@@ -2,16 +2,16 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "vtt-vtm5e",
+      "name": "blood",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8738"],
-      "port": 8738
+      "runtimeArgs": ["-m", "http.server", "8743"],
+      "port": 8743
     },
     {
-      "name": "vtt-vtm5e-worker",
+      "name": "blood-worker",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["wrangler", "dev", "--port", "8789"],
-      "port": 8789,
+      "runtimeArgs": ["wrangler", "dev", "--port", "8795"],
+      "port": 8795,
       "cwd": "worker"
     }
   ]

@@ -7,3 +7,7 @@ build/__pycache__/
 campaigns/
 node_modules/
 .wrangler/
+# the instance's project skills are tracked (upstream ignores all of .claude/*)
+!.claude/skills/
+# the campaign's Foundry exports are kept, but never its relay key
+campaign/source/**/*.key

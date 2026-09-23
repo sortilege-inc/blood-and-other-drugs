@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "sortilege-vtt-vtm5e",
+  "name": "blood-and-other-drugs",
   "main": "src/index.ts",
   "compatibility_date": "2026-09-08",
   "observability": { "enabled": true, "head_sampling_rate": 1 },
@@ -8,6 +8,7 @@
     // The app's own origins, comma-separated — the only non-localhost origins the Worker
     // answers to. Until the owner picks the deployment origin (PLAN.md D3) only the github.io
     // address is listed; localhost / 127.0.0.1 are always admitted for `wrangler dev`.
+    // INSTANCE-OWNED (merge=ours): this deployment's origin goes here at M7.
     "ALLOWED_ORIGIN": "https://sortilege-inc.github.io"
   },
   "durable_objects": {
