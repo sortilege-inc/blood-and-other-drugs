@@ -218,6 +218,67 @@ real controls (PLAYBOOK §5) before the next begins.
 | 20 | `check_shape` counts an `ACTOR "…" DEF` line as an entity, as the build does | The BASE's `ACTOR "Kindred"` is the first non-`^` declaration line in the corpus. |
 | 21 | **The corpus defects were fixed upstream, at the owner's direction** (2026-09-23), in the conversion's extractor and generator — all 18 books regenerated, 85 files bumped, `gates.sh` green, `qa_vtm` never worse. Nothing here patches a corpus string | Ground rules; the TODO there holds the proof and what remains (Anarch *Blood Cult*, the Four Humors grid, Cults' *Mental Maze*, the third-party corpus not re-extracted). |
 
+## Instances (2026-09-23)
+
+A campaign repo that is a **fork of this VTT**: it owns `campaign/` and a short list of root
+files, and never edits an upstream file. The process is
+`campaign/INSTANCE-PLAYBOOK.md` in `portents-and-fortunes`, written against the L5R5e line.
+The first instance of *this* VTT is **Blood & Other Drugs**
+(`sortilege-inc/blood-and-other-drugs`, private), which D3 named.
+
+**I1 — the instance hook (landed 2026-09-23).** This VTT could not host an instance: it had no
+`engine/instance.js`, no `build/build_layer.*` and no `instance:` key. All three now exist.
+
+- `engine/instance.js` — **byte-identical to the L5R5e line's** (`diff` is empty; the file
+  carries no system word). Four pages carry its stage tags: `index.html` (`data` after
+  `data/errata.js`, `site` after `system/vtm5e/site.js`), `gm/index.html` (`data`, `gm` after
+  `system/vtm5e/panels.js`), `gm/vtt.html` (`data`, `table`), `gm/play.html` (`data`, `play`).
+- `build/build_layer.py` + `.sh` — **written for this build, not copied.** The L5R5e one is
+  built on `Build` / `Ctx` / `gen`, which this build does not have; this one uses this build's
+  own `collect_entities` / `corrections_of` / `records_of`, so a layer's Storyteller characters
+  and Discipline powers are found by the **same shapes** as the corpus's, and a power under the
+  layer's own `Level N` heading takes its Discipline and level. The layer's corrections merge
+  into `index.corrections`, so a house rule shows beside the rule it changes.
+- `engine/config.js` gains `instance: null` and the shape of the key, commented.
+
+**The four gates, each proven by making it fail** (`build/fixtures/layer/fixture-layer.ttrpg`,
+built to a scratch folder; the planted variants are not kept):
+
+| Gate | Green | Planted fault | Result |
+|---|---|---|---|
+| strings, both ways by count | `29 (29 occurrences) — 0 uncovered · 0 short · 0 unsourced` | a `STEPS [ … ]` block the emitter does not carry | `UNCOVERED … 'A step the builder never carries.'`, exit 1 |
+| ids | `5, none of them the corpus's (9758)` | the fixture takes `#vtm5Table000000000001` | `IDS — the layer reuses 1 corpus ids`, exit 1 |
+| references | every id the layer points at resolves | `EXTENDS #vtm5NoSuchHash00001` | `REFERENCES — 1 ids … in neither`, exit 1 |
+| names | `1 references by name, every one names an entity` | `MODIFY ^"No Such Rule At All"` | `NAMES — 1 references name nothing`, exit 1 |
+
+Two faults of the first draft were caught by the gates themselves and fixed: coverage was read
+from the book file alone (a layer's corrections ride in `index.js`, so it must be read over
+both), and the names walker read a scalar property's `type` — the word `STRING` — as a
+reference. It now reads only the places a name can be one: EXTENDS, `LIST OF`, a `REF`, a
+`REFERENCES` line, a `MODIFY` / `OVERRIDE` target.
+
+**In the browser (8738), through the real controls.** With `instance: null` the eight stage tags
+are no-ops: 19 books, 9,758 entities, the seven site tabs, hero *18 books … 211 Discipline
+powers, 101 rituals and formulae, 513 Storyteller characters*, 0 console errors. With a
+temporary instance declared: **20 books with the layer first under its own heading *This
+campaign*** and *The books* below, 9,763 entities, its stylesheet applied, its 2 records present
+(the power reading `discipline: Animalism`, `level: Level 1` from the layer's own headings), its
+1 correction in `index.corrections`, its site tab rendering when clicked, and its panel
+registering 10th on the Storyteller's table and rendering. 0 console errors on both.
+(`gm/` also logs a WebSocket failure for a **pre-existing** stored room `GFVA2` with no Worker
+running — present before this change, unrelated to it.)
+
+**One upstream bug the hook exposed, fixed here.** `system/vtm5e/site.js` printed
+`idx.counts.books - 1`, a hardcoded subtraction for the BASE; a campaign book made it undercount
+and folded the campaign's entries into a line that says *verbatim from the corpus*. The shelf now
+takes the campaign's books out of that line and shelves them first under *This campaign*, as the
+L5R5e line does. With no instance the line is unchanged: *18 books … 9758 entries*.
+
+**Unchanged by all of this:** `bash build/build.sh` → `build_data: 140 corpus files → 19 books,
+9758 entities; records: power 211, ritual 101, character 513`, `verify_data: 24037 strings — 0
+uncovered · 0 unsourced`, `check_shape: OK (33 assertions)`, and `data/`'s 21 files
+**byte-identical** before and after.
+
 ## STOPPED HERE — to resume
 
 **M0–M5 landed 2026-09-23**, each committed and pushed. D1 decided and landed (with the

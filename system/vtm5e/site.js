@@ -37,27 +37,41 @@ window.VttSiteTabs = (function () {
   // ── the shelf ──────────────────────────────────────────────────────
   function renderShelf(page, ctx) {
     const idx = D.index();
+    // `campaign` is an instance's own layer (build/build_layer.py) — its homebrew, shelved
+    // first and under its own heading. The hero line describes the CORPUS, so the campaign's
+    // own entries are taken back out of it: the books are verbatim, the campaign is not.
+    const shelved = D.books().filter((b) => b.kind !== 'base');
+    const mine = shelved.filter((b) => b.kind === 'campaign');
+    const sum = (k) => mine.reduce((n, b) => n + (b.counts[k] || 0), 0);
     page.appendChild(el('div', { class: 'hero' }, [
       mark(Art().logos.vampire, 'hero-logo'),
       el('p', { class: 'hero-sub' }, [
-        String(idx.counts.books - 1) + ' books, generated verbatim from the corpus — ',
-        String(idx.counts.entities) + ' entries, ',
-        String(idx.counts.records.power) + ' Discipline powers, ',
-        String(idx.counts.records.ritual) + ' rituals and formulae, ',
-        String(idx.counts.records.character) + ' Storyteller characters.',
+        String(shelved.length - mine.length) + ' books, generated verbatim from the corpus — ',
+        String(idx.counts.entities - sum('entities')) + ' entries, ',
+        String(idx.counts.records.power - sum('power')) + ' Discipline powers, ',
+        String(idx.counts.records.ritual - sum('ritual')) + ' rituals and formulae, ',
+        String(idx.counts.records.character - sum('character')) + ' Storyteller characters.',
       ]),
     ]));
-    const shelf = el('div', { class: 'shelf' });
-    D.books().filter((b) => b.kind !== 'base').forEach((b) => {
+    const card = (b) => {
       const c = b.counts;
-      shelf.appendChild(el('a', { class: 'shelf-book' + (b.kind === 'errata' ? ' errata' : ''), href: ctx.href('books', [b.id]) }, [
+      return el('a', { class: 'shelf-book' + (b.kind === 'errata' ? ' errata' : '') + (b.kind === 'campaign' ? ' campaign' : ''), href: ctx.href('books', [b.id]) }, [
         el('div', { class: 'shelf-title' }, [b.label]),
         el('div', { class: 'shelf-meta' }, [
           [c.chapters + ' chapters', c.entities + ' entries', c.power ? c.power + ' powers' : null, c.character ? c.character + ' characters' : null].filter(Boolean).join(' · '),
         ]),
         el('div', { class: 'shelf-size' }, [kb(b.bytes)]),
-      ]));
-    });
+      ]);
+    };
+    if (mine.length) {
+      page.appendChild(el('h2', { class: 'shelf-group' }, ['This campaign']));
+      const ours = el('div', { class: 'shelf' });
+      mine.forEach((b) => ours.appendChild(card(b)));
+      page.appendChild(ours);
+      page.appendChild(el('h2', { class: 'shelf-group' }, ['The books']));
+    }
+    const shelf = el('div', { class: 'shelf' });
+    shelved.filter((b) => b.kind !== 'campaign').forEach((b) => shelf.appendChild(card(b)));
     page.appendChild(shelf);
     const base = D.books().find((b) => b.kind === 'base');
     if (base) page.appendChild(el('p', { class: 'muted small' }, ['Under the hood: ', el('a', { href: ctx.href('books', [base.id]) }, [base.label]), ' — the corpus BASE, the types every book instantiates.']));

@@ -19,6 +19,7 @@ join a session by room code on `gm/play.html`.
 | M3 — the Storyteller's table: Chronicle, Coterie, Inspector, Cast, Disciplines, Dice, Rules & Book, Log, Campaign; the table; the player's page | **landed** (2026-09-23) |
 | M4 — the character sheet derived from the corpus's ACTOR, the creator, the live trackers | landed 2026-09-23 (the BASE's `ACTOR "Kindred"`) |
 | M5 — sessions through the Worker (`wrangler dev` on 8789) | **landed** (2026-09-23) |
+| I1 — the instance hook: `engine/instance.js`, `build/build_layer.{sh,py}`, the `instance:` key | **landed** (2026-09-23) — the four gates each proven by making them fail; `data/` byte-identical |
 | Deploy | this general build is not deployed and the repo stays private; a campaign-specific instantiation will be the hosted one (owner, 2026-09-23) |
 
 ## Running it
