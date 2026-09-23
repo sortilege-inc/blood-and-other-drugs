@@ -9,6 +9,18 @@ Buildless static site. The site is the books; the Storyteller's table is under `
 engine TEETH's, Invisible Sun's and Troika!'s tables run on, with Vampire's own panels. Players
 join a session by room code on `gm/play.html`.
 
+## Status
+
+| Milestone | State |
+|---|---|
+| M0 — repo skeleton: the engine, the parser, the Worker, the config, the art | **landed** (2026-09-23) |
+| M1 — `build/` generates `data/` from the corpus; the gate both ways; the shape check | **landed** (2026-09-23) |
+| M2 — the site: the books, the clans, the Disciplines, the Storyteller characters, the dice, search | **landed** (2026-09-23) |
+| M3 — the Storyteller's table: Chronicle, Coterie, Inspector, Cast, Disciplines, Dice, Rules & Book, Log, Campaign; the table; the player's page | **landed** (2026-09-23) |
+| M4 — the character sheet derived from the corpus's ACTOR, the creator | **waits on D1** (the corpus declares no character) |
+| M5 — sessions through the Worker (`wrangler dev` on 8789) | **landed** (2026-09-23) |
+| Deploy | not deployed; the repo is private (D3) |
+
 ## Running it
 
 ```bash
