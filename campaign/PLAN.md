@@ -74,7 +74,10 @@ custom predator types (*Extortionist*, *Montero*), the power *Plug-In* and *Fals
 are written in the Titterpig DSL under `campaign/dsl/` and built by upstream's own build through
 the same two-way gate as the books — Portents O6, unchanged.
 
-**O5 — PROPOSED: the third-party corpus is a second shelf, labelled.** *The Black Hand* and the
+**O5 — PROPOSED: the third-party corpus is a second shelf, labelled.** (Its Black Hand half is
+being re-extracted by the VtM5e VTT session as this is written — loresheet dot ratings and the
+merged `Cost (2)` power names — so U2 waits for that push; the Sunburners are hand-authored and
+unaffected.) *The Black Hand* and the
 **Sunburners** load beside the official books as a visibly separate shelf (upstream D2's own
 recommendation), and the two `.arc` scenarios — *Lost in the Garden*, *Our Graves Are Empty* —
 are offered as modules in the Chronicle panel. *Summoned Stories* is **excluded**: it is another
@@ -132,5 +135,5 @@ the fork.
 | 2026-09-23 | autonomous, tool | Per-repo identity and `merge.ours.driver true` set at clone time | The playbook requires the driver once per clone; every sibling sets identity per repo |
 | 2026-09-23 | autonomous, method | Foundry read over the `foundryrestapi.com` relay, **read-only**, key never written to disk | The key is session-scoped; the Sjórseiðr note records the same handling |
 | 2026-09-23 | owner | O1, O2, O3 | asked with the alternatives and the legwork; answered |
-| 2026-09-23 | coordination | **U2 held** until the VtM5e VTT session finishes regenerating the corpus and rebuilding `data/` | It edits `build_data.py` and `BOOKS`, which its rebuild also touches; a peer session asked for the hold and it costs nothing. Asked it to re-extract `titterpig-dsl-vtm5e-3rdparty` at the same time (that repo's books were never re-extracted with the current conversion code) — if it declines, re-extraction becomes this instance's own step before U2 |
+| 2026-09-23 | coordination | **U2 held** until the VtM5e VTT session finishes regenerating the corpus and rebuilding `data/` | It edits `build_data.py` and `BOOKS`, which its rebuild also touches; a peer session asked for the hold and it costs nothing. It confirmed it **is** re-extracting `titterpig-dsl-vtm5e-3rdparty` right after the official pass, at the owner's direction — *The Black Hand* and its two `.arc`s, whose **loresheets gain dot ratings** (110 + 10 + 10 levels, currently none) and whose merged `Cost (2)` powers get their names back. The Sunburners are hand-authored and *Summoned Stories* has its own extractor, so both are untouched. **U2 therefore starts only after both of its pushes**: building the shelf first would be building against text about to change |
 | 2026-09-23 | correction | The peer attributed corpus commit `a31138f` (the buyer watermark) to this session; it is **not** this session's work | Every commit in `titterpig-dsl-vtm5e` is authored *Jordan Peacock*, the shared per-repo identity, so author does not distinguish sessions. This session has touched neither that repo nor `sortilege-vtt-vtm5e/data/`: I1 left `data/`'s 21 files byte-identical |
