@@ -64,8 +64,15 @@ window.VttSystem = (function () {
 
   const readCharacter = (obj, fileName) => Sheet.readMember(obj, fileName);
   const downloadCharacter = (m) => Sheet.downloadMember(m);
-  const liveSheet = (m, opts) => Sheet.live(m, opts);
-  const memberSubtitle = (m) => Sheet.sentence(m);
+  // the sheet reads the BASE, the core (its groupings) and the Errata (the Blood Potency
+  // chart); until they are in memory the panel says so and fills in when they arrive
+  function liveSheet(m, opts) {
+    if (Sheet.BOOKS.every((b) => D.loaded(b))) return Sheet.live(m, opts);
+    const box = window.VttRender.el('div', { class: 'muted' }, ['Opening the sheet…']);
+    D.ready(Sheet.BOOKS).then(() => { if (box.parentNode) box.replaceWith(Sheet.live(m, opts)); });
+    return box;
+  }
+  const memberSubtitle = (m) => Sheet.memberSentence(m);
 
   return {
     MODULE, scenes, scene, currentSceneId, cast, maps, mapDef, defaultMapId, legend, mapAssets,

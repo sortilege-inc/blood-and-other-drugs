@@ -60,7 +60,8 @@ def grep_count(corpus, pattern, files="*.ttrpg"):
 
 
 # ── an independent reader: DEF blocks and the property names printed in them ──
-DEF_LINE = re.compile(r'^\s*(#[A-Za-z0-9]+)\s+\^"((?:[^"\\]|\\.)*)"\s+DEF\s*\{\s*$')
+# a DEF, or an ACTOR declaration (the BASE's #… ACTOR "Kindred" DEF {, from the printed sheet)
+DEF_LINE = re.compile(r'^\s*(#[A-Za-z0-9]+)\s+(?:\^|ACTOR\s+)"((?:[^"\\]|\\.)*)"\s+DEF\s*\{\s*$')
 PROP_LINE = re.compile(r'^\s*\^"((?:[^"\\]|\\.)*)"\s+(STRING|INTEGER|LIST|BOOLEAN|ENUM)\b')
 STR_RE = re.compile(r'"(?:[^"\\]|\\.)*"')
 
@@ -112,7 +113,7 @@ def main():
         for bid, b in books.items() for c in b["chapters"]), True)
 
     # ── entities and what they carry ──
-    check("entities = hashed DEF lines in the corpus", len(ents), grep_count(corpus, r'^\s*#[A-Za-z0-9]+ \^".*" DEF \{$'))
+    check("entities = hashed DEF and ACTOR lines in the corpus", len(ents), grep_count(corpus, r'^\s*#[A-Za-z0-9]+ (\^|ACTOR )".*" DEF \{$'))
     check("entities with a DESCRIPTION = DESCRIPTION lines", sum(1 for e in ents.values() if e["desc"] is not None),
           grep_count(corpus, r'^\s*DESCRIPTION "'))
     corr = index["corrections"]
@@ -158,8 +159,13 @@ def main():
     got = {h: (by_id[h].get("discipline"), by_id[h].get("level")) for h in want}
     check("core Discipline powers and rituals placed as the scanner reads them", got == want, True)
     check("core powers with no Discipline or no level", sorted(by_id[h]["name"] for h, v in got.items() if None in v and by_id[h]["kind"] == "power"), [])
-    check("Discipline names read from the corpus (%d)" % len(index["disciplines"]), sorted(index["disciplines"]),
-          sorted({n for i, (h, n, ps, f) in enumerate(core[:-1]) if core[i + 1][1] == "Characteristics" and n != "Characteristics"} | {"Oblivion"}))
+    # the BASE's ^"Discipline" ENUM, read off its line independently of the parser
+    base_src = open(os.path.join(corpus, FILE_PREFIX + "base.ttrpg"), encoding="utf-8").read()
+    m = re.search(r'\^"Discipline" DEF \{(?:\s*#[^\n]*)*\s*ENUM \[([^\]]*)\]', base_src)
+    check("Discipline names = the BASE's ^\"Discipline\" ENUM (%d)" % len(index["disciplines"]), sorted(index["disciplines"]),
+          sorted(re.findall(r'"([^"]+)"', m.group(1))) if m else None)
+    check("every core Discipline heading followed by Characteristics is a declared name",
+          sorted({n for i, (h, n, ps, f) in enumerate(core[:-1]) if core[i + 1][1] == "Characteristics" and n != "Characteristics"} - set(index["disciplines"])), [])
     oblivion = sum(1 for r in records if r.get("discipline") == "Oblivion" and r["kind"] == "power")
     check("Oblivion powers found (Chicago by Night, Cults, Players Guide…) > 0", oblivion > 0, True)
 

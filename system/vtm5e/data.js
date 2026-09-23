@@ -69,6 +69,21 @@ window.VtmData = (function () {
     return typeof v === 'string' ? v : null;
   };
 
+  // Every entity of a set of loaded books, each book's chapters in order, depth first.
+  function all(bookIds) {
+    const out = [];
+    (bookIds || loadedBooks()).forEach((bid) => {
+      const b = book(bid);
+      if (!b) return;
+      const walk = (ids) => ids.forEach((id) => { const e = entity(id); if (e) { out.push(e); walk(e.children); } });
+      b.chapters.forEach((c) => walk(c.roots || []));
+    });
+    return out;
+  }
+  // The BASE's declaration of a type (the base book must be loaded): the entity whose key is
+  // the type's name and that EXTENDS nothing.
+  const declaration = (name) => all(['base']).find((e) => e.key === name && !e.type) || null;
+
   // ── a chapter's display title ──────────────────────────────────────
   // The chapter's own title is its file's NAME, "Vampire: The Masquerade - <Book> - <Chapter>";
   // shown here as its last segment. A lore chapter's is its first heading line.
@@ -136,7 +151,7 @@ window.VtmData = (function () {
 
   // "Level 3" → 3; a record the corpus lost its level for → null
   const levelNumber = (r) => {
-    const m = /^Level (\d+)$/.exec(r.level || '');
+    const m = /^Level (\d+)(?: (?:Powers?|Rituals?|Ceremony|Ceremonies|Formulae?))?$/.exec(r.level || '');   // as build_data.LEVEL_HEADING
     return m ? +m[1] : null;
   };
 
@@ -218,7 +233,7 @@ window.VtmData = (function () {
 
   return {
     artUrl, T, index, books, indexBook, book, loaded, loadedBooks, entity, records, record, disciplines,
-    ready, readyAll, bookOf, fetch, children, prop, val, text, chapterTitle, outline, node, trail,
+    ready, readyAll, bookOf, fetch, children, all, declaration, prop, val, text, chapterTitle, outline, node, trail,
     corrections, powers, characters, levelNumber, generic, recordLabel, headingsNamed, search, excerpt, searchRecords,
   };
 })();

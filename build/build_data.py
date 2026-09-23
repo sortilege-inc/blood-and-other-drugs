@@ -31,8 +31,8 @@ What this corpus needs that Troika's did not:
     ritual and a Storyteller character are known by the fields the book prints on them. The
     SHAPES below name those fields — by KEY, never by value — and data/records.js lists every
     entity that has one, with its place: the nearest `Level N` heading before it in its file
-    and the nearest Discipline heading before it. The Discipline names are read from the
-    corpus by the book's own patterns (disciplines_of), not typed here. check_shape.py asserts
+    and the nearest Discipline heading before it. The Discipline names are the BASE's
+    ^"Discipline" ENUM (disciplines_of), not typed here. check_shape.py asserts
     every count against grep over the corpus.
 
 Every string is carried byte-for-byte from the DSL (only DSL escapes resolved); this file
@@ -91,9 +91,10 @@ SHAPES = [
      or ("Attributes" in ps and "Skills" in ps)),
 ]
 SHAPE_NAMES = [s[0] for s in SHAPES]
-LEVEL_HEADING = re.compile(r"^Level \d+$")
-DISCIPLINE_MARK = "Characteristics"        # the heading the book prints after a Discipline's name
-DISCIPLINES_HEADING = "Disciplines"        # a clan's list of its three
+# "Level 3", or a label that names what the level holds ("Level 4 Powers", "Level 3
+# Ceremonies", "Level 5 Formula" -- Tattered Facade, and the rituals appendices)
+LEVEL_HEADING = re.compile(r"^Level \d+( (Powers?|Rituals?|Ceremony|Ceremonies|Formulae?))?$")
+DISCIPLINE_TYPE = "Discipline"             # the BASE's vocabulary type: ENUM of the names
 CORE_DISCIPLINES = FILE_PREFIX + "core-disciplines.ttrpg"
 # scalar fields a record list shows without loading its book
 RECORD_FIELDS = {
@@ -195,7 +196,7 @@ def prop_value(p):
         v["type"] = t
     if "value" in p:
         v["value"] = p["value"]
-    for m in ("min", "max", "required", "fixed"):
+    for m in ("min", "max", "required", "fixed", "default"):
         if m in p:
             v[m] = p[m]
     return v
@@ -284,6 +285,8 @@ def entity_record(e, doc, book, parent_id=None, slot=None):
         "entries": defs_block(body, "ENTRIES"),
         "table": table_of(body),
         "choices": choices_of(body),
+        # a vocabulary type's options: `^"Discipline" DEF { ENUM ["Animalism", …] }`
+        "enum": [x["v"] for x in kwlist(body, "ENUM") if x.get("k") == "str"] or None,
         "guidance": guidance_of(body),
         "refs": refs_of(body),
     }
@@ -399,30 +402,15 @@ def prop_names(e):
     return {p["name"] for p in e["props"]}
 
 
-def disciplines_of(entities, orders):
-    """The Discipline names, read from the corpus by two of the book's own patterns (the
-    nesting is too uneven for either alone — PLAN.md decision 4):
-
-      1. in the core's Disciplines chapter, a heading the book follows directly with a
-         heading named `Characteristics` (the 11 core Disciplines and Thin-Blood Alchemy);
-      2. a heading printed under a clan's `Disciplines` heading in two or more books (what
-         brings in Oblivion, which the core does not print).
-
-    A `Level N` heading is never a Discipline. D1 recommends the BASE declare the names."""
-    names = set()
-    for fn, order in orders:
-        if fn != CORE_DISCIPLINES:
-            continue
-        for i, h in enumerate(order[:-1]):
-            if entities[order[i + 1]]["name"] == DISCIPLINE_MARK and entities[h]["name"] != DISCIPLINE_MARK:
-                names.add(entities[h]["name"])
-    listed = {}
-    for e in entities.values():
-        if e["name"] == DISCIPLINES_HEADING:
-            for k in e["children"]:
-                listed.setdefault(entities[k]["name"], set()).add(entities[k]["book"])
-    names |= {n for n, books in listed.items() if len(books) >= 2}
-    return {n for n in names if not LEVEL_HEADING.match(n)}
+def disciplines_of(entities):
+    """The Discipline names: the BASE's own vocabulary, `^"Discipline" DEF { ENUM [...] }`
+    (PLAN.md D1, declared from the core's Disciplines chapter). Before the BASE declared
+    them they were read by two of the book's heading patterns (decision 4); with the nesting
+    fixed those patterns also caught labels ("Obfuscate:"), and the declaration is exact."""
+    decl = [e for e in entities.values() if e["book"] == "base" and e["name"] == DISCIPLINE_TYPE and e.get("enum")]
+    if len(decl) != 1:
+        raise SystemExit("build_data: the BASE must declare exactly one ^\"%s\" ENUM (found %d)" % (DISCIPLINE_TYPE, len(decl)))
+    return set(decl[0]["enum"])
 
 
 def scalar(e, name):
@@ -502,7 +490,7 @@ def main():
             orders.append((c["file"], order))
         books_out.append((b, chapters, roots))
 
-    disciplines = disciplines_of(entities, orders)
+    disciplines = disciplines_of(entities)
     records = records_of(entities, orders, disciplines)
 
     index_books = []

@@ -17,9 +17,9 @@ join a session by room code on `gm/play.html`.
 | M1 — `build/` generates `data/` from the corpus; the gate both ways; the shape check | **landed** (2026-09-23) |
 | M2 — the site: the books, the clans, the Disciplines, the Storyteller characters, the dice, search | **landed** (2026-09-23) |
 | M3 — the Storyteller's table: Chronicle, Coterie, Inspector, Cast, Disciplines, Dice, Rules & Book, Log, Campaign; the table; the player's page | **landed** (2026-09-23) |
-| M4 — the character sheet derived from the corpus's ACTOR, the creator | **waits on D1** (the corpus declares no character) |
+| M4 — the character sheet derived from the corpus's ACTOR, the creator, the live trackers | landed 2026-09-23 (the BASE's `ACTOR "Kindred"`) |
 | M5 — sessions through the Worker (`wrangler dev` on 8789) | **landed** (2026-09-23) |
-| Deploy | not deployed; the repo is private (D3) |
+| Deploy | this general build is not deployed and the repo stays private; a campaign-specific instantiation will be the hosted one (owner, 2026-09-23) |
 
 ## Running it
 

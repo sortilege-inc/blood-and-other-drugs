@@ -125,7 +125,7 @@
       party.forEach((m) => container.appendChild(el('div', { class: 'member' }, [
         el('button', { class: 'card static-card', type: 'button', onclick: () => Panels.select({ kind: 'party', id: m.id }) }, [
           el('div', { class: 'card-name' }, [m.name]),
-          el('div', { class: 'card-meta' }, [Sheet.sentence(m)]),
+          el('div', { class: 'card-meta' }, [Sheet.memberSentence(m)]),
           el('div', { class: 'hunger-mini' }, Array.from({ length: Dice.HUNGER_MAX }, (_, i) => el('span', { class: 'pip' + (i < Sheet.hunger(m) ? ' on' : '') }))),
         ]),
         el('div', { class: 'member-ops' }, [
@@ -175,7 +175,7 @@
         container.appendChild(el('div', { class: 'paper' }, [E.render(e, { onPool: pool, noKids: D.children(e.id).length > 12 })]));
       } else if (sel.kind === 'party') {
         const m = (S().party || []).find((x) => x.id === sel.id);
-        container.appendChild(m ? Sheet.live(m, { onRule: window.VtmOpenEntity }) : el('div', { class: 'empty' }, ['That character is no longer in the coterie.']));
+        container.appendChild(m ? Sys().liveSheet(m, { onRule: window.VtmOpenEntity }) : el('div', { class: 'empty' }, ['That character is no longer in the coterie.']));
       } else container.appendChild(el('div', { class: 'empty' }, ['Nothing to show for ' + sel.kind + '.']));
     };
     ctx.on('select', draw);
@@ -351,7 +351,7 @@
       container.appendChild(el('h4', {}, ['The coterie', el('span', { class: 'muted small' }, [' · saved in the pack'])]));
       container.appendChild(party.length ? el('ul', { class: 'items' }, party.map((m) => el('li', {}, [
         el('button', { class: 'ref', type: 'button', onclick: () => Panels.select({ kind: 'party', id: m.id }) }, [m.name]),
-        el('span', { class: 'muted small' }, [' · ' + Sheet.sentence(m)]),
+        el('span', { class: 'muted small' }, [' · ' + Sheet.memberSentence(m)]),
       ]))) : el('div', { class: 'empty' }, ['No one yet.']));
       const list = State.listCampaigns();
       container.appendChild(el('h4', {}, ['Chronicles in this browser']));

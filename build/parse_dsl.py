@@ -342,11 +342,18 @@ class Parser:
         # (a REQUIRED left unconsumed would read as a statement and swallow the next line)
         while True:
             t3 = self.peek()
-            if t3 is None or t3.kind != "ID" or t3.val not in ("REQUIRED", "FIXED", "MIN", "MAX"):
+            if t3 is None or t3.kind != "ID" or t3.val not in ("REQUIRED", "FIXED", "MIN", "MAX", "DEFAULT"):
                 break
             m = self.next().val
             if m in ("MIN", "MAX"):
                 node[m.lower()] = int(self.expect("INT").val)
+            elif m == "DEFAULT":
+                # `^"Flaw" BOOLEAN DEFAULT false`: left unconsumed, DEFAULT read as a
+                # statement of its own and the default attached to nothing
+                v = self.next()
+                node["default"] = (unescape(v.val) if v.kind == "STR"
+                                   else int(v.val) if v.kind == "INT"
+                                   else v.val == "true" if v.kind == "BOOL" else v.val)
             else:
                 node[m.lower()] = True
         return node
