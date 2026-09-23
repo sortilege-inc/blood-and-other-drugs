@@ -1,0 +1,42 @@
+{
+  "_id": "i1ZPNlqfsIeMsx6Z",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767758132250,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767758169117,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "effects": [],
+  "flags": {},
+  "folder": null,
+  "img": "systems/wod5e/assets/icons/items/feature.svg",
+  "name": "Business Establishment",
+  "ownership": {
+    "58f3S3bDXY6A0mwq": 3,
+    "default": 0
+  },
+  "sort": 0,
+  "system": {
+    "bonuses": [],
+    "dataItemId": "",
+    "description": "<p>The haven is rented out to a business or is run as a business by the Kindred themselves. This gives both benefits and drawbacks, such as a ready stream of income but also being very much on the grid and local enforcement being aware of the location. This reduces the Haven’s base dots by one for pools involving the Haven’s privacy and defenses against either financial intrusions. Dots in this merit roughly equal Resources but do not stack onto existing Resources for the character.</p>",
+    "featuretype": "merit",
+    "macroid": "",
+    "points": 2,
+    "source": {
+      "book": "",
+      "page": ""
+    },
+    "uses": {
+      "current": 0,
+      "enabled": false,
+      "max": 0
+    }
+  },
+  "type": "feature"
+}

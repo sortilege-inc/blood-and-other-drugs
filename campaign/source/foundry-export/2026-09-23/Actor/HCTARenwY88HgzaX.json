@@ -1,0 +1,1614 @@
+{
+  "_id": "HCTARenwY88HgzaX",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "14.367",
+    "createdTime": 1767560607262,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1790179033809,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.27"
+  },
+  "effects": [],
+  "flags": {
+    "ginzzzu-portraits": {
+      "customEmotions": [],
+      "portraitCustomImage": "modules/sortilege-yyz-by-night/packs/toronto-kindred/portraits/moth-transparent.webp",
+      "portraitFlipX": false,
+      "portraitHeightMultiplier": 1,
+      "portraitShown": false,
+      "showStandardEmotions": true
+    },
+    "wod5e": {
+      "manualDefaultOwnership": true
+    }
+  },
+  "folder": "OePIcRsuM0pjJpNa",
+  "img": "modules/sortilege-yyz-by-night/packs/toronto-kindred/portraits/moth.png",
+  "items": [
+    {
+      "_id": "U4Jo5Av1MtiAAJTs",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Ravnos",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 500000,
+      "system": {
+        "bane": "Doomed: If slumbering in the same place more than once in seven nights, suffer Aggravated damage.",
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "<h5>Disciplines: Animalism, Obfuscate, Presence</h5>",
+        "macroid": "",
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "clan"
+    },
+    {
+      "_id": "YbUsOihwWfRcug0E",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Scene Queen",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "dicepool": {},
+        "macroid": "",
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "predatorType"
+    },
+    {
+      "_id": "xOBO7c1OIjDFxUBu",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Cloak of Shadows",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Become invisible in shadows</p>",
+        "dicepool": {},
+        "discipline": "obfuscate",
+        "level": 1,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "A2ixx0MsYemffXCQ",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Silence of Death",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Muffle sounds</p>",
+        "dicepool": {},
+        "discipline": "obfuscate",
+        "level": 1,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "ZrCce3ojYdumaOcw",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Unseen Passage",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Move while invisible</p>",
+        "dicepool": {},
+        "discipline": "obfuscate",
+        "level": 2,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "JYMUyZ8bzwOYasmo",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Ghost in the Machine",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Erase digital presence</p>",
+        "dicepool": {},
+        "discipline": "obfuscate",
+        "level": 2,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "RceuteMgCbhfMSjH",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Mask of a Thousand Faces",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Appear as someone else</p>",
+        "dicepool": {},
+        "discipline": "obfuscate",
+        "level": 3,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "vTSyLkbKa4KJLNaH",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Awe",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Become the center of attention</p>",
+        "dicepool": {},
+        "discipline": "presence",
+        "level": 1,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "XYv18PJKQDAJW0EZ",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Daunt",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Subtle intimidation (rarely used)</p>",
+        "dicepool": {},
+        "discipline": "presence",
+        "level": 1,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "sVAJSlzrYTGruD29",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Lingering Kiss",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Make feeding pleasurable and memorable</p>",
+        "dicepool": {},
+        "discipline": "presence",
+        "level": 2,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "5IPGTXbYkO7TUqPK",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Bond Familiars",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Create connection with animals</p>",
+        "dicepool": {},
+        "discipline": "animalism",
+        "level": 1,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "OMVm1NBG1QcYczLR",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Resources",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "background",
+        "macroid": "",
+        "points": 2,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "3YStc8G9vSlbs9Da",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Contacts",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "background",
+        "macroid": "",
+        "points": 2,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "qvZjrAKeL4BVD3bF",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Fame",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "background",
+        "macroid": "",
+        "points": 1,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "82szW5s84MjgukMh",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Mask",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "background",
+        "macroid": "",
+        "points": 2,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "lUIyhSnfDGNMduli",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Collector",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "merit",
+        "macroid": "",
+        "points": 2,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "lAVhlBF7siposCXe",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Efficient Digestion",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "merit",
+        "macroid": "",
+        "points": 3,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "o8r1lj6Ks03dXgCH",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Disallowed Feeding",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "flaw",
+        "macroid": "",
+        "points": 2,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "hqofLNEs3LwY53sk",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Prey Exclusion",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "flaw",
+        "macroid": "",
+        "points": 2,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "MBIRqjV6jKu321UW",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Unbondable",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "flaw",
+        "macroid": "",
+        "points": 3,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    }
+  ],
+  "name": "Moth",
+  "ownership": {
+    "58f3S3bDXY6A0mwq": 3,
+    "default": 0
+  },
+  "prototypeToken": {
+    "actorLink": true,
+    "alpha": 1,
+    "appendNumber": false,
+    "bar1": {
+      "attribute": "health"
+    },
+    "bar2": {
+      "attribute": "willpower"
+    },
+    "depth": 1,
+    "detectionModes": {},
+    "displayBars": 0,
+    "displayName": 0,
+    "disposition": -1,
+    "flags": {},
+    "height": 1,
+    "light": {
+      "alpha": 0.5,
+      "angle": 360,
+      "animation": {
+        "intensity": 5,
+        "reverse": false,
+        "speed": 5,
+        "type": null
+      },
+      "attenuation": 0.5,
+      "bright": 0,
+      "color": null,
+      "coloration": 1,
+      "contrast": 0,
+      "darkness": {
+        "max": 1,
+        "min": 0
+      },
+      "dim": 0,
+      "luminosity": 0.5,
+      "negative": false,
+      "priority": 0,
+      "saturation": 0,
+      "shadows": 0
+    },
+    "lockRotation": false,
+    "movementAction": null,
+    "name": "Moth",
+    "occludable": {
+      "radius": 0
+    },
+    "prependAdjective": false,
+    "randomImg": false,
+    "ring": {
+      "colors": {
+        "background": null,
+        "ring": null
+      },
+      "effects": 1,
+      "enabled": false,
+      "subject": {
+        "scale": 1,
+        "texture": null
+      }
+    },
+    "rotation": 0,
+    "sight": {
+      "angle": 360,
+      "attenuation": 0.1,
+      "brightness": 0,
+      "color": null,
+      "contrast": 0,
+      "enabled": false,
+      "range": 0,
+      "saturation": 0,
+      "visionMode": "basic"
+    },
+    "texture": {
+      "alphaThreshold": 0.75,
+      "anchorX": 0.5,
+      "anchorY": 0.5,
+      "fit": "contain",
+      "scaleX": 1,
+      "scaleY": 1,
+      "src": "sortilege/yyz/portraits/moth.png",
+      "tint": "#ffffff"
+    },
+    "turnMarker": {
+      "animation": null,
+      "disposition": false,
+      "mode": 1,
+      "src": null
+    },
+    "width": 1
+  },
+  "sort": 400000,
+  "system": {
+    "activeForm": "homid",
+    "appearance": "<p>Moth has an androgynous, deliberately cultivated aesthetic - layered vintage clothing in muted tones (grays, browns, faded blacks), often incorporating found objects as accessories. Their hair changes color frequently (currently ash-blonde fading to gray). They wear fingerless gloves to hide nervously picking fingers. Slight build, forgettable features that blend into crowds.</p>",
+    "attributes": {
+      "charisma": {
+        "active": false,
+        "value": 2
+      },
+      "composure": {
+        "active": false,
+        "value": 3
+      },
+      "dexterity": {
+        "active": false,
+        "value": 3
+      },
+      "intelligence": {
+        "active": false,
+        "value": 3
+      },
+      "manipulation": {
+        "active": false,
+        "value": 4
+      },
+      "resolve": {
+        "active": false,
+        "value": 2
+      },
+      "stamina": {
+        "active": false,
+        "value": 2
+      },
+      "strength": {
+        "active": false,
+        "value": 1
+      },
+      "wits": {
+        "active": false,
+        "value": 4
+      }
+    },
+    "balance": {
+      "harano": {
+        "value": 0
+      },
+      "hauglosk": {
+        "value": 0
+      }
+    },
+    "bio": {
+      "age": {
+        "apparent": "",
+        "trueage": ""
+      },
+      "dateof": {
+        "birth": "",
+        "death": ""
+      },
+      "history": ""
+    },
+    "biography": "",
+    "blood": {
+      "generation": "",
+      "potency": 2
+    },
+    "bonuses": {},
+    "crinosHealth": {
+      "aggravated": 0,
+      "max": 4,
+      "superficial": 0,
+      "value": 4
+    },
+    "danger": {
+      "max": 5,
+      "value": 0
+    },
+    "derivedXP": {
+      "remainingXP": 0,
+      "totalXP": 0
+    },
+    "description": "",
+    "despair": {
+      "value": 0
+    },
+    "desperation": {
+      "value": 0
+    },
+    "disciplines": {
+      "alchemy": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "animalism": {
+        "description": "",
+        "powers": [],
+        "value": 1,
+        "visible": true
+      },
+      "auspex": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "celerity": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "ceremonies": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "dominate": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "fortitude": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "obfuscate": {
+        "description": "",
+        "powers": [],
+        "value": 3,
+        "visible": true
+      },
+      "oblivion": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "potence": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "presence": {
+        "description": "",
+        "powers": [],
+        "value": 2,
+        "visible": true
+      },
+      "protean": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "rituals": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "sorcery": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      }
+    },
+    "edges": {
+      "arsenal": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "artifact": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "beastwhisperer": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "dronejockey": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "fleet": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "globalaccess": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "improvisedgear": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "library": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "ordnance": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "repeltheunnatural": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "sensetheunnatural": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "thwarttheunnatural": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      }
+    },
+    "equipment": "",
+    "exp": {
+      "max": 0,
+      "value": 0
+    },
+    "experiences": [],
+    "forms": {
+      "crinos": {
+        "description": "",
+        "token": {
+          "img": ""
+        }
+      },
+      "glabro": {
+        "description": "",
+        "token": {
+          "img": ""
+        }
+      },
+      "hispo": {
+        "description": "",
+        "token": {
+          "img": ""
+        }
+      },
+      "homid": {
+        "description": "",
+        "token": {
+          "img": ""
+        }
+      },
+      "lupus": {
+        "description": "",
+        "token": {
+          "img": ""
+        }
+      }
+    },
+    "frenzyActive": false,
+    "gifts": {
+      "ahroun": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "blackfury": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "bonegnawer": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "childrenofgaia": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "galestalker": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "galliard": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "ghostcouncil": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "glasswalker": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "hartwarden": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "native": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "philodox": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "ragabash": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "redtalon": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "rites": {
+        "description": "",
+        "powers": []
+      },
+      "shadowlord": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "silentstrider": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "silverfang": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "theurge": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      }
+    },
+    "group": "",
+    "hasSkillAttributeData": true,
+    "headers": {
+      "ambition": "",
+      "cellname": "",
+      "chronicle": "YYZ By Night",
+      "concept": "Compulsive collector who sabotages their own goals through deception",
+      "creedfields": "",
+      "desire": "",
+      "domitor": "",
+      "generation": "12th",
+      "sire": "Unknown itinerant Ravnos (abandoned Moth shortly after Embrace)",
+      "tenets": "",
+      "touchstones": "<p>Yuki Tanaka: Every beautiful thing deserves to be preserved</p><p>The Urbex Community: Deception is survival</p><p>Their First Acquisition: Nothing lasts forever</p>"
+    },
+    "health": {
+      "aggravated": 0,
+      "max": 7,
+      "superficial": 0,
+      "value": 7
+    },
+    "humanity": {
+      "stains": 0,
+      "value": 6
+    },
+    "hunger": {
+      "max": 5,
+      "value": 2
+    },
+    "locked": false,
+    "lostTheWolf": false,
+    "notes": "",
+    "privatenotes": "",
+    "rage": {
+      "max": 5,
+      "value": 1
+    },
+    "renown": {
+      "glory": {
+        "value": 0
+      },
+      "honor": {
+        "value": 0
+      },
+      "wisdom": {
+        "value": 0
+      }
+    },
+    "selectedDiscipline": "",
+    "selectedDisciplinePower": "",
+    "selectedEdge": "",
+    "selectedEdgePerk": "",
+    "selectedGift": "",
+    "selectedGiftPower": "",
+    "settings": {
+      "background": "",
+      "enableDisciplines": false,
+      "enableEdges": false,
+      "enableGifts": false,
+      "generalDifficultyEnabled": true,
+      "headerbg": "",
+      "limited": {
+        "appearance": true,
+        "biography": true,
+        "tenets": false,
+        "touchstones": false
+      },
+      "skillAttributeInputs": false
+    },
+    "skills": {
+      "academics": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      },
+      "animalken": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "athletics": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "awareness": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 3
+      },
+      "brawl": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "craft": {
+        "active": false,
+        "bonuses": [
+          {
+            "displayWhenInactive": true,
+            "paths": [
+              "skills.craft"
+            ],
+            "source": "Preservation and restoration",
+            "value": 1
+          }
+        ],
+        "description": "",
+        "macroid": "",
+        "value": 3
+      },
+      "drive": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      },
+      "etiquette": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 2
+      },
+      "finance": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 2
+      },
+      "firearms": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "insight": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 3
+      },
+      "intimidation": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "investigation": {
+        "active": false,
+        "bonuses": [
+          {
+            "displayWhenInactive": true,
+            "paths": [
+              "skills.investigation"
+            ],
+            "source": "Art authentication",
+            "value": 1
+          }
+        ],
+        "description": "",
+        "macroid": "",
+        "value": 3
+      },
+      "larceny": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 3
+      },
+      "leadership": {
+        "active": false,
+        "bonuses": [
+          {
+            "displayWhenInactive": true,
+            "paths": [
+              "skills.leadership"
+            ],
+            "source": "Subcultural Group",
+            "value": 1
+          }
+        ],
+        "description": "",
+        "macroid": "",
+        "value": 2
+      },
+      "medicine": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "melee": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "occult": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 2
+      },
+      "performance": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      },
+      "persuasion": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 3
+      },
+      "politics": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      },
+      "science": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "stealth": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 2
+      },
+      "streetwise": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 2
+      },
+      "subterfuge": {
+        "active": false,
+        "bonuses": [
+          {
+            "displayWhenInactive": true,
+            "paths": [
+              "skills.subterfuge"
+            ],
+            "source": "Feigning ownership",
+            "value": 1
+          }
+        ],
+        "description": "",
+        "macroid": "",
+        "value": 4
+      },
+      "survival": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      },
+      "technology": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 2
+      }
+    },
+    "talismans": [],
+    "willpower": {
+      "aggravated": 0,
+      "max": 5,
+      "superficial": 0,
+      "value": 5
+    }
+  },
+  "type": "vampire"
+}

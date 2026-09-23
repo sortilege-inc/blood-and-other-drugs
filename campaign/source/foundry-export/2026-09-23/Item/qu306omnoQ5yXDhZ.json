@@ -1,0 +1,37 @@
+{
+  "_id": "qu306omnoQ5yXDhZ",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767750664568,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767750664568,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "effects": [],
+  "flags": {},
+  "folder": null,
+  "img": "systems/wod5e/assets/icons/items/item-default.svg",
+  "name": "Ballistic Vest",
+  "ownership": {
+    "58f3S3bDXY6A0mwq": 3,
+    "default": 0
+  },
+  "sort": 0,
+  "system": {
+    "armorvalue": 0,
+    "bonuses": [],
+    "dataItemId": "",
+    "description": "",
+    "macroid": "",
+    "quantity": 1,
+    "source": {
+      "book": "",
+      "page": ""
+    }
+  },
+  "type": "armor"
+}

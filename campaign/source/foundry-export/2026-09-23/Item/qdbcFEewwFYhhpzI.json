@@ -1,0 +1,40 @@
+{
+  "_id": "qdbcFEewwFYhhpzI",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767552776880,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767556689691,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "effects": [],
+  "flags": {},
+  "folder": "28gCLliFrPNgS3dM",
+  "img": "systems/wod5e/assets/icons/items/discipline.png",
+  "name": "Plug-In",
+  "ownership": {
+    "58f3S3bDXY6A0mwq": 3,
+    "default": 0
+  },
+  "sort": 112500,
+  "system": {
+    "bonuses": [],
+    "cost": null,
+    "dataItemId": "",
+    "description": "<p>Produce low-level electrical current from their body.</p>",
+    "dicepool": {},
+    "discipline": "alchemy",
+    "level": 1,
+    "macroid": "",
+    "selected": false,
+    "source": {
+      "book": "",
+      "page": ""
+    }
+  },
+  "type": "power"
+}

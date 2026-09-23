@@ -1,0 +1,22 @@
+{
+  "_id": "aBHQrKu5cIWQhL4g",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767303050820,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767561742788,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "color": "#5b1d72",
+  "description": "",
+  "flags": {},
+  "folder": null,
+  "name": "Coterie",
+  "sort": 300000,
+  "sorting": "a",
+  "type": "Actor"
+}

@@ -1,0 +1,22 @@
+{
+  "_id": "SobDRE8PdYlex3Uf",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767560211953,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767560211953,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "color": "#ee5717",
+  "description": "",
+  "flags": {},
+  "folder": null,
+  "name": "Kensington Barony",
+  "sort": 0,
+  "sorting": "a",
+  "type": "Actor"
+}

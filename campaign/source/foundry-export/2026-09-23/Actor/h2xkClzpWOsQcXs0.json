@@ -1,0 +1,2214 @@
+{
+  "_id": "h2xkClzpWOsQcXs0",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "14.367",
+    "createdTime": 1767562270162,
+    "duplicateSource": "Actor.jMsUhegvvLgCQ86G",
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1790179033995,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.27"
+  },
+  "effects": [],
+  "flags": {
+    "ginzzzu-portraits": {
+      "customEmotions": [],
+      "portraitCustomImage": "modules/sortilege-yyz-by-night/packs/toronto-kindred/portraits/lucien-transparent.webp",
+      "portraitHeightMultiplier": 1,
+      "portraitShown": false,
+      "showStandardEmotions": true
+    },
+    "wod5e": {
+      "manualDefaultOwnership": true
+    }
+  },
+  "folder": "5jJjhxSMsIGNBGIZ",
+  "img": "modules/sortilege-yyz-by-night/packs/toronto-kindred/portraits/lucien_dusang.png",
+  "items": [
+    {
+      "_id": "XbI2RSrfyOnQJzz2",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Toreador",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 500000,
+      "system": {
+        "bane": "Aesthetic Fixation: Become fixated on beautiful things.",
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "<h5>Disciplines: Auspex, Celerity, Presence</h5>",
+        "macroid": "",
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "clan"
+    },
+    {
+      "_id": "EQgYAhkcUqoXMyAH",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Consensualist (modified for Prince)",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "dicepool": {},
+        "macroid": "",
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "predatorType"
+    },
+    {
+      "_id": "hqt6fE0tN4ajgbK0",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Awe",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Command attention and admiration</p>",
+        "dicepool": {},
+        "discipline": "presence",
+        "level": 1,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "xrWiUad6WGctGTRV",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Daunt",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Project intimidation</p>",
+        "dicepool": {},
+        "discipline": "presence",
+        "level": 1,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "nNjmBUMIr34HAhm6",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Lingering Kiss",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Make feeding transcendent</p>",
+        "dicepool": {},
+        "discipline": "presence",
+        "level": 2,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "ZWqtX8NGC1V84Dva",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Entrancement",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Create obsessive devotion</p>",
+        "dicepool": {},
+        "discipline": "presence",
+        "level": 3,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "IsiWP5wKYZu0cxKO",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Summon",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Call those who've tasted your blood</p>",
+        "dicepool": {},
+        "discipline": "presence",
+        "level": 4,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "eX4ep5KSDQ0q3Z8K",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Majesty",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Become avatar of perfection, command absolute deference</p>",
+        "dicepool": {},
+        "discipline": "presence",
+        "level": 5,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "KhuU1DVALaiT5xOc",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Heightened Senses",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Supernatural perception</p>",
+        "dicepool": {},
+        "discipline": "auspex",
+        "level": 1,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "gh5GuN7By1Qp2PvU",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Sense the Unseen",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Detect supernatural presence</p>",
+        "dicepool": {},
+        "discipline": "auspex",
+        "level": 1,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "X4RLQlo8BWok4wYS",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Premonition",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Sense danger</p>",
+        "dicepool": {},
+        "discipline": "auspex",
+        "level": 2,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "a1uGaUratPxO94I5",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Spirit's Touch",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Read psychic impressions</p>",
+        "dicepool": {},
+        "discipline": "auspex",
+        "level": 2,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "6gnpn672F3GaQI9u",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Clairvoyance",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Remote viewing</p>",
+        "dicepool": {},
+        "discipline": "auspex",
+        "level": 3,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "4Qpjr9mLkPy1uqyw",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Cat's Grace",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Enhanced movement</p>",
+        "dicepool": {},
+        "discipline": "celerity",
+        "level": 1,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "g67LH6KED9L4nRm0",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Rapid Reflexes",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>React instantly</p>",
+        "dicepool": {},
+        "discipline": "celerity",
+        "level": 1,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "cwthFGbjo3tCZjjs",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Blink",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Brief burst of superhuman speed</p>",
+        "dicepool": {},
+        "discipline": "celerity",
+        "level": 2,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "nYRG3z3bnQAGKYk2",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Compel",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Simple commands</p>",
+        "dicepool": {},
+        "discipline": "dominate",
+        "level": 1,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "UVcyk9A5UwnQ9HwI",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Mesmerize",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Implant instructions/memories</p>",
+        "dicepool": {},
+        "discipline": "dominate",
+        "level": 2,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "6SPDO3ILYB8nIXvY",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Status (Camarilla)",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "background",
+        "macroid": "",
+        "points": 5,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "jQJzrlPK16nwq3ux",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Domain",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "background",
+        "macroid": "",
+        "points": 5,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "za7ttqKOTt4hzJQh",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Haven",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "background",
+        "macroid": "",
+        "points": 5,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "aAqjzFqOcBElwGpV",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Herd",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "background",
+        "macroid": "",
+        "points": 4,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "1FYEHOSz6NpKMyrc",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Resources",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "background",
+        "macroid": "",
+        "points": 5,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "pmqv5QfxHGd6AtXC",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Retainers",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "background",
+        "macroid": "",
+        "points": 4,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "1jQKlBDfEO4LEbU9",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Contacts",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "background",
+        "macroid": "",
+        "points": 4,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "23XDsLeeghBLPQUJ",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Allies",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "background",
+        "macroid": "",
+        "points": 3,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "yM8h2ZfM4Jt3Qjn4",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Prestigious Sire",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "merit",
+        "macroid": "",
+        "points": 1,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "ZmGQ69fifZgrFfBU",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Linguistics",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "merit",
+        "macroid": "",
+        "points": 3,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "FhF01sVhKTEUhAZk",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Eat Food",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "merit",
+        "macroid": "",
+        "points": 1,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "EaW1YB6kLtAGD0iL",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Natural Leader",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "merit",
+        "macroid": "",
+        "points": 2,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "4gCP6VRYBI0WwFAN",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Dark Secret",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "flaw",
+        "macroid": "",
+        "points": 1,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "kCQAJ6J4m7XWqNNy",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Prey Exclusion",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "flaw",
+        "macroid": "",
+        "points": 1,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "6JqvsWs1tQin7wFF",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Enemy",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "flaw",
+        "macroid": "",
+        "points": 4,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "OIIKFSPn7fWDRc1R",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Obsession Target",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "flaw",
+        "macroid": "",
+        "points": 2,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "GyQiKv5KmMRAHnJQ",
+      "_stats": {
+        "compendiumSource": null,
+        "coreVersion": "14.367",
+        "createdTime": null,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": null,
+        "modifiedTime": null,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Weak-Willed Regarding Art",
+      "ownership": {
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "flaw",
+        "macroid": "",
+        "points": 2,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    }
+  ],
+  "name": "Lucien Henri DuSang (Prince)",
+  "ownership": {
+    "58f3S3bDXY6A0mwq": 3,
+    "default": 0
+  },
+  "prototypeToken": {
+    "actorLink": true,
+    "alpha": 1,
+    "appendNumber": false,
+    "bar1": {
+      "attribute": "health"
+    },
+    "bar2": {
+      "attribute": "willpower"
+    },
+    "depth": 1,
+    "detectionModes": {},
+    "displayBars": 0,
+    "displayName": 0,
+    "disposition": -1,
+    "flags": {},
+    "height": 1,
+    "light": {
+      "alpha": 0.5,
+      "angle": 360,
+      "animation": {
+        "intensity": 5,
+        "reverse": false,
+        "speed": 5,
+        "type": null
+      },
+      "attenuation": 0.5,
+      "bright": 0,
+      "color": null,
+      "coloration": 1,
+      "contrast": 0,
+      "darkness": {
+        "max": 1,
+        "min": 0
+      },
+      "dim": 0,
+      "luminosity": 0.5,
+      "negative": false,
+      "priority": 0,
+      "saturation": 0,
+      "shadows": 0
+    },
+    "lockRotation": false,
+    "movementAction": null,
+    "name": "Lucien Henri DuSang",
+    "occludable": {
+      "radius": 0
+    },
+    "prependAdjective": false,
+    "randomImg": false,
+    "ring": {
+      "colors": {
+        "background": null,
+        "ring": null
+      },
+      "effects": 1,
+      "enabled": false,
+      "subject": {
+        "scale": 1,
+        "texture": null
+      }
+    },
+    "rotation": 0,
+    "sight": {
+      "angle": 360,
+      "attenuation": 0.1,
+      "brightness": 0,
+      "color": null,
+      "contrast": 0,
+      "enabled": false,
+      "range": 0,
+      "saturation": 0,
+      "visionMode": "basic"
+    },
+    "texture": {
+      "alphaThreshold": 0.75,
+      "anchorX": 0.5,
+      "anchorY": 0.5,
+      "fit": "contain",
+      "scaleX": 1,
+      "scaleY": 1,
+      "src": "sortilege/yyz/portraits/lucien_henri_dusang.png",
+      "tint": "#ffffff"
+    },
+    "turnMarker": {
+      "animation": null,
+      "disposition": false,
+      "mode": 1,
+      "src": null
+    },
+    "width": 1
+  },
+  "sort": 100000,
+  "system": {
+    "activeForm": "homid",
+    "appearance": "<p>Lucien is elegant in the Old World style - impeccably tailored suits (Brioni, bespoke), silver hair swept back, pale calculating eyes that never quite meet others' gaze directly. Thin hands with long fingers (pianist's hands, artist's hands). Every detail curated: pocket squares, cufflinks, fountain pens. He looks like museum piece - beautiful, valuable, fragile.</p>",
+    "attributes": {
+      "charisma": {
+        "active": false,
+        "value": 5
+      },
+      "composure": {
+        "active": false,
+        "value": 5
+      },
+      "dexterity": {
+        "active": false,
+        "value": 3
+      },
+      "intelligence": {
+        "active": false,
+        "value": 4
+      },
+      "manipulation": {
+        "active": false,
+        "value": 4
+      },
+      "resolve": {
+        "active": false,
+        "value": 3
+      },
+      "stamina": {
+        "active": false,
+        "value": 2
+      },
+      "strength": {
+        "active": false,
+        "value": 2
+      },
+      "wits": {
+        "active": false,
+        "value": 3
+      }
+    },
+    "balance": {
+      "harano": {
+        "value": 0
+      },
+      "hauglosk": {
+        "value": 0
+      }
+    },
+    "bio": {
+      "age": {
+        "apparent": "",
+        "trueage": ""
+      },
+      "dateof": {
+        "birth": "",
+        "death": ""
+      },
+      "history": ""
+    },
+    "biography": "",
+    "blood": {
+      "generation": "",
+      "potency": 4
+    },
+    "bonuses": {},
+    "crinosHealth": {
+      "aggravated": 0,
+      "max": 4,
+      "superficial": 0,
+      "value": 4
+    },
+    "danger": {
+      "max": 5,
+      "value": 0
+    },
+    "derivedXP": {
+      "remainingXP": 0,
+      "totalXP": 0
+    },
+    "description": "",
+    "despair": {
+      "value": 0
+    },
+    "desperation": {
+      "value": 0
+    },
+    "disciplines": {
+      "alchemy": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "animalism": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "auspex": {
+        "description": "",
+        "powers": [],
+        "value": 3,
+        "visible": true
+      },
+      "celerity": {
+        "description": "",
+        "powers": [],
+        "value": 2,
+        "visible": true
+      },
+      "ceremonies": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "dominate": {
+        "description": "",
+        "powers": [],
+        "value": 2,
+        "visible": true
+      },
+      "fortitude": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "obfuscate": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "oblivion": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "potence": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "presence": {
+        "description": "",
+        "powers": [],
+        "value": 5,
+        "visible": true
+      },
+      "protean": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "rituals": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "sorcery": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      }
+    },
+    "edges": {
+      "arsenal": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "artifact": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "beastwhisperer": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "dronejockey": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "fleet": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "globalaccess": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "improvisedgear": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "library": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "ordnance": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "repeltheunnatural": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "sensetheunnatural": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "thwarttheunnatural": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      }
+    },
+    "equipment": "",
+    "exp": {
+      "max": 0,
+      "value": 0
+    },
+    "experiences": [],
+    "forms": {
+      "crinos": {
+        "description": "",
+        "token": {
+          "img": ""
+        }
+      },
+      "glabro": {
+        "description": "",
+        "token": {
+          "img": ""
+        }
+      },
+      "hispo": {
+        "description": "",
+        "token": {
+          "img": ""
+        }
+      },
+      "homid": {
+        "description": "",
+        "token": {
+          "img": ""
+        }
+      },
+      "lupus": {
+        "description": "",
+        "token": {
+          "img": ""
+        }
+      }
+    },
+    "frenzyActive": false,
+    "gifts": {
+      "ahroun": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "blackfury": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "bonegnawer": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "childrenofgaia": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "galestalker": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "galliard": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "ghostcouncil": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "glasswalker": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "hartwarden": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "native": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "philodox": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "ragabash": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "redtalon": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "rites": {
+        "description": "",
+        "powers": []
+      },
+      "shadowlord": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "silentstrider": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "silverfang": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "theurge": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      }
+    },
+    "group": "",
+    "hasSkillAttributeData": true,
+    "headers": {
+      "ambition": "",
+      "cellname": "",
+      "chronicle": "YYZ By Night",
+      "concept": "Declining Prince clinging to cultural prestige while real power slips away",
+      "creedfields": "",
+      "desire": "",
+      "domitor": "",
+      "generation": "8th",
+      "sire": "Isabelle Montcalm (destroyed during Montreal's fall, 1990s)",
+      "tenets": "",
+      "touchstones": "<p>The Art Gallery of Ontario: Art and culture define civilization</p><p>Sabine Moreau: Reputation is everything</p><p>The Six Traditions: Tradition preserves order</p>"
+    },
+    "health": {
+      "aggravated": 0,
+      "max": 7,
+      "superficial": 0,
+      "value": 7
+    },
+    "humanity": {
+      "stains": 0,
+      "value": 8
+    },
+    "hunger": {
+      "max": 5,
+      "value": 2
+    },
+    "locked": false,
+    "lostTheWolf": false,
+    "notes": "",
+    "privatenotes": "",
+    "rage": {
+      "max": 5,
+      "value": 1
+    },
+    "renown": {
+      "glory": {
+        "value": 0
+      },
+      "honor": {
+        "value": 0
+      },
+      "wisdom": {
+        "value": 0
+      }
+    },
+    "selectedDiscipline": "",
+    "selectedDisciplinePower": "",
+    "selectedEdge": "",
+    "selectedEdgePerk": "",
+    "selectedGift": "",
+    "selectedGiftPower": "",
+    "settings": {
+      "background": "",
+      "enableDisciplines": false,
+      "enableEdges": false,
+      "enableGifts": false,
+      "generalDifficultyEnabled": true,
+      "headerbg": "",
+      "limited": {
+        "appearance": true,
+        "biography": true,
+        "tenets": false,
+        "touchstones": false
+      },
+      "skillAttributeInputs": false
+    },
+    "skills": {
+      "academics": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 4
+      },
+      "animalken": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "athletics": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      },
+      "awareness": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 3
+      },
+      "brawl": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "craft": {
+        "active": false,
+        "bonuses": [
+          {
+            "displayWhenInactive": true,
+            "paths": [
+              "skills.craft"
+            ],
+            "source": "Oil painting",
+            "value": 1
+          }
+        ],
+        "description": "",
+        "macroid": "",
+        "value": 4
+      },
+      "drive": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      },
+      "etiquette": {
+        "active": false,
+        "bonuses": [
+          {
+            "displayWhenInactive": true,
+            "paths": [
+              "skills.etiquette"
+            ],
+            "source": "Camarilla court",
+            "value": 1
+          }
+        ],
+        "description": "",
+        "macroid": "",
+        "value": 5
+      },
+      "finance": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 3
+      },
+      "firearms": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "insight": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 4
+      },
+      "intimidation": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 2
+      },
+      "investigation": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 2
+      },
+      "larceny": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "leadership": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 4
+      },
+      "medicine": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "melee": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      },
+      "occult": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 2
+      },
+      "performance": {
+        "active": false,
+        "bonuses": [
+          {
+            "displayWhenInactive": true,
+            "paths": [
+              "skills.performance"
+            ],
+            "source": "Princely bearing",
+            "value": 1
+          }
+        ],
+        "description": "",
+        "macroid": "",
+        "value": 5
+      },
+      "persuasion": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 4
+      },
+      "politics": {
+        "active": false,
+        "bonuses": [
+          {
+            "displayWhenInactive": true,
+            "paths": [
+              "skills.politics"
+            ],
+            "source": "Camarilla Inner Circle",
+            "value": 1
+          }
+        ],
+        "description": "",
+        "macroid": "",
+        "value": 5
+      },
+      "science": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "stealth": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      },
+      "streetwise": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      },
+      "subterfuge": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 3
+      },
+      "survival": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "technology": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      }
+    },
+    "talismans": [],
+    "willpower": {
+      "aggravated": 0,
+      "max": 8,
+      "superficial": 0,
+      "value": 8
+    }
+  },
+  "type": "vampire"
+}

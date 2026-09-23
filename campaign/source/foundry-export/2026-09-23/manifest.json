@@ -1,0 +1,582 @@
+{
+  "clientId": "fvtt_58c153fc85e1a050",
+  "counts": {
+    "Actor": {
+      "listed": 49,
+      "saved": 49
+    },
+    "Item": {
+      "listed": 16,
+      "saved": 16
+    },
+    "JournalEntry": {
+      "listed": 0,
+      "saved": 0
+    },
+    "RollTable": {
+      "listed": 0,
+      "saved": 0
+    },
+    "Scene": {
+      "listed": 5,
+      "saved": 5
+    }
+  },
+  "date": "2026-09-23",
+  "folders": {
+    "28gCLliFrPNgS3dM": {
+      "name": "Custom",
+      "parent": null
+    },
+    "3jSO4FbkWV5GF8ju": {
+      "name": "Olly's Touchstones",
+      "parent": "aBHQrKu5cIWQhL4g"
+    },
+    "4inmVuBXx7jixtkY": {
+      "name": "Sunburners",
+      "parent": "G3AoBmjApLJZEsHN"
+    },
+    "5jJjhxSMsIGNBGIZ": {
+      "name": "GTA Camarilla",
+      "parent": null
+    },
+    "B8Q1KOMB2dpuIo9b": {
+      "name": "Ethan's Contacts",
+      "parent": "aBHQrKu5cIWQhL4g"
+    },
+    "FDqGcPWBdrbtqrfr": {
+      "name": "Ralph's Touchstones",
+      "parent": "aBHQrKu5cIWQhL4g"
+    },
+    "G3AoBmjApLJZEsHN": {
+      "name": "Scarborough Barony",
+      "parent": null
+    },
+    "Mds4EC9IZLf09fb4": {
+      "name": "Riverdale Barony",
+      "parent": null
+    },
+    "OePIcRsuM0pjJpNa": {
+      "name": "Unclaimed Territory",
+      "parent": null
+    },
+    "SobDRE8PdYlex3Uf": {
+      "name": "Kensington Barony",
+      "parent": null
+    },
+    "Y1clJnz5TIpiueK7": {
+      "name": "Claude's Touchstones",
+      "parent": "aBHQrKu5cIWQhL4g"
+    },
+    "aBHQrKu5cIWQhL4g": {
+      "name": "Coterie",
+      "parent": null
+    },
+    "wBO0S25z9SgY3iil": {
+      "name": "Olly's Retainers",
+      "parent": "aBHQrKu5cIWQhL4g"
+    }
+  },
+  "listed": {
+    "Actor": [
+      {
+        "folder": "G3AoBmjApLJZEsHN",
+        "id": "guIYZcu8KmkYKC70",
+        "name": "Amira al-Najjar",
+        "subType": "vampire",
+        "uuid": "Actor.guIYZcu8KmkYKC70"
+      },
+      {
+        "folder": "G3AoBmjApLJZEsHN",
+        "id": "Iu6xYmOw9VEbKI3O",
+        "name": "Andre Baptiste (Baron)",
+        "subType": "vampire",
+        "uuid": "Actor.Iu6xYmOw9VEbKI3O"
+      },
+      {
+        "folder": "OePIcRsuM0pjJpNa",
+        "id": "vpGH8oga1SkORURZ",
+        "name": "Arjun Qamar",
+        "subType": "vampire",
+        "uuid": "Actor.vpGH8oga1SkORURZ"
+      },
+      {
+        "folder": "aBHQrKu5cIWQhL4g",
+        "id": "cTns8VDwWHrdIqEf",
+        "name": "Barbara Hall Park",
+        "subType": "group",
+        "uuid": "Actor.cTns8VDwWHrdIqEf"
+      },
+      {
+        "folder": "FDqGcPWBdrbtqrfr",
+        "id": "vgIcu1ZCB3e7HXL5",
+        "name": "Bill",
+        "subType": "mortal",
+        "uuid": "Actor.vgIcu1ZCB3e7HXL5"
+      },
+      {
+        "folder": "Y1clJnz5TIpiueK7",
+        "id": "A1sQm5W5hxKUoqlD",
+        "name": "Bonnie",
+        "subType": "mortal",
+        "uuid": "Actor.A1sQm5W5hxKUoqlD"
+      },
+      {
+        "folder": "Y1clJnz5TIpiueK7",
+        "id": "EjYHrO6OWG71py4Z",
+        "name": "Celeste",
+        "subType": "mortal",
+        "uuid": "Actor.EjYHrO6OWG71py4Z"
+      },
+      {
+        "folder": "aBHQrKu5cIWQhL4g",
+        "id": "vdlWHrBCEx8Hoz63",
+        "name": "Claude",
+        "subType": "vampire",
+        "uuid": "Actor.vdlWHrBCEx8Hoz63"
+      },
+      {
+        "folder": "OePIcRsuM0pjJpNa",
+        "id": "0PdmZQGFa7Cqk0Kk",
+        "name": "Colette d'Aurevoir",
+        "subType": "vampire",
+        "uuid": "Actor.0PdmZQGFa7Cqk0Kk"
+      },
+      {
+        "folder": null,
+        "id": "0pdXDhUHc651R5ZH",
+        "name": "Cop 1",
+        "subType": "mortal",
+        "uuid": "Actor.0pdXDhUHc651R5ZH"
+      },
+      {
+        "folder": null,
+        "id": "RE5YFhmaXMqAFnMH",
+        "name": "Cop 2",
+        "subType": "mortal",
+        "uuid": "Actor.RE5YFhmaXMqAFnMH"
+      },
+      {
+        "folder": null,
+        "id": "MWvHA2gN2ec1l7G4",
+        "name": "Cop 3",
+        "subType": "mortal",
+        "uuid": "Actor.MWvHA2gN2ec1l7G4"
+      },
+      {
+        "folder": "OePIcRsuM0pjJpNa",
+        "id": "dq2WMm8fwTrQyiOd",
+        "name": "Darya Vuković",
+        "subType": "vampire",
+        "uuid": "Actor.dq2WMm8fwTrQyiOd"
+      },
+      {
+        "folder": "wBO0S25z9SgY3iil",
+        "id": "Gf64L8hcDEsA4oXq",
+        "name": "Dmitri",
+        "subType": "mortal",
+        "uuid": "Actor.Gf64L8hcDEsA4oXq"
+      },
+      {
+        "folder": "5jJjhxSMsIGNBGIZ",
+        "id": "TqUZm7Nm4yBorY5j",
+        "name": "Dominik Levesque",
+        "subType": "vampire",
+        "uuid": "Actor.TqUZm7Nm4yBorY5j"
+      },
+      {
+        "folder": "5jJjhxSMsIGNBGIZ",
+        "id": "sgsQzpldiiHqgHMl",
+        "name": "Elijah Kane (Sheriff)",
+        "subType": "vampire",
+        "uuid": "Actor.sgsQzpldiiHqgHMl"
+      },
+      {
+        "folder": "Y1clJnz5TIpiueK7",
+        "id": "PC7Y9Or9NSDrTU77",
+        "name": "Emmery",
+        "subType": "mortal",
+        "uuid": "Actor.PC7Y9Or9NSDrTU77"
+      },
+      {
+        "folder": "SobDRE8PdYlex3Uf",
+        "id": "jMsUhegvvLgCQ86G",
+        "name": "Erin Ko",
+        "subType": "vampire",
+        "uuid": "Actor.jMsUhegvvLgCQ86G"
+      },
+      {
+        "folder": "aBHQrKu5cIWQhL4g",
+        "id": "1z6tH9CvLqOF9YnQ",
+        "name": "Ethan Cole",
+        "subType": "vampire",
+        "uuid": "Actor.1z6tH9CvLqOF9YnQ"
+      },
+      {
+        "folder": "SobDRE8PdYlex3Uf",
+        "id": "F5QJFiy7lGtYpaTn",
+        "name": "Evelyn Skye (Baron)",
+        "subType": "vampire",
+        "uuid": "Actor.F5QJFiy7lGtYpaTn"
+      },
+      {
+        "folder": "Mds4EC9IZLf09fb4",
+        "id": "EMydgI5DAljVQ5ws",
+        "name": "Father Vivek (Baron, Sabbat)",
+        "subType": "vampire",
+        "uuid": "Actor.EMydgI5DAljVQ5ws"
+      },
+      {
+        "folder": "3jSO4FbkWV5GF8ju",
+        "id": "rS6UeNbDN3z8fDBD",
+        "name": "Gamut",
+        "subType": "mortal",
+        "uuid": "Actor.rS6UeNbDN3z8fDBD"
+      },
+      {
+        "folder": null,
+        "id": "Sm0cHVuXxpvJLVy6",
+        "name": "Guard",
+        "subType": "mortal",
+        "uuid": "Actor.Sm0cHVuXxpvJLVy6"
+      },
+      {
+        "folder": "3jSO4FbkWV5GF8ju",
+        "id": "T76vq2p4hHbU4axH",
+        "name": "Isabelle",
+        "subType": "mortal",
+        "uuid": "Actor.T76vq2p4hHbU4axH"
+      },
+      {
+        "folder": "SobDRE8PdYlex3Uf",
+        "id": "fsf3gtVqTwEYpYbI",
+        "name": "Jason Cho",
+        "subType": "vampire",
+        "uuid": "Actor.fsf3gtVqTwEYpYbI"
+      },
+      {
+        "folder": "4inmVuBXx7jixtkY",
+        "id": "0QthyejQX78Z6J98",
+        "name": "Jonah",
+        "subType": "vampire",
+        "uuid": "Actor.0QthyejQX78Z6J98"
+      },
+      {
+        "folder": "4inmVuBXx7jixtkY",
+        "id": "dl3IKhPdCyVQMUUy",
+        "name": "Lil Sis",
+        "subType": "vampire",
+        "uuid": "Actor.dl3IKhPdCyVQMUUy"
+      },
+      {
+        "folder": "5jJjhxSMsIGNBGIZ",
+        "id": "h2xkClzpWOsQcXs0",
+        "name": "Lucien Henri DuSang (Prince)",
+        "subType": "vampire",
+        "uuid": "Actor.h2xkClzpWOsQcXs0"
+      },
+      {
+        "folder": "5jJjhxSMsIGNBGIZ",
+        "id": "lV9I1hAsYVF2NdJU",
+        "name": "Maeva Rousseau (Seneschal, Ventrue Primogen)",
+        "subType": "vampire",
+        "uuid": "Actor.lV9I1hAsYVF2NdJU"
+      },
+      {
+        "folder": "4inmVuBXx7jixtkY",
+        "id": "ByQEjmBGvpzuJOKg",
+        "name": "Malik the Low",
+        "subType": "vampire",
+        "uuid": "Actor.ByQEjmBGvpzuJOKg"
+      },
+      {
+        "folder": "5jJjhxSMsIGNBGIZ",
+        "id": "KeXNnhukVOWRgquh",
+        "name": "Marcus Söderström",
+        "subType": "vampire",
+        "uuid": "Actor.KeXNnhukVOWRgquh"
+      },
+      {
+        "folder": "FDqGcPWBdrbtqrfr",
+        "id": "uG8e2qpPtAfnApfs",
+        "name": "Michele",
+        "subType": "mortal",
+        "uuid": "Actor.uG8e2qpPtAfnApfs"
+      },
+      {
+        "folder": "B8Q1KOMB2dpuIo9b",
+        "id": "Sr21ElOb6PwnFYqh",
+        "name": "Mike Harrison (Money Launderer)",
+        "subType": "mortal",
+        "uuid": "Actor.Sr21ElOb6PwnFYqh"
+      },
+      {
+        "folder": "OePIcRsuM0pjJpNa",
+        "id": "HCTARenwY88HgzaX",
+        "name": "Moth",
+        "subType": "vampire",
+        "uuid": "Actor.HCTARenwY88HgzaX"
+      },
+      {
+        "folder": "aBHQrKu5cIWQhL4g",
+        "id": "Iw9SpbRcS5T9IvXG",
+        "name": "Olly",
+        "subType": "vampire",
+        "uuid": "Actor.Iw9SpbRcS5T9IvXG"
+      },
+      {
+        "folder": "3jSO4FbkWV5GF8ju",
+        "id": "n4cS1hURnYG2wWEk",
+        "name": "Ostrich (Sami)",
+        "subType": "mortal",
+        "uuid": "Actor.n4cS1hURnYG2wWEk"
+      },
+      {
+        "folder": "aBHQrKu5cIWQhL4g",
+        "id": "RNuGzLlPkpfeKE0N",
+        "name": "Ralph Begg",
+        "subType": "vampire",
+        "uuid": "Actor.RNuGzLlPkpfeKE0N"
+      },
+      {
+        "folder": "G3AoBmjApLJZEsHN",
+        "id": "jUqYj6uFKTQ8iOIx",
+        "name": "Rami Saadeh",
+        "subType": "vampire",
+        "uuid": "Actor.jUqYj6uFKTQ8iOIx"
+      },
+      {
+        "folder": "OePIcRsuM0pjJpNa",
+        "id": "oqQENH5zr1gOAByf",
+        "name": "Raya Wong (Noddist Priest)",
+        "subType": "vampire",
+        "uuid": "Actor.oqQENH5zr1gOAByf"
+      },
+      {
+        "folder": null,
+        "id": "xq3OUcH4s6YSR9AL",
+        "name": "Raymond",
+        "subType": "mortal",
+        "uuid": "Actor.xq3OUcH4s6YSR9AL"
+      },
+      {
+        "folder": "aBHQrKu5cIWQhL4g",
+        "id": "lS0ziEzl6cUK1OT8",
+        "name": "Rose",
+        "subType": "vampire",
+        "uuid": "Actor.lS0ziEzl6cUK1OT8"
+      },
+      {
+        "folder": "5jJjhxSMsIGNBGIZ",
+        "id": "i0xclHjKtiABVajj",
+        "name": "Sabine Moreau (Keeper of Elysium)",
+        "subType": "vampire",
+        "uuid": "Actor.i0xclHjKtiABVajj"
+      },
+      {
+        "folder": null,
+        "id": "XKDohMrvBVKoioXq",
+        "name": "Secretary",
+        "subType": "mortal",
+        "uuid": "Actor.XKDohMrvBVKoioXq"
+      },
+      {
+        "folder": "5jJjhxSMsIGNBGIZ",
+        "id": "zMCKzBbBt81Xy6OL",
+        "name": "Tatiana 'Tash' Mirek",
+        "subType": "vampire",
+        "uuid": "Actor.zMCKzBbBt81Xy6OL"
+      },
+      {
+        "folder": "4inmVuBXx7jixtkY",
+        "id": "RAAKM69fm4iF2eXh",
+        "name": "Trieste",
+        "subType": "vampire",
+        "uuid": "Actor.RAAKM69fm4iF2eXh"
+      },
+      {
+        "folder": "Mds4EC9IZLf09fb4",
+        "id": "oWwNREC0KbIupVUj",
+        "name": "Valence",
+        "subType": "vampire",
+        "uuid": "Actor.oWwNREC0KbIupVUj"
+      },
+      {
+        "folder": null,
+        "id": "V3507ZdGXAi2RyuZ",
+        "name": "Vincent Lao",
+        "subType": "vampire",
+        "uuid": "Actor.V3507ZdGXAi2RyuZ"
+      },
+      {
+        "folder": "5jJjhxSMsIGNBGIZ",
+        "id": "afVSwsOCNocKWOdH",
+        "name": "Viorica Dal",
+        "subType": "vampire",
+        "uuid": "Actor.afVSwsOCNocKWOdH"
+      },
+      {
+        "folder": "4inmVuBXx7jixtkY",
+        "id": "feBfqtyafqo37sXN",
+        "name": "Zuzu",
+        "subType": "vampire",
+        "uuid": "Actor.feBfqtyafqo37sXN"
+      }
+    ],
+    "Item": [
+      {
+        "folder": null,
+        "id": "qu306omnoQ5yXDhZ",
+        "name": "Ballistic Vest",
+        "subType": "armor",
+        "uuid": "Item.qu306omnoQ5yXDhZ"
+      },
+      {
+        "folder": null,
+        "id": "i1ZPNlqfsIeMsx6Z",
+        "name": "Business Establishment",
+        "subType": "feature",
+        "uuid": "Item.i1ZPNlqfsIeMsx6Z"
+      },
+      {
+        "folder": null,
+        "id": "fIRmetewfuGTdmaa",
+        "name": "City Secrets",
+        "subType": "feature",
+        "uuid": "Item.fIRmetewfuGTdmaa"
+      },
+      {
+        "folder": "28gCLliFrPNgS3dM",
+        "id": "CFA3HvBNtAvkb6cj",
+        "name": "Extortionist",
+        "subType": "predatorType",
+        "uuid": "Item.CFA3HvBNtAvkb6cj"
+      },
+      {
+        "folder": "28gCLliFrPNgS3dM",
+        "id": "5kYHXMnpQAP7gIFA",
+        "name": "False Love (Trieste)",
+        "subType": "feature",
+        "uuid": "Item.5kYHXMnpQAP7gIFA"
+      },
+      {
+        "folder": null,
+        "id": "DUcaFXp2wNIjRWPh",
+        "name": "Furcus",
+        "subType": "feature",
+        "uuid": "Item.DUcaFXp2wNIjRWPh"
+      },
+      {
+        "folder": null,
+        "id": "SxrkSXaq8rRnFZHF",
+        "name": "Haunted",
+        "subType": "feature",
+        "uuid": "Item.SxrkSXaq8rRnFZHF"
+      },
+      {
+        "folder": "28gCLliFrPNgS3dM",
+        "id": "ItYJfYh5plrFPt9X",
+        "name": "Knowledge Hungry",
+        "subType": "feature",
+        "uuid": "Item.ItYJfYh5plrFPt9X"
+      },
+      {
+        "folder": "28gCLliFrPNgS3dM",
+        "id": "gg9MC3ggeVBUAzTX",
+        "name": "Montero",
+        "subType": "predatorType",
+        "uuid": "Item.gg9MC3ggeVBUAzTX"
+      },
+      {
+        "folder": "28gCLliFrPNgS3dM",
+        "id": "qdbcFEewwFYhhpzI",
+        "name": "Plug-In",
+        "subType": "power",
+        "uuid": "Item.qdbcFEewwFYhhpzI"
+      },
+      {
+        "folder": null,
+        "id": "uPJqobSEOaZ95MLU",
+        "name": "Postern",
+        "subType": "feature",
+        "uuid": "Item.uPJqobSEOaZ95MLU"
+      },
+      {
+        "folder": null,
+        "id": "XqXL8befrXOQR3gn",
+        "name": "Research Equipment",
+        "subType": "feature",
+        "uuid": "Item.XqXL8befrXOQR3gn"
+      },
+      {
+        "folder": null,
+        "id": "O94kNt6iN9r6NKHu",
+        "name": "Sanguine",
+        "subType": "resonance",
+        "uuid": "Item.O94kNt6iN9r6NKHu"
+      },
+      {
+        "folder": null,
+        "id": "H2mmQ3WqCtSY0lT4",
+        "name": "Security System",
+        "subType": "feature",
+        "uuid": "Item.H2mmQ3WqCtSY0lT4"
+      },
+      {
+        "folder": "28gCLliFrPNgS3dM",
+        "id": "A8Xsb1UHTstxPmao",
+        "name": "Strength of Sadness",
+        "subType": "gear",
+        "uuid": "Item.A8Xsb1UHTstxPmao"
+      },
+      {
+        "folder": "28gCLliFrPNgS3dM",
+        "id": "2pfmM9j0ONheTOWh",
+        "name": "The Pony Express: Station Agent",
+        "subType": "feature",
+        "uuid": "Item.2pfmM9j0ONheTOWh"
+      }
+    ],
+    "JournalEntry": [],
+    "RollTable": [],
+    "Scene": [
+      {
+        "folder": null,
+        "id": "rKqpU6uQxIyMgOBG",
+        "name": "Barbara Hall Park",
+        "subType": "",
+        "uuid": "Scene.rKqpU6uQxIyMgOBG"
+      },
+      {
+        "folder": null,
+        "id": "HodBFShTjhLjF1Pi",
+        "name": "Precinct 4",
+        "subType": "",
+        "uuid": "Scene.HodBFShTjhLjF1Pi"
+      },
+      {
+        "folder": null,
+        "id": "WxxQJqW8hHPp8qtz",
+        "name": "University of Toronto - Private Club",
+        "subType": "",
+        "uuid": "Scene.WxxQJqW8hHPp8qtz"
+      },
+      {
+        "folder": null,
+        "id": "Hkl9uw5YQgF6fIMa",
+        "name": "Warehouse",
+        "subType": "",
+        "uuid": "Scene.Hkl9uw5YQgF6fIMa"
+      },
+      {
+        "folder": null,
+        "id": "leCXsVtUn3p6T45I",
+        "name": "YYZ",
+        "subType": "",
+        "uuid": "Scene.leCXsVtUn3p6T45I"
+      }
+    ]
+  },
+  "takenAt": "2026-09-23T13:37:07-05:00",
+  "world": "blood-and-other-drugs"
+}

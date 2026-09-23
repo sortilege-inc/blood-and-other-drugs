@@ -1,0 +1,22 @@
+{
+  "_id": "G3AoBmjApLJZEsHN",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767303071614,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767303071780,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "color": "#188670",
+  "description": "",
+  "flags": {},
+  "folder": null,
+  "name": "Scarborough Barony",
+  "sort": 200000,
+  "sorting": "a",
+  "type": "Actor"
+}

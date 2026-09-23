@@ -1,0 +1,22 @@
+{
+  "_id": "28gCLliFrPNgS3dM",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767556685219,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767556685219,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "color": "#983434",
+  "description": "",
+  "flags": {},
+  "folder": null,
+  "name": "Custom",
+  "sort": 0,
+  "sorting": "a",
+  "type": "Item"
+}

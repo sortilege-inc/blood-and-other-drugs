@@ -1,0 +1,49 @@
+{
+  "_id": "CFA3HvBNtAvkb6cj",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767551308342,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767556686571,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "effects": [],
+  "flags": {},
+  "folder": "28gCLliFrPNgS3dM",
+  "img": "systems/wod5e/assets/icons/items/item-default.svg",
+  "name": "Extortionist",
+  "ownership": {
+    "58f3S3bDXY6A0mwq": 3,
+    "default": 0
+  },
+  "sort": 100000,
+  "system": {
+    "bonuses": [],
+    "dataItemId": "",
+    "description": "<p><span class=\"fontstyle0\">The extortionist likes to force their victims to bleed for them. Ostensibly, the extortionist acquires blood in exchange for services such as security or surveillance, but as many times as the need for protection is real, it is just as often a fiction engineered to make the deal feel acceptable to the victim.</span></p><p><span style=\"color: rgb(255, 255, 255); font-family: Signika, &#x27;Palatino Linotype&#x27;, sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(29, 29, 29); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none\">■ </span><span class=\"fontstyle0\">Add a specialty: Intimidation (Coercion) or Larceny (Security)</span></p><p><span style=\"color: rgb(255, 255, 255); font-family: Signika, &#x27;Palatino Linotype&#x27;, sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(29, 29, 29); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none\">■ </span><span class=\"fontstyle0\">Gain one dot of Dominate or Potence</span></p><p><span style=\"color: rgb(255, 255, 255); font-family: Signika, &#x27;Palatino Linotype&#x27;, sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(29, 29, 29); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none\">■ </span><span class=\"fontstyle0\">Distribute three dots between the Contacts and Resources Backgrounds</span></p><p><span style=\"color: rgb(255, 255, 255); font-family: Signika, &#x27;Palatino Linotype&#x27;, sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(29, 29, 29); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none\">■ </span><span class=\"fontstyle0\">Gain the Enemy Flaw: (••) the police or a victim who escaped your extortion and now wants revenge.</span></p><p><span class=\"fontstyle3\">Predator Pool: </span><span class=\"fontstyle0\">Strength or Manipulation + Intimidation; you feed through coercion both subtle and painfully obvious.</span> </p>",
+    "dicepool": {
+      "HfCNyakK": {
+        "path": "skills.intimidation"
+      },
+      "HftsDug3": {
+        "path": "attributes.manipulation"
+      },
+      "cncG6usm": {
+        "path": "attributes.strength"
+      },
+      "jxb2e17D": {
+        "path": "skills.intimidation"
+      }
+    },
+    "macroid": "",
+    "source": {
+      "book": "",
+      "page": ""
+    }
+  },
+  "type": "predatorType"
+}

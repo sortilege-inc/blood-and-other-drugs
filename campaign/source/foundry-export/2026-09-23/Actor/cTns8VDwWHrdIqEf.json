@@ -1,0 +1,424 @@
+{
+  "_id": "cTns8VDwWHrdIqEf",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "14.367",
+    "createdTime": 1767741743374,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767757890458,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "effects": [],
+  "flags": {
+    "wod5e": {
+      "manualDefaultOwnership": true
+    }
+  },
+  "folder": "aBHQrKu5cIWQhL4g",
+  "img": "sortilege/blood-and-other-drugs/portraits/barbara-hall-park-lot.png",
+  "items": [
+    {
+      "_id": "XaGZjWZPY0T1HTrS",
+      "_stats": {
+        "compendiumSource": "Item.fIRmetewfuGTdmaa",
+        "coreVersion": "14.367",
+        "createdTime": 1767742458617,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": "58f3S3bDXY6A0mwq",
+        "modifiedTime": 1767742458617,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "City Secrets",
+      "ownership": {
+        "58f3S3bDXY6A0mwq": 3,
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "",
+        "featuretype": "merit",
+        "macroid": "",
+        "points": 1,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "ElLMAlmdPfTqdxfW",
+      "_stats": {
+        "compendiumSource": "Item.DUcaFXp2wNIjRWPh",
+        "coreVersion": "14.367",
+        "createdTime": 1767757887961,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": "58f3S3bDXY6A0mwq",
+        "modifiedTime": 1767757887961,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Furcus",
+      "ownership": {
+        "58f3S3bDXY6A0mwq": 3,
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "<p>The haven is located on veins of the earth or a frayed spot in the Veil. Each dot in this merit adds one die to Rituals or Ceremony dice pools used at the furcus.</p>",
+        "featuretype": "merit",
+        "macroid": "",
+        "points": 1,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "yHdnkabld1XWHJVC",
+      "_stats": {
+        "compendiumSource": "Item.uPJqobSEOaZ95MLU",
+        "coreVersion": "14.367",
+        "createdTime": 1767757929509,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": "58f3S3bDXY6A0mwq",
+        "modifiedTime": 1767757929509,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Postern",
+      "ownership": {
+        "58f3S3bDXY6A0mwq": 3,
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "<p>The haven has some kind of secret exit that allows them a safe passage out. For each dot of this merit add one die to pools of evasion or escaping surveillance near the haven.</p>",
+        "featuretype": "merit",
+        "macroid": "",
+        "points": 1,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "BqDpQClgq2BErJlP",
+      "_stats": {
+        "compendiumSource": "Item.SxrkSXaq8rRnFZHF",
+        "coreVersion": "14.367",
+        "createdTime": 1767758080866,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": "58f3S3bDXY6A0mwq",
+        "modifiedTime": 1767758080866,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Haunted",
+      "ownership": {
+        "58f3S3bDXY6A0mwq": 3,
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "<p>There is a supernatural manifestation taking hold over the haven.</p>",
+        "featuretype": "flaw",
+        "macroid": "",
+        "points": 3,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "VElHGTm7thDZhhIT",
+      "_stats": {
+        "compendiumSource": "Item.i1ZPNlqfsIeMsx6Z",
+        "coreVersion": "14.367",
+        "createdTime": 1767758174062,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": "58f3S3bDXY6A0mwq",
+        "modifiedTime": 1767758174062,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Business Establishment",
+      "ownership": {
+        "58f3S3bDXY6A0mwq": 3,
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "<p>The haven is rented out to a business or is run as a business by the Kindred themselves. This gives both benefits and drawbacks, such as a ready stream of income but also being very much on the grid and local enforcement being aware of the location. This reduces the Haven’s base dots by one for pools involving the Haven’s privacy and defenses against either financial intrusions. Dots in this merit roughly equal Resources but do not stack onto existing Resources for the character.</p>",
+        "featuretype": "merit",
+        "macroid": "",
+        "points": 2,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "uCTi0lWyPFZg372I",
+      "_stats": {
+        "compendiumSource": "Item.H2mmQ3WqCtSY0lT4",
+        "coreVersion": "14.367",
+        "createdTime": 1767758201646,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": "58f3S3bDXY6A0mwq",
+        "modifiedTime": 1767758201646,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "systems/wod5e/assets/icons/items/feature.svg",
+      "name": "Security System",
+      "ownership": {
+        "58f3S3bDXY6A0mwq": 3,
+        "default": 0
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "<p>For each dot of this merit, add one die to pools to resist unwelcome guests into the haven.</p>",
+        "featuretype": "merit",
+        "macroid": "",
+        "points": 1,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    }
+  ],
+  "name": "Barbara Hall Park",
+  "ownership": {
+    "58f3S3bDXY6A0mwq": 3,
+    "default": 3
+  },
+  "prototypeToken": {
+    "actorLink": true,
+    "alpha": 1,
+    "appendNumber": false,
+    "bar1": {
+      "attribute": "health"
+    },
+    "bar2": {
+      "attribute": "willpower"
+    },
+    "depth": 1,
+    "detectionModes": {},
+    "displayBars": 0,
+    "displayName": 0,
+    "disposition": -1,
+    "flags": {},
+    "height": 1,
+    "light": {
+      "alpha": 0.5,
+      "angle": 360,
+      "animation": {
+        "intensity": 5,
+        "reverse": false,
+        "speed": 5,
+        "type": null
+      },
+      "attenuation": 0.5,
+      "bright": 0,
+      "color": null,
+      "coloration": 1,
+      "contrast": 0,
+      "darkness": {
+        "max": 1,
+        "min": 0
+      },
+      "dim": 0,
+      "luminosity": 0.5,
+      "negative": false,
+      "priority": 0,
+      "saturation": 0,
+      "shadows": 0
+    },
+    "lockRotation": false,
+    "movementAction": null,
+    "name": "At the Gates",
+    "occludable": {
+      "radius": 0
+    },
+    "prependAdjective": false,
+    "randomImg": false,
+    "ring": {
+      "colors": {
+        "background": null,
+        "ring": null
+      },
+      "effects": 1,
+      "enabled": false,
+      "subject": {
+        "scale": 1,
+        "texture": null
+      }
+    },
+    "rotation": 0,
+    "sight": {
+      "angle": 360,
+      "attenuation": 0.1,
+      "brightness": 0,
+      "color": null,
+      "contrast": 0,
+      "enabled": false,
+      "range": 0,
+      "saturation": 0,
+      "visionMode": "basic"
+    },
+    "texture": {
+      "alphaThreshold": 0.75,
+      "anchorX": 0.5,
+      "anchorY": 0.5,
+      "fit": "contain",
+      "scaleX": 1,
+      "scaleY": 1,
+      "src": "sortilege/blood-and-other-drugs/portraits/barbara-hall-park-lot.png",
+      "tint": "#ffffff"
+    },
+    "turnMarker": {
+      "animation": null,
+      "disposition": false,
+      "mode": 1,
+      "src": null
+    },
+    "width": 1
+  },
+  "sort": 0,
+  "system": {
+    "biography": "",
+    "chasse": {
+      "value": 2
+    },
+    "collapsed": true,
+    "community": {
+      "value": 0
+    },
+    "danger": {
+      "max": 5,
+      "value": 0
+    },
+    "desperation": {
+      "value": 0
+    },
+    "equipment": "",
+    "groupType": "coterie",
+    "headers": {
+      "chronicle": "Blood & Other Drugs",
+      "concept": "",
+      "tenets": ""
+    },
+    "lien": {
+      "value": 3
+    },
+    "locked": false,
+    "members": [
+      "Actor.1z6tH9CvLqOF9YnQ",
+      "Actor.Iw9SpbRcS5T9IvXG",
+      "Actor.RNuGzLlPkpfeKE0N",
+      "Actor.vdlWHrBCEx8Hoz63"
+    ],
+    "notes": "<p>Chasse: Park entrance, small site.</p><p>Lien: </p><p>Portillon: Secret exit, video surveillance.</p>",
+    "portillon": {
+      "value": 2
+    },
+    "privatenotes": "",
+    "settings": {
+      "background": "",
+      "headerbg": ""
+    },
+    "spirit": {
+      "value": 0
+    },
+    "territory": {
+      "value": 0
+    }
+  },
+  "type": "group"
+}
