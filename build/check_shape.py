@@ -172,6 +172,12 @@ def main():
     raw = subprocess.run(["grep", "-ohE", r"\[(Regular|Hunger) Die: [A-Za-z ]+\]"] + sorted(glob.glob(os.path.join(corpus, "*.ttrpg"))), capture_output=True, text=True).stdout.split("\n")
     check("die-glyph tokens in the data = in the corpus", sorted(seen), sorted({x for x in raw if x}))
 
+    # ── the rules the dice roller cites (system/vtm5e/dice.js RULES), by id and printed name ──
+    dice_js = open(os.path.join(HERE, "system", "vtm5e", "dice.js"), encoding="utf-8").read()
+    cited = re.findall(r"\{ id: '(#[A-Za-z0-9]+)', name: '([^']+)' \}", dice_js)
+    check("rules the dice cite (%d) are in the core under those names" % len(cited),
+          [(h, n) for h, n in cited if not (h in ents and ents[h]["name"] == n and ents[h]["book"] == "core")], [])
+
     print("check_shape: %s (%d assertions)" % ("OK" if not FAILS else "FAILED: " + ", ".join(FAILS), COUNT[0]))
     return 1 if FAILS else 0
 
