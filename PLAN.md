@@ -206,6 +206,7 @@ real controls (PLAYBOOK §5) before the next begins.
 | 11 | **One roller per coterie member, kept across redraws** (`VtmSheet.rollerFor`): the panels and the engine's player page redraw on every state change, and a roll's own log entry is one — a fresh roller wiped the result the moment it appeared. A redraw now only brings the kept roller's Hunger up to date | Found by driving the real button; the engine's `play.js` is left as it is. |
 | 12 | **Until D1, a coterie member is a name, a player and current Hunger** (`templateId` `vtm5e-character`); the Storyteller adds one by name or loads a character file; the live panel is the Hunger track and the roller bound to it | Hunger and its 0–5 range are rules (the roller's constants), not a sheet; nothing is hand-listed. D1 replaces the template id with the ACTOR's and a file with the old id still reads. |
 | 13 | The Chronicle is the Storyteller's own scenes (`scenes` op, moduleId `chronicle`), and the Cast is every Storyteller character in the books, put in a scene by record id | No official book ships an `.arc`; D2 would add *The Black Hand*'s two. |
+| 14 | The eleven corpus defects the build found are reported in `titterpig-dsl-vtm5e/TODO.md` (`6f845e1` there), not patched here | Ground rules. |
 | 6 | The gate counts `.lore` line by line, and skips ids **by key only** — Troika's regex that dropped any hash-shaped string also dropped corpus words (*Bankersofdunsirn*, *Lafamigliagiovanni*: loresheet slugs) | A value filter hides content; a key filter cannot. |
 
 ## STOPPED HERE — to resume
