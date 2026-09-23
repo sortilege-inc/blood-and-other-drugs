@@ -1,0 +1,154 @@
+/* Vampire — the Storyteller's table (gm/). Loaded after vtm5e.css: the same black band and
+   white pages; this file adds only the shell the engine expects — a sidebar of panels, three
+   slots, the map table, the player's page. The layout is the engine's contract
+   (engine/app.js, vtt.js, play.js); the colours are this site's. */
+body.gm { display: grid; grid-template-columns: 210px 1fr; min-height: 100vh; font-size: 16px; line-height: 1.45; }
+
+/* ── sidebar ── */
+#sidebar { background: var(--night); color: var(--bone); display: flex; flex-direction: column; padding: 16px 12px; position: sticky; top: 0; height: 100vh; border-right: 1px solid var(--night-3); }
+#sidebar .brand-title { font-family: var(--font-display); font-size: 19px; line-height: 1.1; }
+#sidebar .brand-sub { font-family: var(--font-ui); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+#sidebar .brand { display: block; position: relative; padding-left: 24px; }
+#sidebar .brand::before { content: ''; position: absolute; left: 0; top: 2px; width: 14px; height: 30px; background: var(--blood-2); -webkit-mask: url("../art/logos/ankh.webp") center / contain no-repeat; mask: url("../art/logos/ankh.webp") center / contain no-repeat; }
+.nav { list-style: none; margin: 16px 0 0; padding: 0; }
+.navbtn { width: 100%; text-align: left; background: none; border: 0; border-left: 3px solid transparent; color: var(--bone-2); font-family: var(--font-ui); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; padding: 7px 10px; cursor: pointer; }
+.navbtn:hover { color: var(--bone); }
+.navbtn.active { border-left-color: var(--blood-2); color: var(--bone); }
+.sidebar-foot { margin-top: auto; font-family: var(--font-ui); font-size: 12px; color: var(--muted); }
+.sidebar-foot a { color: var(--bone-2); text-decoration: none; }
+.window-controls { display: flex; flex-direction: column; gap: 6px; margin: 16px 0 0; }
+.window-controls .btn, .session-controls .btn { width: 100%; }
+
+/* ── slots ── */
+.main { min-width: 0; background: var(--night-2); color: var(--bone); }
+.main.wide { display: grid; grid-template-columns: 26% 1fr 36%; height: 100vh; }
+.slot { display: flex; flex-direction: column; min-width: 0; min-height: 0; height: 100%; border-right: 1px solid #2c2329; }
+.slot:last-child { border-right: 0; }
+.slot-head { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; font-family: var(--font-ui); letter-spacing: .14em; text-transform: uppercase; font-size: 11px; color: var(--blood-2); border-bottom: 1px solid #2c2329; background: var(--night); }
+.slot-pick { font-family: var(--font-ui); font-size: 12px; background: transparent; border: 1px solid #3a2f35; color: var(--bone-2); padding: 2px 4px; }
+.slot-body { padding: 14px 16px 36px; overflow: auto; flex: 1; min-height: 0; }
+.main.single .slot { height: auto; min-height: 100vh; }
+.main h4 { margin-top: 16px; }
+
+/* ── controls the panels add ── */
+.main textarea.text { width: 100%; resize: vertical; }
+.main input.search { width: 100%; }
+.main input.text.small { font-size: 13px; padding: 6px 8px; flex: 1; min-width: 7em; }
+.search-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-bottom: 10px; }
+.main .ref { font: inherit; color: var(--bone); background: none; border: 0; border-bottom: 1px dotted var(--blood-2); padding: 0; cursor: pointer; text-align: left; }
+.main .ref:hover { color: var(--blood-2); border-bottom-style: solid; }
+.main .ref.tiny { font-family: var(--font-ui); font-size: 12px; border: 0; margin: 0 6px 0 0; color: var(--blood-2); }
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border: 1px solid #3a2f35; background: var(--night); font-size: 14px; }
+.chip.on { color: #9fd0ae; border-color: var(--good); }
+.chiprow.tight { gap: 6px; margin: 6px 0; }
+details.book { border-bottom: 1px solid #2c2329; padding: 4px 0; }
+details.book > summary, details.chapter > summary { cursor: pointer; font-family: var(--font-display); font-size: 16px; padding: 4px 0; }
+details.chapter { margin-left: 10px; }
+details.chapter > summary { font-family: var(--font-ui); font-size: 11px; }
+.disc-icon { width: 20px; height: 20px; vertical-align: -4px; margin-right: 8px; }
+.phase-h { font-family: var(--font-ui); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--blood-2); margin: 10px 0 2px; }
+.main .toc { padding-left: 0; }
+.main .toc li { margin: 3px 0; }
+.main .prop { border-top-color: #2c2329; }
+.main .prop-k { color: var(--blood-2); }
+
+/* the Storyteller's scenes */
+.scene-list { margin: 6px 0 12px; }
+.scene-row { display: flex; align-items: center; gap: 6px; padding: 4px 6px; border-left: 3px solid transparent; }
+.scene-row.current { border-left-color: var(--blood-2); background: var(--night); }
+.scene-row.done .scene-link { color: var(--muted); text-decoration: line-through; }
+.scene-row .grip { cursor: grab; color: #4a3d44; font-size: 12px; }
+.scene-row.dragging { opacity: .4; }
+.scene-link { font: inherit; background: none; border: 0; padding: 0; cursor: pointer; color: var(--bone); text-align: left; }
+.scene-link:hover { color: var(--blood-2); }
+section.scene { margin-top: 14px; }
+section.scene input.text { width: 100%; font-family: var(--font-display); font-size: 18px; }
+
+/* the coterie */
+.member { display: flex; align-items: stretch; gap: 6px; margin: 6px 0; }
+.member .card { flex: 1; }
+.member-ops { display: flex; flex-direction: column; gap: 4px; }
+.hunger-mini { display: flex; gap: 3px; }
+.hunger-mini .pip { width: 12px; height: 12px; border: 1px solid #4a3d44; }
+.hunger-mini .pip.on { background: var(--blood-2); border-color: var(--blood-2); }
+
+/* the Inspector's page */
+.paper { background: var(--paper); color: var(--ink); padding: 18px 22px; margin-top: 8px; }
+.paper .entity-h { font-size: 26px; }
+.inspector-roll { margin-bottom: 10px; }
+.main .roller { padding: 14px; }
+.main .roller-controls { gap: 16px; }
+.main .die { width: 38px; height: 44px; }
+.sheet.live .chapter-h { font-size: 30px; }
+.main .roll-line .dice-row { margin: 0; }
+
+/* ── sessions ── */
+.session-controls { margin-top: 16px; font-family: var(--font-ui); font-size: 12px; color: var(--bone-2); }
+.session-controls .chiprow .btn { width: auto; margin: 0; }
+.session-code { display: flex; align-items: center; gap: 6px; color: var(--bone); }
+.session-code b { font-size: 15px; letter-spacing: .12em; }
+.session-url { font-size: 10.5px; word-break: break-all; color: var(--muted); margin: 4px 0; }
+
+/* ── the table (vtt.html) ── */
+body.vtt { display: flex; flex-direction: column; height: 100vh; overflow: hidden; font-size: 15px; }
+.vtt-toolbar { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; padding: 6px 10px; background: var(--night); color: var(--bone); font-family: var(--font-ui); font-size: 12px; flex: none; border-bottom: 1px solid var(--night-3); }
+.vtt-toolbar .group { display: flex; align-items: center; gap: 6px; padding-right: 10px; border-right: 1px solid var(--night-3); }
+.vtt-toolbar .group.last { border-right: none; margin-left: auto; }
+.vtt-toolbar label { color: var(--bone-2); display: inline-flex; align-items: center; gap: 4px; }
+.vtt-toolbar .muted { color: var(--muted); letter-spacing: .08em; font-size: 11px; text-transform: uppercase; }
+.vtt-toolbar .btn { padding: 3px 9px; font-size: 11px; }
+.vtt-toolbar .btn.ghost.active, .vtt-toolbar .btn.active { color: #fff; background: var(--blood); border-color: var(--blood-2); }
+.vtt-num { width: 60px; font-size: 12px; padding: 3px 5px; }
+.vtt-url { max-width: 240px; font-size: 12px; padding: 3px 6px; }
+.vtt-select { max-width: 220px; font-size: 12px; padding: 3px 5px; }
+.vtt-toolbar input, .vtt-toolbar select { background: var(--night-2); color: var(--bone); border: 1px solid #3a2f35; }
+.vtt-stage { flex: 1; min-height: 0; position: relative; background: #0f0c0e; }
+svg#map { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+svg#map.panning { cursor: grabbing; }
+svg#map.tool-active { cursor: crosshair; }
+.grid-line { stroke: rgba(236, 228, 214, .12); stroke-width: 1; }
+.fog { fill: #050404; opacity: .65; }
+body.player .fog { opacity: 1; }
+.token { cursor: pointer; }
+body.player .token { cursor: default; }
+.token .body { fill: var(--night-2); }
+.token text { font-family: var(--font-display); fill: var(--bone); pointer-events: none; }
+.token .ini { font-weight: 600; }
+.token .label { font-family: var(--font-ui); fill: var(--bone); paint-order: stroke; stroke: #050404; stroke-width: 3px; stroke-linejoin: round; }
+.token .pip { fill: var(--blood-2); stroke: #050404; stroke-width: 1; }
+.token.selected .ring-outline { stroke: var(--bone) !important; stroke-dasharray: 6 4; }
+.token.hidden-token .body { stroke-dasharray: 4 4; }
+.token.hidden-token { opacity: .45; }
+.effect { fill: rgba(200, 16, 46, .16); stroke: var(--blood-2); stroke-width: 2; cursor: pointer; }
+.effect.line { stroke: rgba(200, 16, 46, .6); stroke-linecap: round; }
+.effect.selected { stroke: var(--bone); stroke-width: 3; }
+.effect.preview { pointer-events: none; stroke-dasharray: 8 6; }
+.ping { fill: none; stroke: var(--bone); stroke-width: 4; pointer-events: none; }
+.vtt-hint { position: absolute; left: 10px; bottom: 8px; color: var(--muted); font-family: var(--font-ui); font-size: 12px; pointer-events: none; text-shadow: 0 1px 2px #000; }
+.vtt-menu { position: absolute; background: var(--paper); color: var(--ink); border: 1px solid var(--blood); padding: 10px 12px; min-width: 240px; z-index: 10; box-shadow: 0 6px 24px rgba(0, 0, 0, .6); font-size: 14px; }
+.vtt-menu h4 { margin: 0 0 6px; }
+.vtt-menu .row { display: flex; gap: 6px; align-items: center; margin: 6px 0; flex-wrap: wrap; }
+.btn.danger { background: var(--blood); border-color: var(--blood-2); }
+
+/* ── the player's page (play.html) ── */
+body.play { display: block; background: var(--night); }
+.play-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--night); padding: 12px 18px; border-bottom: 1px solid var(--night-3); }
+.play-head .brand { display: flex; align-items: center; gap: 12px; }
+.play-status { display: flex; align-items: center; gap: 8px; font-family: var(--font-ui); font-size: 13px; }
+.play-main { max-width: 900px; margin: 0 auto; padding: 18px; }
+.play-card { background: var(--night-2); color: var(--bone); border: 1px solid #2c2329; padding: 20px 24px; }
+.play-card h1 { font-family: var(--font-display); font-weight: 400; font-size: 32px; margin: 0 0 10px; }
+.play-card .card.static { cursor: default; }
+.play-card .card.static .btn { margin-top: 6px; }
+.play-card.wide { max-width: none; }
+.code-input { font-family: var(--font-ui); text-transform: uppercase; letter-spacing: .2em; width: 10em; }
+.session-error { color: var(--blood-2); }
+.clock-strip { display: none; }
+
+@media (max-width: 1099px) {
+  body.gm { grid-template-columns: 1fr; }
+  #sidebar { position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .nav { display: flex; flex-wrap: wrap; margin: 0; }
+  .window-controls, .session-controls { margin: 0; }
+  .sidebar-foot { margin-left: auto; }
+}

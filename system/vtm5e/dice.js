@@ -312,6 +312,7 @@ window.VtmDice = (function () {
     }
     box.setPool = (n, label) => { state.pool = n; o.label = label || o.label; state.dice = null; state.rouse = null; draw(); };
     box.setHunger = (n) => { state.hunger = n; draw(); };
+    box.hunger = () => state.hunger;
     draw();
     return box;
   }
