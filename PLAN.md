@@ -217,6 +217,7 @@ real controls (PLAYBOOK §5) before the next begins.
 | 19 | **A coterie member's subtitle says what they are** (clan · predator · generation · Hunger · player), not their name again; a member saved before D1 (`{name, player}`) reads its name from `m.name` | The heading above it is the name; the old member showed *An unnamed Kindred*. |
 | 20 | `check_shape` counts an `ACTOR "…" DEF` line as an entity, as the build does | The BASE's `ACTOR "Kindred"` is the first non-`^` declaration line in the corpus. |
 | 21 | **The corpus defects were fixed upstream, at the owner's direction** (2026-09-23), in the conversion's extractor and generator — all 18 books regenerated, 85 files bumped, `gates.sh` green, `qa_vtm` never worse. Nothing here patches a corpus string | Ground rules; the TODO there holds the proof and what remains (Anarch *Blood Cult*, the Four Humors grid, Cults' *Mental Maze*, the third-party corpus not re-extracted). |
+| 22 | **Rebuilt on the corpus's second pass** (titterpig-dsl-vtm5e `eff2305` + `c4281aa`, 2026-09-23): every loresheet level is its own DEF with its printed `^"Rating"`, under its loresheet (586/586, gated upstream by `qa_loresheets.py`); reading order and tables fixed; the buyer watermark stripped by the pipeline. **All 211 power records now place** (Cults' *Mental Maze* under Obfuscate, Level 3); decision 16's 210 is superseded. Nothing in the site changed: a loresheet renders through the generic entity view, each level showing RATING n (browser-checked on core's *Carna*, which the old corpus had merged into *Cainite Heresy*) | `build.sh` → `build_data: 140 corpus files → 19 books, 10137 entities; records: power 211, ritual 101, character 513`, `check_shape: OK (33 assertions)`; the seven tabs render with 0 console errors. |
 
 ## Instances (2026-09-23)
 
@@ -294,5 +295,6 @@ To resume here: `bash build/build.sh` (gate green), start the launch entry `vtt-
 and open `/`, `/#create` and `/gm/`; for sessions also `vtt-vtm5e-worker` (8789; `worker/` has
 `node_modules`) and test a player from `http://127.0.0.1:8738/gm/play.html?s=CODE`.
 **If D2 is taken up:** add the third-party corpus root to `build_data.py` (a second BOOKS list
-with its own prefix map) and offer its two arcs in the Chronicle panel — re-extract those books
-with the current conversion code first (they share it and were not re-extracted).
+with its own prefix map) and offer its two arcs in the Chronicle panel. Those books were
+re-extracted with the current conversion code on 2026-09-23 (titterpig-dsl-vtm5e-3rdparty
+`60688cc`), so they are ready.
