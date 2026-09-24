@@ -167,9 +167,10 @@ window.VtmConflict = (function () {
   }
   // Damage to one character: levels, Superficial or Aggravated, halved as Tracking Damage says
   // ("Unless otherwise stated, divide Superficial damage in half (rounded up) before applying it")
-  const dmg = {};   // member id → { n, kind, halve } being set up
+  // … except in a one-roll conflict: "Do not halve Superficial damage in this case." — One-Roll Conflicts
+  const dmg = {};   // member id → { n, kind, halve } being set up, per conflict
   function damageRow(m, c, track) {
-    const d = dmg[m.id] = dmg[m.id] || { n: 1, kind: 'sup', halve: true };
+    const d = dmg[m.id] = dmg[m.id] && dmg[m.id].conflict === c.id ? dmg[m.id] : { conflict: c.id, n: 1, kind: 'sup', halve: c.variant !== 'oneRoll' };
     const levels = d.kind === 'sup' && d.halve ? Math.ceil(d.n / 2) : d.n;
     return el('div', { class: 'chiprow tight dmg-row' }, [
       el('b', {}, [m.name]),
@@ -197,9 +198,11 @@ window.VtmConflict = (function () {
       if (!e) return el('li', {}, [m.name + ': ', el('span', { class: 'muted' }, ['not rolled yet'])]);
       const res = window.VtmDice.evaluate(window.VtmDice.fromEntry(e), c.difficulty);
       const hurt = Math.max(0, 2 * c.difficulty - res.successes);
-      return el('li', {}, [m.name + ': ' + res.successes + (res.successes === 1 ? ' success' : ' successes') + ' · ' + (res.successes >= c.difficulty ? 'wins' : 'loses') + ' · damage ' + hurt]);
+      return el('li', {}, [m.name + ': ' + res.successes + (res.successes === 1 ? ' success' : ' successes') + ' · ' + (res.successes >= c.difficulty ? 'wins' : 'loses') + ' · damage ' + hurt,
+        hurt ? button('Take ' + hurt, () => { const d = dmg[m.id] = { conflict: c.id, n: hurt, kind: (dmg[m.id] || {}).kind || 'sup', halve: false }; window.VttBus.emit('state:changed', {}, { local: true }); }, 'ghost tiny') : null]);
     });
-    return el('div', {}, [el('div', { class: 'prop-k' }, ['The rolls', el('span', { class: 'muted' }, [' · ', ruleLink('oneRoll')])]), el('ul', { class: 'items' }, rows)]);
+    return el('div', {}, [el('div', { class: 'prop-k' }, ['The rolls', el('span', { class: 'muted' }, [' · ', ruleLink('oneRoll')])]), el('ul', { class: 'items' }, rows),
+      el('div', { class: 'muted small' }, ['"This damage can not be mitigated by armor or supernatural means such as Fortitude … Do not halve Superficial damage in this case."'])]);
   }
 
   // ── the player's Conflict tab ─────────────────────────────────────────
