@@ -188,7 +188,7 @@ window.VtmDice = (function () {
       at: Date.now(), kind: 'roll', who: o.who || null, label: o.label || null,
       mode: o.mode || 'pool', pool: o.pool, hunger: o.hunger, difficulty: o.difficulty == null ? null : o.difficulty,
       dice: o.dice.map((d) => [d.kind === 'hunger' ? 'h' : 'r', d.face, d.was || 0]),
-      willpower: !!o.willpower, hungerGain: o.hungerGain || 0,
+      willpower: !!o.willpower, hungerGain: o.hungerGain || 0, note: o.note || null,
     };
   }
   const fromEntry = (x) => (x.dice || []).map((a) => ({ kind: a[0] === 'h' ? 'hunger' : 'regular', face: a[1], was: a[2] || undefined }));
@@ -202,17 +202,22 @@ window.VtmDice = (function () {
       bits.push(R.el('span', { class: 'verdict-bit ' + (x.hungerGain ? 'blood' : 'good') }, [x.hungerGain ? 'Hunger +' + x.hungerGain : 'Hunger unchanged']));
     } else {
       const res = evaluate(dice, x.difficulty);
-      bits.push(R.el('span', { class: 'muted small' }, [(x.willpower ? 'Willpower re-roll · ' : '') + (x.difficulty != null ? 'Difficulty ' + x.difficulty : 'no Difficulty')]));
+      // a re-roll's entry keeps each re-rolled die's first face: "re-rolled 3 → 8, 2 → 6"
+      const again = dice.filter((d) => d.was).map((d) => d.was + ' → ' + d.face);
+      bits.push(R.el('span', { class: 'muted small' }, [(x.willpower ? 'Willpower re-roll' + (again.length ? ' (' + again.join(', ') + ')' : '') + ' · ' : '') + (x.difficulty != null ? 'Difficulty ' + x.difficulty : 'no Difficulty')]));
       bits.push(verdictEl(res, onRule));
     }
+    if (x.note) bits.push(R.el('span', { class: 'roll-note small' }, ['“' + x.note + '”']));
     return R.el('div', { class: 'roll-line' }, bits);
   }
 
   // ── the roller: pool, Hunger, Difficulty, re-roll, Rouse ───────────
-  // opts: { pool, hunger, difficulty, label, who, onRoll(entry), onRule(id), onHunger(n) }
+  // opts: { pool, hunger, difficulty, label, who, onRoll(entry), onRule(id), onHunger(n, cause),
+  //         onWillpower(dice) } — onWillpower pays a re-roll's point for a character (their sheet
+  //         marks it); a roll for no one (the Storyteller's, the site's) pays nothing
   function roller(opts) {
     const o = Object.assign({ pool: 5, hunger: 1, difficulty: '' }, opts || {});
-    let state = { pool: o.pool, hunger: o.hunger, difficulty: o.difficulty, noHunger: false, twoRouse: false, dice: null, selected: [], rerolled: false, rouse: null };
+    let state = { pool: o.pool, hunger: o.hunger, difficulty: o.difficulty, noHunger: false, twoRouse: false, dice: null, selected: [], rerolled: false, rouse: null, note: '', rolledNoHunger: false };
     const box = R.el('div', { class: 'roller' });
 
     function stepper(label, key, min, max) {
@@ -234,7 +239,7 @@ window.VtmDice = (function () {
         R.el('div', { class: 'step-k' }, ['Hunger']),
         R.el('div', { class: 'hunger-track', role: 'radiogroup', 'aria-label': 'Hunger' }, Array.from({ length: HUNGER_MAX + 1 }, (_, i) => R.el('button', {
           type: 'button', class: 'hunger-pip' + (i === 0 ? ' zero' : '') + (i <= state.hunger && i > 0 ? ' on' : ''), title: 'Hunger ' + i, 'aria-checked': String(i === state.hunger), role: 'radio',
-          onclick: () => { state.hunger = i; if (o.onHunger) o.onHunger(i); draw(); },
+          onclick: () => { state.hunger = i; if (o.onHunger) o.onHunger(i, 'set on the Hunger track'); draw(); },
         }, [i === 0 ? '0' : teeth ? R.el('span', { class: 'die-mark', style: '--mark:url("' + window.VtmData.artUrl(teeth.src) + '")' }) : String(i)]))),
       ]);
     }
@@ -243,14 +248,19 @@ window.VtmDice = (function () {
       state.selected = [];
       state.rerolled = false;
       state.rouse = null;
-      if (o.onRoll) o.onRoll(entry({ who: o.who, label: o.label, pool: state.pool, hunger: state.noHunger ? 0 : state.hunger, difficulty: state.difficulty === '' ? null : state.difficulty, dice: state.dice }));
+      state.rolledNoHunger = state.noHunger;
+      if (o.onRoll) o.onRoll(entry({ who: o.who, label: o.label, pool: state.pool, hunger: state.noHunger ? 0 : state.hunger, difficulty: state.difficulty === '' ? null : state.difficulty, dice: state.dice, note: state.note.trim() }));
       draw();
     }
     function doReroll() {
+      const n = state.selected.length;
       state.dice = reroll(state.dice, state.selected);
       state.selected = [];
       state.rerolled = true;
-      if (o.onRoll) o.onRoll(entry({ who: o.who, label: o.label, pool: state.pool, hunger: state.noHunger ? 0 : state.hunger, difficulty: state.difficulty === '' ? null : state.difficulty, dice: state.dice, willpower: true }));
+      if (o.onRoll) o.onRoll(entry({ who: o.who, label: o.label, pool: state.pool, hunger: state.noHunger ? 0 : state.hunger, difficulty: state.difficulty === '' ? null : state.difficulty, dice: state.dice, willpower: true, note: state.note.trim() }));
+      // "A spent point of Willpower counts as having sustained a level of Superficial damage to
+      //  Willpower (see p. 126) and is marked as such." — Willpower
+      if (o.onWillpower) o.onWillpower(n);
       draw();
     }
     function doRouse() {
@@ -259,9 +269,9 @@ window.VtmDice = (function () {
       state.dice = null;
       if (r.hungerGain && state.hunger < HUNGER_MAX) {
         state.hunger = Math.min(HUNGER_MAX, state.hunger + r.hungerGain);
-        if (o.onHunger) o.onHunger(state.hunger);
+        if (o.onHunger) o.onHunger(state.hunger, 'Rouse Check failed (' + r.faces.join(', ') + ')');
       }
-      if (o.onRoll) o.onRoll(entry({ who: o.who, label: 'Rouse Check', mode: 'rouse', pool: r.faces.length, hunger: 0, dice: r.faces.map((f) => ({ kind: 'regular', face: f })), hungerGain: r.hungerGain }));
+      if (o.onRoll) o.onRoll(entry({ who: o.who, label: 'Rouse Check', mode: 'rouse', pool: r.faces.length, hunger: 0, dice: r.faces.map((f) => ({ kind: 'regular', face: f })), hungerGain: r.hungerGain, note: state.note.trim() }));
       draw();
     }
     const rule = (k) => R.el('a', { class: 'rule-link', href: '#', onclick: (ev) => { ev.preventDefault(); if (o.onRule) o.onRule(RULES[k].id); } }, [RULES[k].name]);
@@ -279,9 +289,13 @@ window.VtmDice = (function () {
         R.el('label', { class: 'small' }, [R.el('input', { type: 'checkbox', checked: state.twoRouse || null, onchange: (ev) => { state.twoRouse = ev.target.checked; } }), ' two dice, keep the highest']),
         R.el('label', { class: 'small' }, [R.el('input', { type: 'checkbox', checked: state.noHunger || null, onchange: (ev) => { state.noHunger = ev.target.checked; draw(); } }), ' no Hunger dice (a check, a Willpower or a Humanity roll)']),
       ]));
+      if (o.onRoll) box.appendChild(R.el('input', { type: 'text', class: 'text small roll-for', placeholder: 'What for? (goes in the log)', value: state.note, oninput: (ev) => { state.note = ev.target.value; } }));
       if (state.dice) {
         const res = evaluate(state.dice, state.difficulty === '' ? null : state.difficulty);
-        const canPick = !state.rerolled;
+        // "Characters may not spend Willpower to re-roll Hunger dice or a tracker roll, such as
+        //  Willpower or Humanity." — Willpower; "Characters may not use Willpower to re-roll
+        //  checks." — Checks. The no-Hunger roll is exactly those.
+        const canPick = !state.rerolled && !state.rolledNoHunger;
         box.appendChild(R.el('div', { class: 'dice-row' }, state.dice.map((d, i) => dieEl(d, {
           selected: state.selected.indexOf(i) !== -1,
           onclick: canPick && d.kind === 'regular' ? () => {
@@ -296,8 +310,10 @@ window.VtmDice = (function () {
           box.appendChild(R.el('div', { class: 'chiprow small' }, [
             R.el('span', { class: 'muted' }, ['Pick up to ' + WILLPOWER_REROLL + ' regular dice, then ']),
             R.el('button', { type: 'button', class: 'btn ghost tiny', disabled: state.selected.length ? null : 'disabled', onclick: doReroll }, ['re-roll with Willpower (' + state.selected.length + ')']),
-            R.el('span', { class: 'muted' }, ['· ']), rule('willpower'),
+            R.el('span', { class: 'muted' }, [o.onWillpower ? '· marks 1 Superficial Willpower · ' : '· ']), rule('willpower'),
           ]));
+        } else if (state.rolledNoHunger && !state.rerolled) {
+          box.appendChild(R.el('div', { class: 'muted small' }, ['No Willpower re-roll on a check or a tracker roll · ', rule('willpower'), ' · ', rule('checks')]));
         }
       }
       if (state.rouse) {

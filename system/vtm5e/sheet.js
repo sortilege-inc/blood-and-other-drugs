@@ -305,8 +305,42 @@ window.VtmSheet = (function () {
   // under the member's name (the heading), so it says what they are, not who
   const memberSentence = (m) => (traits(values(m)).join(' · ') || 'Kindred') + ' · Hunger ' + hunger(m) + ((values(m).player) ? ' · played by ' + values(m).player : '');
 
-  function setHunger(m, n) { State().commit('setPartyLive', [m.id, { hunger: Math.max(0, Math.min(Dice.HUNGER_MAX, n)) }]); }
-  function setLive(m, patch) { State().commit('setPartyLive', [m.id, patch]); }
+  // Every change to a character's trackers is one event in the log, with its cause: the live
+  // patch and a { kind: 'track' } entry naming each track's before and after. A player may send
+  // both for their own character (setPartyLive, appendLog with their memberId).
+  const TRACK_LABEL = { hunger: 'Hunger', health: 'Health', willpower: 'Willpower', stains: 'Stains', Humanity: 'Humanity' };
+  const trackText = (k, v) => (k === 'health' || k === 'willpower' ? (v && (v.sup || v.agg) ? [v.sup ? v.sup + ' Superficial' : null, v.agg ? v.agg + ' Aggravated' : null].filter(Boolean).join(', ') : 'unmarked') : String(v == null ? 0 : v));
+  function change(m, patch, cause) {
+    const cur = (live0(m));
+    const changes = Object.keys(patch).filter((k) => k !== 'sheet' && trackText(k, cur[k]) !== trackText(k, patch[k]))
+      .map((k) => [TRACK_LABEL[k] || k, trackText(k, cur[k]), trackText(k, patch[k])]);
+    State().commit('setPartyLive', [m.id, patch]);
+    if (changes.length) State().commit('appendLog', [{ at: Date.now(), kind: 'track', memberId: m.id, who: m.name || null, changes, cause: cause || null }]);
+  }
+  const live0 = (m) => ((State().state.party || []).find((x) => x.id === m.id) || m).live || {};
+  // a tracker event in the log: "Hunger 1 → 2 · Rouse Check failed (3)"
+  const trackLine = (x) => el('div', { class: 'roll-line track-line' }, [
+    el('span', { class: 'roll-who' }, [x.who || 'A character']),
+    el('span', { class: 'small' }, [(x.changes || []).map((c) => c[0] + ' ' + c[1] + ' → ' + c[2]).join(' · ')]),
+    x.cause ? el('span', { class: 'muted small' }, [x.cause]) : null,
+  ]);
+  function setHunger(m, n, cause) { change(m, { hunger: Math.max(0, Math.min(Dice.HUNGER_MAX, n)) }, cause); }
+  function setLive(m, patch, cause) { change(m, patch, cause || 'marked on the sheet'); }
+
+  // Damage to a tracker of `size` boxes, level by level (Tracking Damage, Impairment):
+  // "Mark each level of Superficial damage on the character sheet by making a “/” … Mark
+  //  Aggravated damage … by making an “X”"; once full, "For every level of damage of either kind
+  //  … that a character takes while Impaired, convert one previously sustained Superficial damage
+  //  to Aggravated damage on a one-for-one basis." Halving is the caller's (a spent point of
+  //  Willpower is already "a level of Superficial damage").
+  function damage(size, t, kind, levels) {
+    let sup = (t && t.sup) || 0, agg = (t && t.agg) || 0;
+    for (let i = 0; i < levels; i++) {
+      if (sup + agg < size) { if (kind === 'agg') agg++; else sup++; }
+      else if (sup > 0) { sup--; agg++; }
+    }
+    return { sup, agg };
+  }
 
   // ── trackers ──
   // A tracker's boxes: `size` boxes, Aggravated marked first from the left, then Superficial.
@@ -350,11 +384,21 @@ window.VtmSheet = (function () {
       r = rollers[key] = Dice.roller({
         pool: 4, hunger: hunger(m), who: m.name,
         onRule: o.onRule || window.VtmOpenEntity,
-        onHunger: (n) => setHunger({ id }, n),
+        onHunger: (n, cause) => setHunger({ id, name: m.name }, n, cause),
         onRoll: (entry) => State().commit('appendLog', [Object.assign(entry, { memberId: id })]),
+        onWillpower: (dice) => spendWillpower({ id, name: m.name }, 'Willpower re-roll of ' + dice + (dice === 1 ? ' die' : ' dice')),
       });
     } else if (r.hunger() !== hunger(m)) r.setHunger(hunger(m));
     return r;
+  }
+
+  // "A spent point of Willpower counts as having sustained a level of Superficial damage to
+  //  Willpower" — Willpower
+  function spendWillpower(m, cause) {
+    const cur = (State().state.party || []).find((x) => x.id === m.id) || m;
+    const v = values(cur);
+    const size = +v.Willpower || derived(v).Willpower;
+    change(cur, { willpower: damage(size, live0(cur).willpower || {}, 'sup', 1) }, cause);
   }
 
   // Build a pool from the sheet: an Attribute plus a Skill or a Discipline.
@@ -415,8 +459,8 @@ window.VtmSheet = (function () {
           State().commit('appendLog', [Object.assign(Dice.entry({ who: m.name, label: 'Remorse', pool: n, hunger: 0, difficulty: 1, dice }), { memberId: m.id })]);
           const values2 = Object.assign({}, v);
           if (res.successes < 1) values2.Humanity = Math.max(0, h - 1);
-          State().commit('setPartyLive', [m.id, { stains: 0 }]);
-          if (values2.Humanity !== v.Humanity) updateValues(m, values2);
+          const lost = values2.Humanity !== v.Humanity;
+          change(m, lost ? { stains: 0, sheet: values2 } : { stains: 0 }, 'Remorse test: ' + res.successes + (res.successes === 1 ? ' success' : ' successes') + (lost ? ' — Humanity ' + h + ' → ' + values2.Humanity : ''));
         }, 'ghost tiny') : null]),
       el('div', { class: 'muted small' }, ['Click a box: empty → ', MARK.sup, ' Superficial → ', MARK.agg, ' Aggravated. ', ruleLink(RULES.tracking, 'Tracking Damage'), ' · ', ruleLink(RULES.impairment, 'Impairment'), ' · ', ruleLink(RULES.stains, 'Stains'), ' · ', ruleLink(RULES.remorse, 'Remorse')]),
     ]));
@@ -446,7 +490,7 @@ window.VtmSheet = (function () {
   return {
     ACTOR, BOOKS, FILE_KIND, OLD_TEMPLATE_ID, HEALTH_FROM, WILLPOWER_FROM, RULES,
     spec, field, blank, complete, attributes, skills, derived, potencyRow, groupOf, sentence, render,
-    fileOf, download, readMember, newMember, downloadMember, values, hunger, setHunger,
+    fileOf, download, readMember, newMember, downloadMember, values, hunger, setHunger, change, damage, spendWillpower, trackLine,
     memberSentence, live, powersFor, templateId,
   };
 })();

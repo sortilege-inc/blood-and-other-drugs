@@ -311,3 +311,7 @@ ul.checks li::before { position: absolute; left: 0; }
 ul.checks li.ok::before { content: '✓'; color: #7fc49b; }
 ul.checks li.warn::before { content: '!'; color: var(--blood-2); font-weight: 700; }
 @media (max-width: 900px) { .creator-cols { grid-template-columns: 1fr; } .creator-book { position: static; } }
+/* the roller's "What for?" and the log's tracker events (V3) */
+.roll-for { display: block; width: 100%; max-width: 28em; box-sizing: border-box; margin: 4px 0 8px; }
+.roll-note { font-style: italic; }
+.track-line .roll-who { color: var(--blood-2); }
