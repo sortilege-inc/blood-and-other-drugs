@@ -603,12 +603,12 @@ window.VtmSheet = (function () {
     State().commit('appendLog', [{ at: Date.now(), kind: 'track', memberId: mm.id, who: mm.name, changes: [], cause: 'archived this version as “' + label + '”' }]);
   }
   const redrawAll = () => window.VttBus.emit('state:remote', { view: true }, { local: true });
-  function versionPicker(m) {
+  function versionPicker(m, noArchive) {
     const vs = versionsOf(m);
     const sel = el('select', { class: 'scope tiny', title: 'The live sheet, or an archived version (read-only)' },
       [el('option', { value: '' }, ['Current'])].concat(vs.map((x) => el('option', { value: x.id, selected: viewing[m.id] === x.id || null }, [x.label + (x.date ? ' · ' + x.date : '')]))));
     sel.addEventListener('change', () => { viewing[m.id] = sel.value || null; redrawAll(); });
-    return el('div', { class: 'chiprow tight version-pick' }, [vs.length ? sel : null, button('Archive this version…', () => archive(m), 'ghost tiny')]);
+    return el('div', { class: 'chiprow tight version-pick' }, [vs.length ? sel : null, noArchive ? null : button('Archive this version…', () => archive(m), 'ghost tiny')]);
   }
   function archived(m, o) {
     const ver = versionsOf(m).find((x) => x.id === viewing[m.id]);
@@ -670,14 +670,17 @@ window.VtmSheet = (function () {
     if (isViewingArchive(m)) return archived(m, o);
     const v = values(m);
     const lv = m.live || {};
-    const box = el('div', { class: 'sheet live' });
-    box.appendChild(el('div', { class: 'sheet-head' }, [el('h2', { class: 'chapter-h' }, [m.name]), el('div', { class: 'entity-sub' }, [memberSentence(m)])]));
+    const box = el('div', { class: 'sheet live' + (o.player ? ' player' : '') });
+    // Each block belongs to a pane. On a phone the player's page shows one pane at a time behind a
+    // bar at the bottom (assets/css/vtm5e-gm.css, ≤ 640px); everywhere else every block shows.
+    const add = (node, pane) => { if (node) { if (node.setAttribute) node.setAttribute('data-pane', pane); box.appendChild(node); } return node; };
+    add(el('div', { class: 'sheet-head' }, [el('h2', { class: 'chapter-h' }, [m.name]), el('div', { class: 'entity-sub' }, [memberSentence(m)])]), 'play');
     const hSize = +v.Health || derived(v).Health;
     const wSize = +v.Willpower || derived(v).Willpower;
     const ruleLink = (id, label) => el('a', { class: 'rule-link small', href: '#', onclick: (ev) => { ev.preventDefault(); (o.onRule || window.VtmOpenEntity)(id); } }, [label]);
     const h = +v.Humanity || 0;
     const stains = +lv.stains || 0;
-    box.appendChild(el('div', { class: 'trackers' }, [
+    add(el('div', { class: 'trackers' }, [
       el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Health']), tracker(hSize, lv.health || {}, (t) => setLive(m, { health: t })), impaired(hSize, lv.health || {}) ? el('span', { class: 'verdict-bit blood' }, ['Impaired']) : null]),
       el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Willpower']), tracker(wSize, lv.willpower || {}, (t) => setLive(m, { willpower: t })), impaired(wSize, lv.willpower || {}) ? el('span', { class: 'verdict-bit blood' }, ['Impaired']) : null]),
       el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Humanity']), humanityTrack(h, stains, (n) => setLive(m, { stains: n })),
@@ -692,10 +695,27 @@ window.VtmSheet = (function () {
           const lost = values2.Humanity !== v.Humanity;
           change(m, lost ? { stains: 0, sheet: values2 } : { stains: 0 }, 'Remorse test: ' + res.successes + (res.successes === 1 ? ' success' : ' successes') + (lost ? ' — Humanity ' + h + ' → ' + values2.Humanity : ''));
         }, 'ghost tiny') : null]),
-      el('div', { class: 'muted small' }, ['Click a box: empty → ', MARK.sup, ' Superficial → ', MARK.agg, ' Aggravated. ', ruleLink(RULES.tracking, 'Tracking Damage'), ' · ', ruleLink(RULES.impairment, 'Impairment'), ' · ', ruleLink(RULES.stains, 'Stains'), ' · ', ruleLink(RULES.remorse, 'Remorse')]),
-    ]));
-    box.appendChild(versionPicker(m));
+      // the how-to line is the Storyteller's; the player's copy shows no working (owner, I12)
+      o.player ? null : el('div', { class: 'muted small' }, ['Click a box: empty → ', MARK.sup, ' Superficial → ', MARK.agg, ' Aggravated. ', ruleLink(RULES.tracking, 'Tracking Damage'), ' · ', ruleLink(RULES.impairment, 'Impairment'), ' · ', ruleLink(RULES.stains, 'Stains'), ' · ', ruleLink(RULES.remorse, 'Remorse')]),
+    ]), 'play');
     const roller = rollerFor(m, o);
+    if (o.player) {
+      add(powersBlock(m, v, roller, o), 'play');
+      add(loresheetCards(v), 'play');
+      // the table's order (owner, I14): what it is for, the Difficulty, the dice — then the traits
+      add(roller, 'roll');
+      add(traitLists(m, v, roller), 'roll');
+      const mine = logOf(m).filter((x) => x.kind === 'roll').slice(-5).reverse();
+      if (mine.length) add(el('div', { class: 'roll-log' }, mine.map((x) => Dice.rollLine(x, o.onRule || window.VtmOpenEntity))), 'roll');
+      add(el('div', { class: 'xp-box' }, [el('div', { class: 'prop-k' }, ['Experience']), xpBlock(m, false)]), 'sheet');
+      if (versionsOf(m).length) add(versionPicker(m, true), 'sheet');
+      add(el('div', { class: 'player-sheet' }, [render(v, { edit: (nv) => updateValues(m, nv) })]), 'sheet');
+      add(el('div', { class: 'player-notes' }, [el('div', { class: 'prop-k' }, ['My notes']),
+        el('textarea', { class: 'text', rows: 5, placeholder: 'Only you and the Storyteller see these', oninput: debounce((ev) => State().commit('setPartyPlayerNotes', [m.id, ev.target.value]), 400) }, [m.playerNotes || ''])]), 'sheet');
+      panes(m, box, roller);
+      return box;
+    }
+    box.appendChild(versionPicker(m));
     box.appendChild(poolBuilder(m, roller));
     box.appendChild(roller);
     const pw = powersBlock(m, v, roller, o);
@@ -704,18 +724,91 @@ window.VtmSheet = (function () {
     const history = logOf(m);
     if (history.length) box.appendChild(el('details', { class: 'sheet-details' }, [el('summary', {}, ['This character’s log (' + history.length + ')']),
       el('div', { class: 'char-log' }, history.slice().reverse().map((x) => (x.kind === 'roll' ? Dice.rollLine(x, o.onRule || window.VtmOpenEntity) : trackLine(x))))]));
-    box.appendChild(el('details', { class: 'sheet-details', open: o.player ? 'open' : null }, [
+    box.appendChild(el('details', { class: 'sheet-details' }, [
       el('summary', {}, ['The sheet']),
-      render(v, { edit: o.player || o.gmEdit !== false ? (nv) => updateValues(m, nv) : null }),
+      render(v, { edit: o.gmEdit !== false ? (nv) => updateValues(m, nv) : null }),
     ]));
-    if (!o.player) {
-      box.appendChild(el('div', { class: 'prop-k' }, ['Storyteller’s notes', el('span', { class: 'muted' }, [' · never sent to players'])]));
-      box.appendChild(el('textarea', { class: 'text', rows: 4, oninput: debounce((ev) => State().commit('setPartyNotes', [m.id, ev.target.value]), 400) }, [m.notes || '']));
-    }
-    box.appendChild(el('div', { class: 'prop-k' }, [o.player ? 'My notes' : 'The player’s notes']));
-    box.appendChild(el('textarea', { class: 'text', rows: 3, readonly: o.player ? null : 'readonly', oninput: o.player ? debounce((ev) => State().commit('setPartyPlayerNotes', [m.id, ev.target.value]), 400) : null }, [m.playerNotes || '']));
+    box.appendChild(el('div', { class: 'prop-k' }, ['Storyteller’s notes', el('span', { class: 'muted' }, [' · never sent to players'])]));
+    box.appendChild(el('textarea', { class: 'text', rows: 4, oninput: debounce((ev) => State().commit('setPartyNotes', [m.id, ev.target.value]), 400) }, [m.notes || '']));
+    box.appendChild(el('div', { class: 'prop-k' }, ['The player’s notes']));
+    box.appendChild(el('textarea', { class: 'text', rows: 3, readonly: 'readonly' }, [m.playerNotes || '']));
     box.appendChild(el('div', { class: 'chiprow' }, [button('Download character file', () => downloadMember(m), 'ghost tiny')]));
     return box;
+  }
+
+  // ── the player's page on a phone: the traits as lists, the panes and the bar ──
+  // The Roll tab's traits (owner, I17): each group under a short-ruled name, its traits with their
+  // dots on the right. Tapped, an Attribute is the pool's first half, a Skill or Discipline its
+  // second; tapped again, it is taken out. The pool follows (with Impairment, as poolBuilder).
+  const picks = {};   // member id → { a, b } the traits picked for the pool
+  function traitLists(m, v, roller) {
+    const pk = picks[m.id] = picks[m.id] || { a: null, b: null };
+    const live = (memberNow(m).live) || {};
+    const sheetH = +v.Health || derived(v).Health;
+    const sheetW = +v.Willpower || derived(v).Willpower;
+    const disc = {};
+    (v.Disciplines || []).forEach((d) => { if (d.Discipline) disc[d.Discipline] = +d.Dots || 0; });
+    const valueOf = (t) => (t in disc ? disc[t] : +v[t] || 0);
+    const apply = () => {
+      if (!pk.a && !pk.b) return;
+      const n = (pk.a ? valueOf(pk.a) : 0) + (pk.b ? valueOf(pk.b) : 0);
+      const g = pk.a ? groupOf(pk.a) || '' : '';
+      let pen = 0;
+      if (/Physical/.test(g) && impaired(sheetH, live.health || {})) pen = IMPAIRED_PENALTY;
+      if (/Social|Mental/.test(g) && impaired(sheetW, live.willpower || {})) pen = IMPAIRED_PENALTY;
+      roller.setPool(Math.max(0, n - pen), [pk.a, pk.b].filter(Boolean).join(' + ') + (pen ? ' (Impaired −' + pen + ')' : ''), true);
+    };
+    const row = (t, key) => el('button', { type: 'button', class: 'sk-row' + (pk[key] === t ? ' on' : ''),
+      onclick: () => { pk[key] = pk[key] === t ? null : t; apply(); window.VttBus.emit('state:remote', { view: true }, { local: true }); } },
+      [el('span', {}, [t]), el('span', { class: 'sk-dots' }, ['●'.repeat(valueOf(t)) + '○'.repeat(Math.max(0, 5 - valueOf(t)))])]);
+    const groups = (names) => {
+      const by = [];
+      names.forEach((t) => { const g = groupOf(t) || ''; let x = by.find((y) => y[0] === g); if (!x) by.push(x = [g, []]); x[1].push(t); });
+      return by;
+    };
+    const list = el('div', { class: 'skill-list' });
+    groups(attributes()).forEach(([g, ts]) => { list.appendChild(el('div', { class: 'sg-h' }, [g || 'Attributes'])); ts.forEach((t) => list.appendChild(row(t, 'a'))); });
+    groups(skills()).forEach(([g, ts]) => { list.appendChild(el('div', { class: 'sg-h' }, [g || 'Skills'])); ts.forEach((t) => list.appendChild(row(t, 'b'))); });
+    const ds = Object.keys(disc);
+    if (ds.length) { list.appendChild(el('div', { class: 'sg-h' }, ['Disciplines'])); ds.forEach((t) => list.appendChild(row(t, 'b'))); }
+    return list;
+  }
+  // the loresheet levels a character holds, as on the sheet: [Name] [Dots] [Loresheet] [Text]
+  function loresheetCards(v) {
+    const rows = (v['Advantages & Flaws'] || []).filter((r) => r.Advantage);
+    return rows.length ? el('div', { class: 'lore-cards' }, [el('div', { class: 'prop-k' }, ['Loresheets'])].concat(rows.map((r) => levelLine(r, null)))) : null;
+  }
+  const PANES = [['play', 'Play'], ['roll', 'Roll'], ['sheet', 'Sheet']];
+  const paneOf = {};   // member id → the pane showing; kept across the page's redraws
+  const shown = {};    // member id → the pane switcher of the sheet on the page now
+  function panes(m, box, roller) {
+    const nav = el('nav', { class: 'pane-nav', 'aria-label': 'Sheet sections' });
+    // on the Roll tab the bar's Roll rolls (red); elsewhere it opens the tab
+    const show = (p, scroll) => {
+      paneOf[m.id] = p;
+      box.setAttribute('data-show', p);
+      nav.querySelectorAll('button').forEach((b) => {
+        b.classList.toggle('on', b.getAttribute('data-for') === p);
+        b.classList.toggle('go', b.getAttribute('data-for') === 'roll' && p === 'roll');
+      });
+      if (scroll) window.scrollTo(0, 0);
+    };
+    PANES.forEach(([p, label]) => nav.appendChild(el('button', { type: 'button', 'data-for': p, onclick: () => {
+      if (p === 'roll' && paneOf[m.id] === 'roll' && roller.roll) {
+        roller.roll();
+        setTimeout(() => { const d = roller.querySelector('.dice-row'); if (d && d.isConnected) d.scrollIntoView({ block: 'center' }); }, 60);
+      } else show(p, true);
+    } }, [label])));
+    box.appendChild(nav);
+    shown[m.id] = show;
+    show(paneOf[m.id] || 'play', false);
+    // a power's Roll sets up the pool: take the player to it. The roller outlives the page's
+    // redraws (rollerFor keeps one per member), so it is wrapped once
+    if (!roller.panesWrapped) {
+      const setPool = roller.setPool;
+      roller.setPool = (n, label, stay) => { setPool(n, label); if (!stay && paneOf[m.id] !== 'roll' && shown[m.id]) shown[m.id]('roll', true); };
+      roller.panesWrapped = true;
+    }
   }
 
   // An edit made in play rides in the member's live state (the engine's setPartyLive, which a

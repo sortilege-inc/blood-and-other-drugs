@@ -181,3 +181,83 @@ body.play { display: block; background: var(--night); }
 .thread.closed { border-left-color: var(--night-3); opacity: .6; }
 .thread .chiprow input.text { flex: 1; min-width: 8em; }
 .npc-list li { margin: 3px 0; }
+
+/* ── V6: the player's sheet on a phone (system/vtm5e/sheet.js panes): Play · Roll · Sheet behind
+   a bar at the bottom; the Roll tab rolls from the bar. Wider screens show every block. ── */
+.pane-nav { display: none; }
+.skill-list .sk-row { display: flex; justify-content: space-between; align-items: center; width: 100%; background: none; border: 0; border-bottom: 1px dotted #3a2f35; color: var(--bone); font-family: var(--font-text); font-size: 16px; padding: 4px 4px 4px 14px; text-align: left; cursor: pointer; }
+.skill-list .sk-row.on { background: rgba(200, 16, 46, .14); box-shadow: inset 3px 0 0 var(--blood-2); color: #fff; }
+.skill-list .sk-dots { color: var(--blood-2); letter-spacing: .12em; font-size: 13px; }
+.skill-list .sg-h { font-family: var(--font-ui); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--bone-2); margin: 12px 0 2px; }
+.skill-list .sg-h::after { content: ''; display: block; width: 3.5em; margin-top: 3px; border-bottom: 2px solid var(--blood-2); }
+@media (max-width: 640px) {
+  body.play { padding-bottom: calc(62px + env(safe-area-inset-bottom)); }
+  body.play .play-main { padding: 0; }
+  body.play .play-card, body.play .play-card.wide { padding: 0; border: 0; background: none; }
+  body.play .sheet.live { border: 0; padding: 0 14px 14px; background: none; }
+  /* the panes */
+  body.play .sheet.live[data-show="play"] > [data-pane]:not([data-pane="play"]),
+  body.play .sheet.live[data-show="roll"] > [data-pane]:not([data-pane="roll"]),
+  body.play .sheet.live[data-show="sheet"] > [data-pane]:not([data-pane="sheet"]) { display: none; }
+  body.play .sheet.live > [data-pane] { margin: 0; padding: 12px 0; border-bottom: 1px solid #2a2126; }
+  body.play .pane-nav { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; background: var(--night-2); border-top: 2px solid var(--blood); padding-bottom: env(safe-area-inset-bottom); }
+  body.play .pane-nav button { flex: 1; min-height: 56px; background: none; border: 0; color: var(--bone-2); font-family: var(--font-ui); font-size: 14px; letter-spacing: .12em; text-transform: uppercase; }
+  body.play .pane-nav button.on { color: #fff; box-shadow: inset 0 3px 0 var(--blood-2); background: var(--night-3); }
+  body.play .pane-nav button.go { background: var(--blood); color: #fff; box-shadow: none; font-weight: 600; }
+  /* the Roll tab rolls from the bar: the roller's own Roll is not shown there */
+  body.play .sheet.live > .roller[data-pane="roll"] .roll-btn { display: none; }
+  body.play .skill-list .sk-row { min-height: 44px; }
+  /* the head: the name and one line */
+  body.play .sheet.live .sheet-head h2 { font-size: 26px; margin: 4px 0 0; }
+  body.play .sheet.live .sheet-head .entity-sub { font-size: 13px; }
+  /* touch sizes: controls 44px, inputs 16px, text 13px and up */
+  body.play .sheet.live button, body.play .sheet.live .btn, body.play .sheet.live select { min-height: 44px; font-size: 15px; }
+  body.play .sheet.live input, body.play .sheet.live select, body.play .sheet.live textarea { font-size: 16px; }
+  body.play .sheet.live input.text, body.play .sheet.live input[type=number] { min-height: 44px; }
+  body.play .sheet.live label { display: inline-flex; align-items: center; min-height: 44px; }
+  body.play .sheet.live input[type=checkbox] { width: 22px; height: 22px; margin: 0 8px 0 0; }
+  body.play .sheet.live .small, body.play .sheet.live .muted.small, body.play .sheet.live .prop-k { font-size: 13px; }
+  /* trackers: a row of boxes you can hit */
+  body.play .sheet.live .track { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 6px 0 12px; }
+  body.play .sheet.live .track > .prop-k { flex: 0 0 100%; }
+  body.play .sheet.live .tracker { display: flex; flex-wrap: wrap; gap: 5px; }
+  body.play .sheet.live .tbox { width: 44px; height: 44px; min-height: 44px; font-size: 20px; }
+  body.play .sheet.live .tracker.humanity { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; width: 100%; }
+  body.play .sheet.live .tracker.humanity .tbox { width: 100%; height: 44px; }
+  /* the roller */
+  body.play .sheet.live .step-b { width: 44px; height: 44px; font-size: 18px; }
+  body.play .sheet.live .hunger-track { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+  body.play .sheet.live .hunger-pip { width: 100%; height: 44px; font-size: 14px; }
+  body.play .sheet.live .die { min-width: 40px; min-height: 40px; }
+  body.play .sheet.live .roll-for { max-width: none; }
+  body.play .sheet.live .rules-row { display: none; }
+  /* power and loresheet cards */
+  body.play .sheet.live .power-card { padding: 6px 0 6px 10px; }
+  body.play .sheet.live .power-card button.tiny { margin: 4px 6px 0 0; }
+  body.play .sheet.live .rule-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; }
+  body.play .sheet.live .roll-log .roll-line { font-size: 13px; }
+}
+@media (max-width: 640px) {
+  /* a link-style button (a power's name, a loresheet) stays a link, not a white box */
+  body.play .sheet.live button.ref { background: none; border: 0; color: var(--bone); padding: 0; text-align: left; font-family: var(--font-text); font-size: 18px; text-decoration: underline dotted var(--blood-2); text-underline-offset: 4px; }
+  body.play .sheet.live .power-card .small, body.play .sheet.live .lore-text { font-size: 15px; line-height: 1.35; }
+}
+@media (max-width: 640px) {
+  /* labels 13px and up */
+  body.play .sheet.live .step-k, body.play .sheet.live .skill-list .sg-h, body.play .sheet.live .group-h, body.play .sheet.live .power-disc-h { font-size: 13px; }
+}
+@media (max-width: 640px) {
+  body.play .sheet.live .power-head dt { font-size: 13px; }
+}
+@media (max-width: 640px) {
+  /* the roller in the table's order (owner, I14): what it is for, the Difficulty, the dice, Hunger,
+     then the switches; the dice rolled below */
+  body.play .sheet.live > .roller { display: flex; flex-direction: column; }
+  body.play .sheet.live > .roller > .roll-for { order: -2; }
+  body.play .sheet.live > .roller > .roller-controls { order: -1; display: flex; flex-direction: column; gap: 10px; }
+  body.play .sheet.live .roller-controls .step-difficulty { order: -2; }
+  body.play .sheet.live .roller-controls .step-pool { order: -1; }
+  body.play .sheet.live .roller-controls .step { width: 100%; }
+  body.play .sheet.live .roller-controls .step-row { display: flex; align-items: center; justify-content: space-between; }
+  body.play .sheet.live .roller-controls .step-v { font-size: 30px; min-width: 2.5em; text-align: center; }
+}

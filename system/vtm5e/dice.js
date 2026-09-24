@@ -229,7 +229,7 @@ window.VtmDice = (function () {
     function stepper(label, key, min, max) {
       const v = R.el('span', { class: 'step-v' }, [String(state[key] === '' ? '—' : state[key])]);
       const set = (n) => { state[key] = n; draw(); };
-      return R.el('div', { class: 'step' }, [
+      return R.el('div', { class: 'step step-' + key }, [
         R.el('div', { class: 'step-k' }, [label]),
         R.el('div', { class: 'step-row' }, [
           R.el('button', { type: 'button', class: 'step-b', onclick: () => set(state[key] === '' ? min : Math.max(min, state[key] - 1)) }, ['−']),
@@ -241,7 +241,7 @@ window.VtmDice = (function () {
     }
     function hungerTrack() {
       const teeth = window.VtmArt && window.VtmArt.dice && window.VtmArt.dice.teeth;
-      return R.el('div', { class: 'step' }, [
+      return R.el('div', { class: 'step step-hunger' }, [
         R.el('div', { class: 'step-k' }, ['Hunger']),
         R.el('div', { class: 'hunger-track', role: 'radiogroup', 'aria-label': 'Hunger' }, Array.from({ length: HUNGER_MAX + 1 }, (_, i) => R.el('button', {
           type: 'button', class: 'hunger-pip' + (i === 0 ? ' zero' : '') + (i <= state.hunger && i > 0 ? ' on' : ''), title: 'Hunger ' + i, 'aria-checked': String(i === state.hunger), role: 'radio',
@@ -366,6 +366,7 @@ window.VtmDice = (function () {
     box.setHunger = (n) => { state.hunger = n; draw(); };
     box.hunger = () => state.hunger;
     box.rouse = (q) => doRouse(null, q);
+    box.roll = () => doRoll();
     // the sheet changed (Blood Potency, say): what the roller offers is read again
     box.refresh = () => { if (!box.contains(document.activeElement)) draw(); };
     draw();
