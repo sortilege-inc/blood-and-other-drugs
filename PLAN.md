@@ -218,6 +218,8 @@ real controls (PLAYBOOK §5) before the next begins.
 | 20 | `check_shape` counts an `ACTOR "…" DEF` line as an entity, as the build does | The BASE's `ACTOR "Kindred"` is the first non-`^` declaration line in the corpus. |
 | 21 | **The corpus defects were fixed upstream, at the owner's direction** (2026-09-23), in the conversion's extractor and generator — all 18 books regenerated, 85 files bumped, `gates.sh` green, `qa_vtm` never worse. Nothing here patches a corpus string | Ground rules; the TODO there holds the proof and what remains (Anarch *Blood Cult*, the Four Humors grid, Cults' *Mental Maze*, the third-party corpus not re-extracted). |
 | 22 | **Rebuilt on the corpus's second pass** (titterpig-dsl-vtm5e `eff2305` + `c4281aa`, 2026-09-23): every loresheet level is its own DEF with its printed `^"Rating"`, under its loresheet (586/586, gated upstream by `qa_loresheets.py`); reading order and tables fixed; the buyer watermark stripped by the pipeline. **All 211 power records now place** (Cults' *Mental Maze* under Obfuscate, Level 3); decision 16's 210 is superseded. Nothing in the site changed: a loresheet renders through the generic entity view, each level showing RATING n (browser-checked on core's *Carna*, which the old corpus had merged into *Cainite Heresy*) | `build.sh` → `build_data: 140 corpus files → 19 books, 10137 entities; records: power 211, ritual 101, character 513`, `check_shape: OK (33 assertions)`; the seven tabs render with 0 console errors. |
+| 23 | **data/ stays on the corpus's `c4281aa`, not its `ae948a6`** (2026-09-24). The corpus's table pass (`ae948a6`) lost every core Discipline power field — a list bullet drawn twice merged into its item line, so `^"Cost"` 88 → 0 and `^"System"` 112 → 0 — and a rebuild on it drops power records 211 → 123, rituals 101 → 73. The fix is proven in the conversion (core printed 245: fields back, and 88/112/44/92 on the eight books regenerated), but the owner holds any regeneration of all books until approved; so the VTT keeps the last good build, and V1 ships engine code only | `bash build/build.sh <c4281aa's 0.5>` → `power 211, ritual 101`, `0 uncovered`, `check_shape: OK (33 assertions)`, and `git status data/` empty: the committed data is exactly that build. |
+| 24 | **Browser checks run headless** (Playwright's Chromium from `~/App/ray-so/scripts/node_modules`, the repo served through request routing on `http://vtt.test` — no server) while this folder's five preview slots are held by other chats. `file://` is not a substitute: images fail CORS there | 6 pages (`/`, `/#create` at 375px, `/` at 375px, `/gm/`, `/gm/vtt.html`, `/gm/play.html` at 375px): 0 console errors, no sideways scroll. |
 
 ## Instances (2026-09-23)
 
@@ -279,6 +281,25 @@ L5R5e line does. With no instance the line is unchanged: *18 books … 9758 entr
 9758 entities; records: power 211, ritual 101, character 513`, `verify_data: 24037 strings — 0
 uncovered · 0 unsourced`, `check_shape: OK (33 assertions)`, and `data/`'s 21 files
 **byte-identical** before and after.
+
+## Upstream work from the family PLAYBOOK and the L5R5e VTT (2026-09-24)
+
+Read against `~/Sortilege/VTT/PLAYBOOK.md`, `INSTANCES.md` and `sortilege-vtt-l5r5e` I1–I18. The rule
+that decides where each piece goes: *a feature one campaign needs today, every campaign of the system
+needs tomorrow* — so the Blood & Other Drugs instance's needs are built here, upstream, and pulled.
+The engine pieces are generic and ported as they are; the rest is L5R5e's shape rebuilt in V5's
+terms from the corpus (never hand-listed rules).
+
+| # | Milestone | Mirrors | State |
+|---|---|---|---|
+| V1 | **The engine port**: an instance's seed fills what its campaign never had (`engine/state.js seed`, `engine/app.js`); every page takes `VttConfig.title`; the site's tabs fold into a menu on a phone, with an instance's tab group first; the player page's buttons fold into one line on a phone; a join link to another room leaves the old one; `render.js` nests children to any depth; **`renameIds`** with `system/vtm5e/renamed-ids.js` — the ids the corpus's second pass moved (loresheet levels, reading-order fixes), old → new, so a stored campaign keeps its references | I1 (rest), I8, I10, I18 | **landed 2026-09-24** — headless check (decision 24): 0 console errors on six pages; at 375px the site menu folds (button shown, tabs hidden, open on tap); a campaign stored with a moved id comes back renamed in a scene cast and as a notes key (`2 renamed id(s) carried over`). `renamed-ids.js`: 54 ids f6a442b → 19e0f71, 70 gone with no single successor. Found on the way: the creator's text fields ran 20px past a 375px screen (in HEAD too), fixed in `vtm5e.css`. Not checked: the player page's folded buttons inside a live room (needs the Worker, whose preview slot is taken) |
+| V2 | **The GM's panes**: Notes (the instance's document, gated), Scenes (the arc), Threads · NPCs (the scene's cast with their records) — no encounter arithmetic (V5 has none) | I9 | proposed |
+| V3 | **The roller and the log**: the pool, Hunger dice in it, Difficulty, Willpower reroll of up to three regular dice, messy critical and bestial failure read from the core's rules, Rouse checks; every roll and every tracker change an event with its cause | I2 | proposed |
+| V4 | **The record**: Hunger, Health and Willpower (Superficial / Aggravated), Humanity with Stains and the Remorse test, Blood Potency's effects from the core's chart (now a table), an XP ledger, archived versions | I3, I7 | proposed |
+| V5 | **Powers on the sheet**: each Discipline power a card opening to its printed text; a power with Dice Pools sets up the roll, its Cost makes the Rouse check; loresheet levels (now rated) on the sheet | I4, I13 | proposed |
+| V6 | **The player's page on a phone**: Play · Roll · Gear, compact, numbers tapped not typed | I11, I12, I14, I17 | proposed |
+| V7 | **Conflict**: the GM starts and ends it for the party; initiative, the attack pools, damage to the right track | I5, I16 | proposed |
+| V8 | **Advancement**: XP spent at the core's Trait Costs (a TABLE in the corpus), archived as *Before advancement* | I16 | proposed |
 
 ## STOPPED HERE — to resume
 

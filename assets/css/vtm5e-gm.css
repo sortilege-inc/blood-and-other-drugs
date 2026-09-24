@@ -152,3 +152,19 @@ body.play { display: block; background: var(--night); }
   .window-controls, .session-controls { margin: 0; }
   .sidebar-foot { margin-left: auto; }
 }
+
+/* the player's page on a phone (engine/play.js): the table / file / release buttons fold into one
+   line under the header; wider screens keep them standing open */
+.play-menu > summary { display: none; }
+@media (max-width: 640px) {
+  .play-head { padding: 8px 12px; gap: 8px; }
+  .play-head .brand { min-width: 0; flex: 1; overflow: hidden; }
+  .play-head .brand-title { font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .play-head .brand-sub { display: none; }
+  .play-status { gap: 6px; font-size: 12px; flex: none; }
+  .play-status .room-k { display: none; }
+  .play-menu > summary { display: flex; align-items: center; justify-content: space-between; min-height: 40px; padding: 0 14px; font-family: var(--font-ui); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--bone-2); border-bottom: 1px solid var(--night-3); cursor: pointer; list-style: none; }
+  .play-menu > summary::-webkit-details-marker { display: none; }
+  .play-menu > summary::after { content: '⋯'; font-size: 20px; }
+  .play-menu .play-bar { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--night-3); }
+}

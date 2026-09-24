@@ -5,8 +5,20 @@
 (function () {
   const { el } = window.VttRender;
   const tabs = window.VttSiteTabs || [];
+  // The deployment's name, as the GM's table (engine/app.js) and the map table (engine/vtt.js)
+  // already take it: an instance names its pages in engine/config.js, never in upstream HTML.
+  const TITLE = (window.VttConfig || {}).title;
+  if (TITLE) {
+    document.title = TITLE + ' — the books';
+    document.querySelectorAll('.brand-title').forEach((n) => (n.textContent = TITLE));
+  }
   const bar = document.getElementById('site-tabs');
   const main = document.getElementById('site-main');
+  // On a phone the tabs fold into a menu: one button naming the tab you are on (CSS, ≤ 640px)
+  const head = bar.closest('.site-head');
+  const menuBtn = el('button', { class: 'site-menu-btn', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'site-tabs',
+    onclick: () => { const open = !head.classList.contains('menu-open'); head.classList.toggle('menu-open', open); menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false'); } });
+  if (head) head.insertBefore(menuBtn, bar);
 
   function route() {
     const parts = location.hash.replace(/^#/, '').split('/').map((p) => decodeURIComponent(p));
@@ -27,7 +39,17 @@
   function render() {
     const r = route();
     bar.innerHTML = '';
-    tabs.forEach((t) => bar.appendChild(el('a', { class: 'site-tab' + (t.id === r.id ? ' active' : '') + (t.disabled ? ' disabled' : ''), href: href(t.id), title: t.note || null }, [t.label])));
+    // a tab may name its group (an instance's own tabs); the menu draws a line where the group changes
+    tabs.forEach((t, i) => {
+      if (i && (t.group || null) !== (tabs[i - 1].group || null)) bar.appendChild(el('span', { class: 'site-tab-sep', 'aria-hidden': 'true' }));
+      bar.appendChild(el('a', { class: 'site-tab' + (t.id === r.id ? ' active' : '') + (t.disabled ? ' disabled' : ''), href: href(t.id), title: t.note || null }, [t.label]));
+    });
+    const cur = tabs.find((x) => x.id === r.id);
+    menuBtn.innerHTML = '';
+    menuBtn.appendChild(el('span', { class: 'site-menu-icon', 'aria-hidden': 'true' }, ['☰']));
+    menuBtn.appendChild(el('span', { class: 'site-menu-cur' }, [cur ? cur.label : 'Menu']));
+    if (head) head.classList.remove('menu-open');
+    menuBtn.setAttribute('aria-expanded', 'false');
     main.innerHTML = '';
     const t = tabs.find((x) => x.id === r.id);
     if (t) t.render(main, r.path, ctx);
