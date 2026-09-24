@@ -131,6 +131,75 @@ window.VtmSheet = (function () {
     return n ? { dice: +n[1], text: cell } : null;
   }
 
+  // ── Discipline powers in play ──
+  // The chart's figures for this Blood Potency, by head: "Add 1 die" → 1, "Level 2 and below" → 2.
+  function potencyFigure(v, head) {
+    const pr = potencyRow(v['Blood Potency'] || 0);
+    if (!pr) return 0;
+    const k = pr.columns.findIndex((c) => c.toLowerCase() === head);
+    const m = /(\d+)/.exec(k >= 0 ? String(pr.row[k] || '') : '');
+    return m ? +m[1] : 0;
+  }
+  // A power's printed Cost as a count of Rouse Checks, where it states one plainly ("One Rouse
+  // Check", "Two Rouse Checks", "1 Rouse Check"); anything else ("One or more…", a paragraph) is
+  // shown as printed and rolled by hand.
+  const COUNT = { one: 1, two: 2, three: 3, 1: 1, 2: 2, 3: 3 };
+  function rouseCount(cost) {
+    const m = /^(one|two|three|[123]) rouse checks?\.?$/i.exec(String(cost || '').trim());
+    return m ? COUNT[m[1].toLowerCase()] : 0;
+  }
+  // A power's printed Dice Pools as the pools it can roll: the acting side (before "vs"), each
+  // alternative ("A + B, C + D", "… or …") that names only traits this sheet carries.
+  function poolsOf(text, v) {
+    const acting = String(text || '').split(/\s+vs\.?\s+/i)[0];
+    const disc = {};
+    (v.Disciplines || []).forEach((d) => { if (d.Discipline) disc[d.Discipline] = +d.Dots || 0; });
+    const known = (t) => attributes().indexOf(t) !== -1 || skills().indexOf(t) !== -1 || t in disc;
+    return acting.split(/,\s*(?:or\s+)?|\s+or\s+/i).map((alt) => alt.replace(/\s*\([^)]*\)\s*/g, ' ').trim())
+      .filter((alt) => /^[A-Z][\w ]*(\s\+\s[A-Z][\w ]*)+$/.test(alt))
+      .map((alt) => alt.split(/\s\+\s/).map((t) => t.trim()))
+      .filter((terms) => terms.every(known))
+      .map((terms) => ({ label: terms.join(' + '), terms, dice: terms.reduce((a, t) => a + (t in disc ? disc[t] : +v[t] || 0), 0) }));
+  }
+  function powersBlock(m, v, roller, o) {
+    const rows = (v.Disciplines || []).filter((d) => d.Discipline && (d.Powers || []).length);
+    if (!rows.length) return null;
+    // "Add one die to your dice pools when using or resisting discipline powers." and "Roll two
+    // dice and pick the highest when rolling a Rouse Check for discipline powers of level 2 and
+    // below." — Blood Potency; the figures are the chart's row
+    const bonus = potencyFigure(v, 'discipline power bonus');
+    const reroll = potencyFigure(v, 'discipline rouse check re-roll');
+    const open = (id) => (o.onRule || window.VtmOpenEntity)(id);
+    return el('div', { class: 'powers' }, [
+      el('div', { class: 'prop-k' }, ['Disciplines', el('span', { class: 'muted' }, [' · Blood Potency ' + (v['Blood Potency'] || 0) + ': +' + bonus + ' to power pools, Rouse re-roll ' + (reroll ? 'at level ' + reroll + ' and below' : 'none')])]),
+      ...rows.map((d) => el('div', { class: 'power-disc' }, [
+        el('div', { class: 'power-disc-h' }, [d.Discipline + ' ', el('span', { class: 'muted small' }, ['●'.repeat(+d.Dots || 0)])]),
+        ...(d.Powers || []).map((name) => {
+          const r = D.powers().find((x) => x.discipline === d.Discipline && x.name === name);
+          if (!r) return el('div', { class: 'power-card muted' }, [name + ' (not found in the books)']);
+          const f = r.fields || {};
+          const lvl = D.levelNumber(r);
+          const n = rouseCount(f.Cost);
+          const twoDice = !!(reroll && lvl != null && lvl <= reroll);
+          const pools = poolsOf(f['Dice Pools'], v);
+          return el('div', { class: 'power-card' }, [
+            el('div', { class: 'chiprow tight' }, [
+              el('button', { class: 'ref', type: 'button', title: 'Its printed text', onclick: () => open(r.id) }, [name]),
+              el('span', { class: 'muted small' }, [r.level || '']),
+            ]),
+            el('div', { class: 'small' }, [el('b', {}, ['Cost: ']), f.Cost || '—',
+              n ? button('Rouse' + (n > 1 ? ' ×' + n : '') + (twoDice ? ' (two dice, keep the highest)' : ''), () => { for (let i = 0; i < n; i++) roller.rouse({ twoDice, for: name }); }, 'ghost tiny') : null]),
+            f['Dice Pools'] ? el('div', { class: 'small' }, [el('b', {}, ['Dice Pools: ']), f['Dice Pools'],
+              ...pools.map((pl) => button('Roll ' + pl.label + ' ' + (pl.dice + bonus), () => {
+                roller.setPool(pl.dice + bonus, name + ': ' + pl.label + (bonus ? ' + ' + bonus + ' (Blood Potency)' : ''));
+                roller.scrollIntoView({ block: 'nearest' });
+              }, 'ghost tiny'))]) : null,
+          ]);
+        }),
+      ])),
+    ]);
+  }
+
   // ── a sentence for who this is ──
   const traits = (v) => [v.Clan, v.Predator ? v.Predator : null, v.Generation ? v.Generation + 'th Generation' : null].filter(Boolean);
   function sentence(v) {
@@ -585,6 +654,8 @@ window.VtmSheet = (function () {
     const roller = rollerFor(m, o);
     box.appendChild(poolBuilder(m, roller));
     box.appendChild(roller);
+    const pw = powersBlock(m, v, roller, o);
+    if (pw) box.appendChild(pw);
     box.appendChild(el('details', { class: 'sheet-details xp-details' }, [el('summary', {}, ['Experience · ' + xp(m).available + ' available']), xpBlock(m, false)]));
     const history = logOf(m);
     if (history.length) box.appendChild(el('details', { class: 'sheet-details' }, [el('summary', {}, ['This character’s log (' + history.length + ')']),

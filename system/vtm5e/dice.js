@@ -285,16 +285,21 @@ window.VtmDice = (function () {
       if (o.onWillpower) o.onWillpower(n);
       draw();
     }
-    function doRouse() {
-      const r = rouse(state.twoRouse);
+    // a Rouse Check — the roller's own button, or a Discipline power's (for: 'Feral Whispers',
+    // twoDice from the Blood Potency chart's re-roll level)
+    function doRouse(ev, opts2) {
+      const q = opts2 || {};
+      const r = rouse(q.twoDice != null ? q.twoDice : state.twoRouse);
       state.rouse = r;
       state.dice = null;
+      const what = 'Rouse Check' + (q.for ? ' for ' + q.for : '');
       if (r.hungerGain && state.hunger < HUNGER_MAX) {
         state.hunger = Math.min(HUNGER_MAX, state.hunger + r.hungerGain);
-        if (o.onHunger) o.onHunger(state.hunger, 'Rouse Check failed (' + r.faces.join(', ') + ')');
+        if (o.onHunger) o.onHunger(state.hunger, what + ' failed (' + r.faces.join(', ') + ')');
       }
-      if (o.onRoll) o.onRoll(entry({ who: o.who, label: 'Rouse Check', mode: 'rouse', pool: r.faces.length, hunger: 0, dice: r.faces.map((f) => ({ kind: 'regular', face: f })), hungerGain: r.hungerGain, note: state.note.trim() }));
+      if (o.onRoll) o.onRoll(entry({ who: o.who, label: what, mode: 'rouse', pool: r.faces.length, hunger: 0, dice: r.faces.map((f) => ({ kind: 'regular', face: f })), hungerGain: r.hungerGain, note: state.note.trim() }));
       draw();
+      return r;
     }
     const rule = (k) => R.el('a', { class: 'rule-link', href: '#', onclick: (ev) => { ev.preventDefault(); if (o.onRule) o.onRule(RULES[k].id); } }, [RULES[k].name]);
 
@@ -360,6 +365,7 @@ window.VtmDice = (function () {
     box.setPool = (n, label) => { state.pool = n; o.label = label || o.label; state.dice = null; state.rouse = null; draw(); };
     box.setHunger = (n) => { state.hunger = n; draw(); };
     box.hunger = () => state.hunger;
+    box.rouse = (q) => doRouse(null, q);
     // the sheet changed (Blood Potency, say): what the roller offers is read again
     box.refresh = () => { if (!box.contains(document.activeElement)) draw(); };
     draw();
