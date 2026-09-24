@@ -67,8 +67,11 @@ window.VtmSheet = (function () {
     const s = { name: p.name, required: !!p.required, min: p.min, max: p.max };
     if (p.vk === 'ref') {
       const t = p.ref && decl(p.ref.name);
-      s.kind = t && t.enum ? 'enum' : 'text';
+      // a vocabulary (an ENUM type) is picked from its names; a reference to a printed entity
+      // (the Advantage Line's Advantage: a Loresheet Level) is an id, set by its own picker
+      s.kind = t && t.enum ? 'enum' : t ? 'entity' : 'text';
       s.options = t && t.enum ? t.enum.slice() : null;
+      s.refType = p.ref ? p.ref.name : null;
     } else if (p.vk === 'list' && p.of && p.of !== 'STRING') {
       s.kind = 'rows';
       s.of = p.of;
@@ -229,13 +232,39 @@ window.VtmSheet = (function () {
     return D.powers().filter((r) => r.discipline === discipline && (D.levelNumber(r) == null || D.levelNumber(r) <= (dotsN || 0)));
   }
 
+  // ── Loresheet levels on the sheet: each an Advantage of its own (corpus BASE 0.5.3) ──
+  // Offered only from the loresheets the Storyteller has made available (campaign state
+  // `loresheets`; none by default, and none where there is no campaign — the public creator).
+  const available = () => new Set(((window.VttState && window.VttState.state) || {}).loresheets || []);
+  const loresheetLevels = () => { const on = available(); return D.records().filter((r) => r.kind === 'loresheet level' && on.has(r.loresheet)); };
+  // [Name] [Dots] [Loresheet] [Text] — the text from the level's own entity, its book loaded on demand
+  function levelLine(row, onremove) {
+    const r = D.records().find((x) => x.id === row.Advantage) || {};
+    const text = el('div', { class: 'lore-text small' }, [el('span', { class: 'muted' }, ['…'])]);
+    D.fetch(row.Advantage).then((e) => { text.innerHTML = ''; text.appendChild(e && e.desc ? window.VtmEntity.prose(e.desc) : el('span', { class: 'muted' }, ['(its text is not in the books loaded)'])); });
+    return el('div', { class: 'lore-level' }, [
+      el('div', { class: 'chiprow tight' }, [
+        el('b', {}, [row.Name || r.name || '']),
+        el('span', { class: 'lore-dots' }, ['●'.repeat(+row.Dots || r.rating || 0)]),
+        el('button', { class: 'ref small', type: 'button', onclick: () => (window.VtmOpenEntity || (() => {}))(r.loresheet) }, [r.under || 'Loresheet']),
+        onremove ? button('remove', onremove, 'ghost tiny') : null,
+      ]),
+      text,
+    ]);
+  }
+
   function rowsEditor(s, rows, onchange) {
     const box = el('div', { class: 'rows' });
     const draw = () => {
       box.innerHTML = '';
       rows.forEach((row, i) => {
+        if (s.of === 'Advantage Line' && row.Advantage) {
+          box.appendChild(levelLine(row, () => { rows.splice(i, 1); onchange(rows.slice()); draw(); }));
+          return;
+        }
         const line = el('div', { class: 'row-line' });
         s.fields.forEach((f) => {
+          if (f.kind === 'entity') return;           // set by its own picker, below
           const set = (val) => { rows[i] = Object.assign({}, rows[i], { [f.name]: val }); onchange(rows.slice()); if (f.kind === 'enum' || f.kind === 'dots') draw(); };
           if (f.kind === 'lines' && s.of === 'Discipline Rating') {
             const have = row[f.name] || [];
@@ -258,6 +287,20 @@ window.VtmSheet = (function () {
         box.appendChild(line);
       });
       box.appendChild(button('+ ' + s.of, () => { const r = {}; s.fields.forEach((f) => { r[f.name] = f.kind === 'lines' ? [] : f.kind === 'dots' ? (f.min || 0) : f.kind === 'flag' ? f.default : null; }); rows.push(r); onchange(rows.slice()); draw(); }, 'ghost tiny'));
+      if (s.of === 'Advantage Line') {
+        const taken = new Set(rows.map((r) => r.Advantage).filter(Boolean));
+        const levels = loresheetLevels().filter((r) => !taken.has(r.id));
+        if (levels.length) {
+          const pick = el('select', { class: 'scope lore-pick' }, [el('option', { value: '' }, ['+ a loresheet level…'])].concat(levels.map((r) => el('option', { value: r.id }, [r.under + ' · ' + '●'.repeat(r.rating || 0) + ' ' + r.name]))));
+          pick.addEventListener('change', () => {
+            const r = levels.find((x) => x.id === pick.value);
+            if (!r) return;
+            rows.push({ Name: r.name, Dots: r.rating, Flaw: false, Advantage: r.id });
+            onchange(rows.slice()); draw();
+          });
+          box.appendChild(pick);
+        } else box.appendChild(el('div', { class: 'muted small' }, [available().size ? 'Every level of the available loresheets is taken.' : 'No loresheets are available — the Storyteller makes them available.']));
+      }
     };
     draw();
     return box;
@@ -324,13 +367,14 @@ window.VtmSheet = (function () {
   }
 
   function readRows(s, rows) {
-    return el('ul', { class: 'items' }, (rows || []).map((r) => el('li', {}, [s.fields.map((f) => {
+    return el('ul', { class: 'items' }, (rows || []).map((r) => (s.of === 'Advantage Line' && r.Advantage ? el('li', {}, [levelLine(r, null)]) : el('li', {}, [s.fields.map((f) => {
+      if (f.kind === 'entity') return null;
       const x = r[f.name];
       if (x == null || x === '' || (Array.isArray(x) && !x.length)) return null;
       if (f.kind === 'dots') return ' ' + '●'.repeat(x) + '○'.repeat(Math.max(0, (f.max || 5) - x));
       if (f.kind === 'flag') return x ? ' (' + f.name + ')' : null;
       return (Array.isArray(x) ? ' — ' + x.join(', ') : ' ' + x);
-    }).filter(Boolean).join('').trim()])));
+    }).filter(Boolean).join('').trim()]))));
   }
 
   // ── a character file ──

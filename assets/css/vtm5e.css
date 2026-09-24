@@ -328,3 +328,11 @@ ul.checks li.warn::before { content: '!'; color: var(--blood-2); font-weight: 70
 .power-disc-h { font-family: var(--font-ui); letter-spacing: .06em; text-transform: uppercase; font-size: 12px; color: var(--blood-2); }
 .power-card { border-left: 3px solid var(--night-3); padding: 4px 0 4px 8px; margin: 4px 0; }
 .power-card .btn.tiny, .power-card button.tiny { margin-left: 6px; }
+/* loresheet levels on the sheet: [Name] [Dots] [Loresheet] [Text]; the GM's Loresheets panel */
+.lore-level { border-left: 3px solid var(--blood-2); padding: 3px 0 3px 8px; margin: 4px 0; }
+.lore-dots { color: var(--blood-2); letter-spacing: .1em; }
+.lore-text p { margin: 2px 0 4px; }
+.lore-pick { margin-top: 6px; max-width: 100%; }
+.lore-book { margin: 8px 0; }
+.lore-row { display: block; padding: 1px 0; }
+.lore-row.on { font-weight: 600; }

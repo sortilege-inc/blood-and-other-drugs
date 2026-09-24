@@ -142,6 +142,14 @@ def main():
         got = [r["id"] for r in records if r["kind"] == kind]
         check("%s records = scanned DEFs of that shape (count)" % kind, len(got), len(want))
         check("%s records = scanned DEFs of that shape (same ids)" % kind, sorted(got) == sorted(want), True)
+    # ── records by declared type (BASE 0.5.3), against the corpus's own EXTENDS lines ──
+    for kind, word in (("loresheet", "Loresheet"), ("loresheet level", "Loresheet Level")):
+        check("%s records = DEFs that EXTEND ^\"%s\"" % (kind, word), sum(1 for r in records if r["kind"] == kind),
+              grep_count(corpus, r'^\s*EXTENDS #\S+ \^"%s"$' % word))
+    levels = [r for r in records if r["kind"] == "loresheet level"]
+    check("every loresheet level names its loresheet, and is one of its levels",
+          all(r["loresheet"] in ents and r["id"] in next((x.get("levels", []) for x in records if x["id"] == r["loresheet"]), []) for r in levels), True)
+    check("every loresheet level carries its dots (1-5)", all(isinstance(r.get("rating"), int) and 1 <= r["rating"] <= 5 for r in levels), True)
     by_id = {r["id"]: r for r in records}
     check("every record's name is its entity's", all(ents[r["id"]]["name"] == r["name"] for r in records), True)
 

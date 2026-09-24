@@ -91,6 +91,9 @@ SHAPES = [
      or ("Attributes" in ps and "Skills" in ps)),
 ]
 SHAPE_NAMES = [s[0] for s in SHAPES]
+# Records by DECLARED type (BASE 0.5.3): a DEF that EXTENDS ^"Loresheet" is a loresheet, one that
+# EXTENDS ^"Loresheet Level" (an Advantage) is one of its levels. The ids are read from BASE.
+TYPED_KINDS = {"Loresheet": "loresheet", "Loresheet Level": "loresheet level"}
 # "Level 3", or a label that names what the level holds ("Level 4 Powers", "Level 3
 # Ceremonies", "Level 5 Formula" -- Tattered Facade, and the rituals appendices)
 LEVEL_HEADING = re.compile(r"^Level \d+( (Powers?|Rituals?|Ceremony|Ceremonies|Formulae?))?$")
@@ -419,6 +422,8 @@ def scalar(e, name):
 
 
 def records_of(entities, orders, disciplines):
+    typed = {e["id"]: TYPED_KINDS[e["name"]] for e in entities.values()
+             if e.get("book") == "base" and e["name"] in TYPED_KINDS}
     out = []
     for fn, order in orders:
         level = None
@@ -430,6 +435,18 @@ def records_of(entities, orders, disciplines):
             opens = next((d for d in disciplines if e["name"] == d or e["name"].startswith(d + " ")), None)
             if opens:                    # "Oblivion", "Oblivion Ceremonies", "Thin-Blood Alchemy Formulae"
                 discipline, level = opens, None
+            if e.get("typeHash") in typed:
+                kind = typed[e["typeHash"]]
+                rec = {"id": h, "name": e["name"], "book": e["book"], "kind": kind,
+                       "under": entities[e["parent"]]["name"] if e["parent"] else None}
+                if kind == "loresheet level":
+                    # its dots, and the loresheet it is printed under
+                    rec["rating"] = scalar(e, "Rating")
+                    rec["loresheet"] = e["parent"]
+                else:
+                    rec["levels"] = [c for c in e.get("children", []) if entities.get(c, {}).get("typeHash") in typed]
+                out.append(rec)
+                continue
             ps = prop_names(e)
             kind = next((k for k, test in SHAPES if test(ps)), None)
             if not kind:

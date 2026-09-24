@@ -14,6 +14,8 @@
 //                                                never shared
 //   party[].versions                             archived copies of a character
 //                                                (archivePartyVersion, the player's own)
+//   loresheets [ids]                              the loresheets the Storyteller made available
+//                                                (setLoresheets; shared, the Storyteller's to set)
 //   A party member's live state is the engine's setPartyLive: { hunger } until the corpus
 //   declares the character (PLAN.md D1).
 (function (root, factory) {
@@ -48,6 +50,13 @@
     if (!m.versions) m.versions = [];
     if (!m.versions.some((x) => x.id === version.id)) m.versions.push(version);
   }, (s, me, a) => a[0] === me);
+
+  // The loresheets the Storyteller has made available to this chronicle's characters, by
+  // loresheet id (records.js kind 'loresheet'). "Availability … explicitly granted by the GM …
+  // By default none are" (owner). Shared: a player's sheet offers only these; only the
+  // Storyteller may set it.
+  Ops.shared(['loresheets']);
+  Ops.register('setLoresheets', (s, ids) => { s.loresheets = (ids || []).filter((x) => typeof x === 'string'); });
 
   // The Storyteller's own pack state (the family's I9): free notes, the arc, open threads. Never
   // shared: no player may send them, none is in a player's view, and none is forwarded.

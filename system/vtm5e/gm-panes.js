@@ -147,6 +147,43 @@
     draw();
   }
 
+  // ── Loresheets: which the chronicle's characters may take ──────────────
+  // Every loresheet in the books (records.js kind 'loresheet', declared by the corpus's BASE),
+  // by book; the Storyteller marks the ones available. None are, until marked.
+  function renderLoresheets(container, ctx) {
+    let q = '';
+    const draw = () => {
+      container.innerHTML = '';
+      const on = new Set(S().loresheets || []);
+      const all = D.records().filter((r) => r.kind === 'loresheet');
+      // a checkbox keeps focus, and a pane never redraws under focus: draw here
+      const set = (id, yes) => { const l = (S().loresheets || []).filter((x) => x !== id); if (yes) l.push(id); State.commit('setLoresheets', [l]); draw(); };
+      container.appendChild(el('h4', {}, ['Loresheets', el('span', { class: 'muted small' }, [' · ' + on.size + ' of ' + all.length + ' available to the characters'])]));
+      const search = el('input', { type: 'search', class: 'search', placeholder: 'Find a loresheet…', value: q });
+      search.addEventListener('input', debounce(() => { q = search.value.trim().toLowerCase(); draw(); search.focus(); }, 200));
+      container.appendChild(search);
+      if (on.size) container.appendChild(el('div', { class: 'chiprow tight' }, [button('None available', () => State.commit('setLoresheets', [[]]), 'ghost tiny')]));
+      const byBook = {};
+      all.filter((r) => !q || r.name.toLowerCase().indexOf(q) !== -1).forEach((r) => (byBook[r.book] = byBook[r.book] || []).push(r));
+      D.books().forEach((b) => {
+        const rs = byBook[b.id];
+        if (!rs) return;
+        container.appendChild(el('div', { class: 'lore-book' }, [
+          el('div', { class: 'prop-k' }, [b.label, el('span', { class: 'muted' }, [' · ' + rs.filter((r) => on.has(r.id)).length + ' of ' + rs.length])]),
+          ...rs.map((r) => el('label', { class: 'lore-row' + (on.has(r.id) ? ' on' : '') }, [
+            el('input', { type: 'checkbox', checked: on.has(r.id) || null, onchange: (ev) => set(r.id, ev.target.checked) }),
+            ' ', el('button', { class: 'ref', type: 'button', onclick: (ev) => { ev.preventDefault(); Panels.select({ kind: 'entity', id: r.id }); } }, [r.name]),
+            el('span', { class: 'muted small' }, [' · ' + (r.levels || []).length + ' levels']),
+          ])),
+        ]));
+      });
+    };
+    ctx.on('state:changed', () => { if (!editing(container)) draw(); });
+    ctx.on('state:remote', () => { if (!editing(container)) draw(); });
+    draw();
+  }
+
+  Panels.register('loresheets', { label: 'Loresheets', render: renderLoresheets });
   Panels.register('notes', { label: 'Notes', render: renderNotes });
   Panels.register('scenes', { label: 'Scenes', render: renderScenes });
   Panels.register('threads', { label: 'Threads · NPCs', render: renderThreads });
