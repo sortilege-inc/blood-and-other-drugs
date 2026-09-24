@@ -105,23 +105,10 @@ window.VtmCreator = (function () {
   }
 
   // ── the book behind the picks ──
-  // A clan is a heading in a Clans chapter (core, Players Guide) that prints a "Bane" under it.
-  function clans() {
-    const out = [];
-    D.all(['core', 'players-guide']).forEach((e) => {
-      if (!/clans|caitiff|thin-blooded/.test(e.file)) return;
-      const kids = D.children(e.id);
-      if (kids.some((k) => k.name === 'Bane') && !out.some((c) => c.name === e.name)) out.push({ name: e.name, entity: e, book: e.book });
-    });
-    return out;
-  }
+  // clans and their in-clan Disciplines: VtmData's (shared with Advancement)
+  const clans = () => D.clans();
   const clanNamed = (name) => clans().find((c) => c.name === name) || null;
-  function clanDisciplines(name) {
-    const c = clanNamed(name);
-    const d = c && D.children(c.entity.id).find((k) => k.name === 'Disciplines');
-    const names = d ? D.children(d.id).map((k) => k.name) : [];
-    return names.filter((n) => D.disciplines().indexOf(n) !== -1);
-  }
+  const clanDisciplines = (name) => D.clanDisciplines(name);
   function clanBane(name) {
     const c = clanNamed(name);
     const b = c && D.children(c.entity.id).find((k) => k.name === 'Bane');

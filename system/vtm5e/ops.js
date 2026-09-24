@@ -53,6 +53,18 @@
     if (!m.versions.some((x) => x.id === version.id)) m.versions.push(version);
   }, (s, me, a) => a[0] === me);
 
+  // Advancement (system/vtm5e/advance.js): the character as it was kept as a version, the advanced
+  // one made current, and the experience it cost — one op, so the room never holds half of it. A
+  // player may advance their own character.
+  Ops.register('advancePartyMember', (s, id, adv) => {
+    const m = (s.party || []).find((x) => x.id === id);
+    if (!m || !adv || !adv.character || !adv.version || !adv.version.id) return;
+    if (!m.versions) m.versions = [];
+    if (!m.versions.some((x) => x.id === adv.version.id)) m.versions.push(adv.version);
+    m.character = adv.character;
+    if (adv.live) m.live = Object.assign({}, m.live || {}, adv.live);
+  }, (s, me, a) => a[0] === me);
+
   // The loresheets the Storyteller has made available to this chronicle's characters, by
   // loresheet id (records.js kind 'loresheet'). "Availability … explicitly granted by the GM …
   // By default none are" (owner). Shared: a player's sheet offers only these; only the

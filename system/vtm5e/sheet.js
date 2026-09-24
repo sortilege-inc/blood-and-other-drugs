@@ -577,6 +577,8 @@ window.VtmSheet = (function () {
     return el('div', { class: 'xp' }, [
       el('div', { class: 'chiprow tight' }, [stat('Total Experience', 'xpEarned', x.earned), stat('Spent', 'xpSpent', x.spent), stat('Available', null, x.available)]),
       x.ledger.length ? el('ul', { class: 'items xp-ledger' }, x.ledger.map((e) => el('li', {}, [el('b', { class: 'num' }, [String(e.cost)]), ' ', e.what, e.note ? el('em', { class: 'muted' }, [' ' + e.note]) : null, e.when ? el('span', { class: 'muted small' }, [' · ' + e.when]) : null]))) : null,
+      // Advancement: its own page, priced from the core's Trait Costs (system/vtm5e/advance.js)
+      ro || !window.VtmAdvance ? null : el('div', { class: 'chiprow tight' }, [button('Advancement…', () => window.VtmAdvance.open(memberNow(m)), 'tiny'), el('span', { class: 'muted small' }, ['buy dots at the core’s Trait Costs'])]),
       ro ? null : el('div', { class: 'chiprow tight' }, [cost, what, note, button('Spend', () => {
         const n = parseInt(cost.value || '0', 10);
         if (!(n > 0) || !what.value.trim()) return;
