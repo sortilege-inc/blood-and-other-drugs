@@ -1,7 +1,7 @@
 # sortilege-vtt-vtm5e — plan and decision log
 
 A virtual tabletop for **Vampire: The Masquerade 5th Edition**, built on the Titterpig corpus
-`titterpig-dsl-vtm5e/0.5`. Its shape follows `sortilege-vtt-teeth`'s `PLAYBOOK.md` and the
+`titterpig-dsl-vtm5e/0.5`. Its shape follows `PLAYBOOK.md` (in `~/Sortilege/VTT/`, beside the VTT repos) and the
 Troika! build that applied it most recently; both are read-only reference — nothing in either
 repo is modified here. Seventh in the line — Wyldwolf Axis, NOVA Open, City of Winter, TEETH,
 Invisible Sun, Troika!.
