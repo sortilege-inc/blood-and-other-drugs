@@ -8,7 +8,13 @@ window.VttConfig = {
   // The pages, relative to the site root; the gm/ pages carry <base href="../"> so every
   // path stays root-relative.
   pages: { site: './', gm: 'gm/', table: 'gm/vtt.html', play: 'gm/play.html' },
-  // what a fresh browser opens on until a campaign is created or restored
+  // what a fresh browser opens on until a campaign is created or restored.
+  // An instance may add `seed: 'campaign/pack/seed.json'` — a pack whose keys fill what its
+  // campaign has never had (its arc, its threads), once (engine/state.js seed).
+  // An instance may also name the Notes pane's document (system/vtm5e/gm-panes.js):
+  //   notes: { src: 'campaign/docs/state.html', title: '…', class: '…',
+  //            gate: { title: '…', text: '…', enter: 'Enter' } }
+  // a .html src is the instance's own fragment, inserted as it is; anything else reads as Markdown.
   defaultCampaign: { name: 'A new chronicle', modules: ['chronicle'], books: [] },
   // the three panels the GM page opens on (engine/app.js)
   defaultSlots: ['chronicle', 'party', 'inspector'],

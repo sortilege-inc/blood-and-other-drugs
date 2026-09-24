@@ -168,3 +168,16 @@ body.play { display: block; background: var(--night); }
   .play-menu > summary::after { content: '⋯'; font-size: 20px; }
   .play-menu .play-bar { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--night-3); }
 }
+
+/* the Storyteller's panes (system/vtm5e/gm-panes.js) */
+.notes-doc { max-height: 60vh; overflow: auto; }
+.notes-gate { text-align: center; padding: 18px 14px; }
+.notes-gate-title { font-weight: 600; font-size: 1.15em; margin-bottom: 6px; }
+.notes-free, .arc-text, .thread textarea { width: 100%; box-sizing: border-box; }
+.arc-scene { border-left: 3px solid var(--night-3); padding: 4px 0 4px 8px; margin: 6px 0; }
+.arc-scene.played { opacity: .6; border-left-color: var(--good); }
+.arc-title { flex: 1; min-width: 8em; }
+.thread { border-left: 3px solid var(--blood-2); padding: 2px 0 2px 8px; margin: 4px 0; }
+.thread.closed { border-left-color: var(--night-3); opacity: .6; }
+.thread .chiprow input.text { flex: 1; min-width: 8em; }
+.npc-list li { margin: 3px 0; }

@@ -9,6 +9,9 @@
 //                                                scene is whatever the Storyteller writes;
 //                                                done, notes and the current one use the
 //                                                engine's scene ops under moduleId 'chronicle'
+//   gmNotes, arc, threads                        the Storyteller's own pack state (setGmNotes,
+//                                                setArc, setThreads — system/vtm5e/gm-panes.js),
+//                                                never shared
 //   A party member's live state is the engine's setPartyLive: { hunger } until the corpus
 //   declares the character (PLAN.md D1).
 (function (root, factory) {
@@ -34,6 +37,13 @@
     const sc = (s.scenes || []).find((x) => x.id === sceneId);
     if (sc) sc.cast = (ids || []).slice();
   });
+
+  // The Storyteller's own pack state (the family's I9): free notes, the arc, open threads. Never
+  // shared: no player may send them, none is in a player's view, and none is forwarded.
+  const gmOnly = () => null;
+  Ops.register('setGmNotes', (s, text) => { s.gmNotes = String(text || ''); }, null, gmOnly);
+  Ops.register('setArc', (s, list) => { s.arc = (list || []).map((x) => Object.assign({}, x)); }, null, gmOnly);
+  Ops.register('setThreads', (s, list) => { s.threads = (list || []).map((x) => Object.assign({}, x)); }, null, gmOnly);
 
   return Ops;
 });
