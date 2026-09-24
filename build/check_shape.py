@@ -174,6 +174,13 @@ def main():
           sorted(re.findall(r'"([^"]+)"', m.group(1))) if m else None)
     check("every core Discipline heading followed by Characteristics is a declared name",
           sorted({n for i, (h, n, ps, f) in enumerate(core[:-1]) if core[i + 1][1] == "Characteristics" and n != "Characteristics"} - set(index["disciplines"])), [])
+    # every clan (a clans chapter's heading that prints a Bane; core, Players Guide) names three
+    # in-clan Disciplines as headings under its "Disciplines" — as the creator and Advancement read
+    # them (VtmData.clanDisciplines). The Players Guide once held the first as a field (decision 28).
+    kids = lambda e: [ents[c] for c in e.get("children", []) if c in ents]
+    clans = [e for e in ents.values() if e["book"] in ("core", "players-guide") and re.search(r"clans", e.get("file", "")) and any(k["name"] == "Bane" for k in kids(e))]
+    short = sorted({e["name"] for e in clans if len([k for d in kids(e) if d["name"] == "Disciplines" for k in kids(d) if k["name"] in index["disciplines"]]) != 3})
+    check("every clan names three in-clan Disciplines as headings (%d clans)" % len({e["name"] for e in clans}), short, [])
     oblivion = sum(1 for r in records if r.get("discipline") == "Oblivion" and r["kind"] == "power")
     check("Oblivion powers found (Chicago by Night, Cults, Players Guide…) > 0", oblivion > 0, True)
 

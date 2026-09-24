@@ -4,9 +4,9 @@
 // op advancePartyMember (system/vtm5e/ops.js), a player's own character only. XP is never
 // overspent.
 //
-// The prices are the core's Trait Costs table, read from the corpus (the core prints it twice —
-// the Session Zero sidebar, printed 137, and under Sea of Time, printed 151 — and the page takes
-// the one whose rows are whole): "New level x 5" for an Attribute, "New level x 3" a Skill, "3" a
+// The prices are the core's Trait Costs table, read from the corpus ("Trait Costs: Experience",
+// printed 151 — the core prints it twice with the same numbers, and the corpus holds it once,
+// owner ruling 2026-09-24), found by its rows: "New level x 5" for an Attribute, "New level x 3" a Skill, "3" a
 // Specialty, "New level x 5 / 7 / 6" a Discipline in-clan / other / Caitiff, "Ritual level x 3",
 // "Formula level x 3", "3 per dot" an Advantage, "New level x 10" Blood Potency. "“New level” on
 // that table means the level of Trait you want to buy … You cannot skip ahead" (Sea of Time), so

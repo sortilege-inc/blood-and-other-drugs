@@ -232,9 +232,8 @@ window.VtmData = (function () {
   const artUrl = (src) => new URL(src, document.baseURI).href;
 
   // ── clans: a heading in a Clans chapter (core, Players Guide) that prints a "Bane" under it ──
-  // Its in-clan Disciplines are the names under its "Disciplines" heading: headings there, or — in
-  // the Players Guide, where the first of a clan's three led its own paragraph and the corpus
-  // read it as a field — a property of that heading (^"Obfuscate" STRING "…"). Both are read.
+  // Its in-clan Disciplines are the headings under its "Disciplines" heading (check_shape asserts
+  // three for every clan; the Players Guide once held the first as a field — decision 28).
   function clans() {
     const out = [];
     all(['core', 'players-guide']).forEach((e) => {
@@ -246,7 +245,7 @@ window.VtmData = (function () {
   function clanDisciplines(name) {
     const c = clans().find((x) => x.name === name);
     const d = c && children(c.entity.id).find((k) => k.name === 'Disciplines');
-    const names = d ? (d.props || []).map((p) => p.name).concat(children(d.id).map((k) => k.name)) : [];
+    const names = d ? children(d.id).map((k) => k.name) : [];
     const known = disciplines();
     return known.filter((n) => names.indexOf(n) !== -1);   // in the BASE's order
   }
