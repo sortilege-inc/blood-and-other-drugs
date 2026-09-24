@@ -223,7 +223,7 @@ window.VtmDice = (function () {
 
   function roller(opts) {
     const o = Object.assign({ pool: 5, hunger: 1, difficulty: '' }, opts || {});
-    let state = { pool: o.pool, hunger: o.hunger, difficulty: o.difficulty, noHunger: false, twoRouse: false, dice: null, selected: [], rerolled: false, rouse: null, note: '', rolledNoHunger: false, surge: false, surged: 0 };
+    let state = { pool: o.pool, hunger: o.hunger, difficulty: o.difficulty, noHunger: false, twoRouse: false, dice: null, selected: [], rerolled: false, rouse: null, note: '', rolledNoHunger: false, surge: false, surged: 0, lim: {} };
     const box = R.el('div', { class: 'roller' });
 
     function stepper(label, key, min, max) {
@@ -255,7 +255,7 @@ window.VtmDice = (function () {
       // roll of the dice. (Dice added in a Blood Surge remain throughout any Willpower
       // re-rolls.) Characters cannot use a Blood Surge for Willpower or Humanity rolls" — Blood Surge
       state.surged = 0;
-      const sg = state.surge && !state.noHunger && o.surge ? o.surge() : null;
+      const sg = state.surge && !state.noHunger && !state.lim.noSurge && o.surge ? o.surge() : null;
       state.surge = false;
       if (sg && sg.dice > 0) {
         const r = rouse(false);
@@ -316,7 +316,7 @@ window.VtmDice = (function () {
         R.el('label', { class: 'small' }, [R.el('input', { type: 'checkbox', checked: state.twoRouse || null, onchange: (ev) => { state.twoRouse = ev.target.checked; } }), ' two dice, keep the highest']),
         R.el('label', { class: 'small' }, [R.el('input', { type: 'checkbox', checked: state.noHunger || null, onchange: (ev) => { state.noHunger = ev.target.checked; draw(); } }), ' no Hunger dice (a check, a Willpower or a Humanity roll)']),
       ]));
-      const sg = o.surge ? o.surge() : null;
+      const sg = o.surge && !state.lim.noSurge ? o.surge() : null;
       if (sg && sg.dice > 0) {
         box.appendChild(R.el('div', { class: 'chiprow small surge-row' }, [
           R.el('label', { class: 'small' + (state.noHunger ? ' muted' : '') }, [R.el('input', { type: 'checkbox', checked: state.surge || null, disabled: state.noHunger ? 'disabled' : null,
@@ -331,7 +331,7 @@ window.VtmDice = (function () {
         // "Characters may not spend Willpower to re-roll Hunger dice or a tracker roll, such as
         //  Willpower or Humanity." — Willpower; "Characters may not use Willpower to re-roll
         //  checks." — Checks. The no-Hunger roll is exactly those.
-        const canPick = !state.rerolled && !state.rolledNoHunger;
+        const canPick = !state.rerolled && !state.rolledNoHunger && !state.lim.noReroll;
         box.appendChild(R.el('div', { class: 'dice-row' }, state.dice.map((d, i) => dieEl(d, {
           selected: state.selected.indexOf(i) !== -1,
           onclick: canPick && d.kind === 'regular' ? () => {
@@ -367,6 +367,11 @@ window.VtmDice = (function () {
     box.hunger = () => state.hunger;
     box.rouse = (q) => doRouse(null, q);
     box.roll = () => doRoll();
+    // a conflict sets the Difficulty, and a one-roll conflict takes away the re-roll and the surge
+    // ("without Willpower re-rolls or Blood Surges" — One-Roll Conflicts)
+    box.setDifficulty = (n) => { state.difficulty = n == null ? '' : n; draw(); };
+    box.setLimits = (lim) => { state.lim = lim || {}; if (state.lim.noSurge) state.surge = false; draw(); };
+    box.limits = () => state.lim;
     // the sheet changed (Blood Potency, say): what the roller offers is read again
     box.refresh = () => { if (!box.contains(document.activeElement)) draw(); };
     draw();

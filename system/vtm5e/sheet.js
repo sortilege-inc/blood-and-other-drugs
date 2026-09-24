@@ -531,7 +531,8 @@ window.VtmSheet = (function () {
         pool: 4, hunger: hunger(m), who: m.name,
         onRule: o.onRule || window.VtmOpenEntity,
         onHunger: (n, cause) => setHunger({ id, name: m.name }, n, cause),
-        onRoll: (entry) => State().commit('appendLog', [Object.assign(entry, { memberId: id })]),
+        // a roll made while a conflict is on is that conflict's (the one-roll results read it)
+        onRoll: (entry) => State().commit('appendLog', [Object.assign(entry, { memberId: id }, (State().state.conflict ? { conflict: State().state.conflict.id } : {}))]),
         onWillpower: (dice) => spendWillpower({ id, name: m.name }, 'Willpower re-roll of ' + dice + (dice === 1 ? ' die' : ' dice')),
         surge: () => surgeFor({ id }),
       });
@@ -700,6 +701,7 @@ window.VtmSheet = (function () {
     ]), 'play');
     const roller = rollerFor(m, o);
     if (o.player) {
+      if (window.VtmConflict) add(window.VtmConflict.playerBlock(m, v, roller, o), 'conflict');
       add(powersBlock(m, v, roller, o), 'play');
       add(loresheetCards(v), 'play');
       // the table's order (owner, I14): what it is for, the Difficulty, the dice — then the traits
@@ -778,7 +780,8 @@ window.VtmSheet = (function () {
     const rows = (v['Advantages & Flaws'] || []).filter((r) => r.Advantage);
     return rows.length ? el('div', { class: 'lore-cards' }, [el('div', { class: 'prop-k' }, ['Loresheets'])].concat(rows.map((r) => levelLine(r, null)))) : null;
   }
-  const PANES = [['play', 'Play'], ['roll', 'Roll'], ['sheet', 'Sheet']];
+  const PANES = [['play', 'Play'], ['conflict', 'Conflict'], ['roll', 'Roll'], ['sheet', 'Sheet']];
+  const inConflict = {};   // member id → the conflict the last draw had (its tab opens once)
   const paneOf = {};   // member id → the pane showing; kept across the page's redraws
   const shown = {};    // member id → the pane switcher of the sheet on the page now
   function panes(m, box, roller) {
@@ -793,7 +796,12 @@ window.VtmSheet = (function () {
       });
       if (scroll) window.scrollTo(0, 0);
     };
-    PANES.forEach(([p, label]) => nav.appendChild(el('button', { type: 'button', 'data-for': p, onclick: () => {
+    // the Storyteller starts a conflict: its tab appears and opens; it ends: the tab goes, back to Play
+    const c = (State().state || {}).conflict;
+    if (c && inConflict[m.id] !== c.id) paneOf[m.id] = 'conflict';
+    if (!c && paneOf[m.id] === 'conflict') paneOf[m.id] = 'play';
+    inConflict[m.id] = c ? c.id : null;
+    PANES.filter(([p]) => p !== 'conflict' || c).forEach(([p, label]) => nav.appendChild(el('button', { type: 'button', 'data-for': p, onclick: () => {
       if (p === 'roll' && paneOf[m.id] === 'roll' && roller.roll) {
         roller.roll();
         setTimeout(() => { const d = roller.querySelector('.dice-row'); if (d && d.isConnected) d.scrollIntoView({ block: 'center' }); }, 60);

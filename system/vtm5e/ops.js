@@ -58,6 +58,11 @@
   Ops.shared(['loresheets']);
   Ops.register('setLoresheets', (s, ids) => { s.loresheets = (ids || []).filter((x) => typeof x === 'string'); });
 
+  // The conflict the Storyteller has started for the coterie (system/vtm5e/conflict.js): its
+  // variant, turn, modules, a one-roll conflict's Difficulty and track. Shared; the Storyteller's.
+  Ops.shared(['conflict']);
+  Ops.register('setConflict', (s, c) => { s.conflict = c ? JSON.parse(JSON.stringify(c)) : null; });
+
   // The Storyteller's own pack state (the family's I9): free notes, the arc, open threads. Never
   // shared: no player may send them, none is in a player's view, and none is forwarded.
   const gmOnly = () => null;
