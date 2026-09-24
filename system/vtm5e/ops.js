@@ -12,6 +12,8 @@
 //   gmNotes, arc, threads                        the Storyteller's own pack state (setGmNotes,
 //                                                setArc, setThreads — system/vtm5e/gm-panes.js),
 //                                                never shared
+//   party[].versions                             archived copies of a character
+//                                                (archivePartyVersion, the player's own)
 //   A party member's live state is the engine's setPartyLive: { hunger } until the corpus
 //   declares the character (PLAN.md D1).
 (function (root, factory) {
@@ -37,6 +39,15 @@
     const sc = (s.scenes || []).find((x) => x.id === sceneId);
     if (sc) sc.cast = (ids || []).slice();
   });
+
+  // A party member's archived versions (the sheet's version history): a copy of the character
+  // and its trackers, appended, never edited. A player may archive their own character.
+  Ops.register('archivePartyVersion', (s, id, version) => {
+    const m = (s.party || []).find((x) => x.id === id);
+    if (!m || !version || !version.id) return;
+    if (!m.versions) m.versions = [];
+    if (!m.versions.some((x) => x.id === version.id)) m.versions.push(version);
+  }, (s, me, a) => a[0] === me);
 
   // The Storyteller's own pack state (the family's I9): free notes, the arc, open threads. Never
   // shared: no player may send them, none is in a player's view, and none is forwarded.

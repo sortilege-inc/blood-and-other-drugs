@@ -315,3 +315,10 @@ ul.checks li.warn::before { content: '!'; color: var(--blood-2); font-weight: 70
 .roll-for { display: block; width: 100%; max-width: 28em; box-sizing: border-box; margin: 4px 0 8px; }
 .roll-note { font-style: italic; }
 .track-line .roll-who { color: var(--blood-2); }
+/* the record: Experience, versions (V4) */
+.xp-stat { display: inline-flex; align-items: center; gap: 4px; margin-right: 12px; }
+.xp-stat .num { min-width: 1.6em; text-align: center; }
+.xp-ledger li { margin: 2px 0; }
+.archive-banner { border-left: 3px solid var(--blood-2); background: var(--night-3); color: var(--bone); padding: 6px 10px; margin: 6px 0; font-size: 13px; }
+.sheet.archived .tbox { cursor: default; }
+.char-log .roll-line { font-size: 13px; }

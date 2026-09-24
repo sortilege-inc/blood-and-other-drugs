@@ -253,8 +253,11 @@ window.VtmSheet = (function () {
   }
 
   // ── a character file ──
-  function fileOf(values, live) {
-    return { kind: FILE_KIND, v: 2, system: 'vtm5e', templateId: templateId(), name: values.Name || 'Unnamed', values: complete(values), live: live || {} };
+  // extra: { versions, log } — a character's archived versions and its log travel in its file
+  function fileOf(values, live, extra) {
+    const x = extra || {};
+    return { kind: FILE_KIND, v: 2, system: 'vtm5e', templateId: templateId(), name: values.Name || 'Unnamed', values: complete(values), live: live || {},
+      versions: x.versions && x.versions.length ? x.versions : undefined, log: x.log && x.log.length ? x.log : undefined };
   }
   function download(obj, name) {
     const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
@@ -282,7 +285,11 @@ window.VtmSheet = (function () {
     const name = String(values.Name || obj.name || '').trim();
     if (!name) throw new Error((fileName || 'That file') + ' has no character name.');
     values.Name = name;
-    return { id: genId(), templateId: templateId(), name, source: { kind: 'file', name: fileName || null }, character: values, live: Object.assign({ hunger: +values.Hunger || 0 }, obj.live || {}), notes: '' };
+    const m = { id: genId(), templateId: templateId(), name, source: { kind: 'file', name: fileName || null }, character: values, live: Object.assign({ hunger: +values.Hunger || 0 }, obj.live || {}), notes: '' };
+    if (Array.isArray(obj.versions) && obj.versions.length) m.versions = obj.versions;
+    // what the file's log held (earlier sessions): kept with the member, shown before this table's
+    if (Array.isArray(obj.log) && obj.log.length) m.history = obj.log.map((e) => Object.assign({}, e, { memberId: undefined }));
+    return m;
   }
   function newMember(name, player) {
     const n = String(name || '').trim();
@@ -292,7 +299,17 @@ window.VtmSheet = (function () {
     if (player) values.player = String(player).trim();
     return { id: genId(), templateId: templateId(), name: n, source: { kind: 'table' }, character: values, live: { hunger: 0 }, notes: '' };
   }
-  const downloadMember = (m) => download(fileOf(m.character || {}, m.live), m.name);
+  // an archived version on screen withholds the file: the file is always the live character
+  const downloadMember = (m) => {
+    if (isViewingArchive(m)) return window.alert('“' + m.name + '” is showing an archived version. Return to Current to download the character file.');
+    download(fileOf(m.character || {}, m.live, { versions: m.versions || [], log: logOf(m) }), m.name);
+  };
+  // a character's log: what its file brought, then this table's entries for it
+  function logOf(m) {
+    const here = ((State().state || {}).log || []).filter((x) => (x.kind === 'roll' || x.kind === 'track') && x.memberId === m.id);
+    const seen = new Set(here.map((x) => x.at + '|' + x.kind));
+    return (m.history || []).filter((x) => !seen.has(x.at + '|' + x.kind)).concat(here);
+  }
 
   // a member's sheet now: its file's values, overlaid by any edit made in play (live.sheet)
   // (a member held before the ACTOR — v1, decision 12 — carries only {name, player})
@@ -308,12 +325,16 @@ window.VtmSheet = (function () {
   // Every change to a character's trackers is one event in the log, with its cause: the live
   // patch and a { kind: 'track' } entry naming each track's before and after. A player may send
   // both for their own character (setPartyLive, appendLog with their memberId).
-  const TRACK_LABEL = { hunger: 'Hunger', health: 'Health', willpower: 'Willpower', stains: 'Stains', Humanity: 'Humanity' };
+  const TRACK_LABEL = { hunger: 'Hunger', health: 'Health', willpower: 'Willpower', stains: 'Stains', Humanity: 'Humanity', xpEarned: 'Total Experience', xpSpent: 'Spent Experience' };
+  const NOT_TRACKS = ['sheet', 'xpLedger'];
   const trackText = (k, v) => (k === 'health' || k === 'willpower' ? (v && (v.sup || v.agg) ? [v.sup ? v.sup + ' Superficial' : null, v.agg ? v.agg + ' Aggravated' : null].filter(Boolean).join(', ') : 'unmarked') : String(v == null ? 0 : v));
   function change(m, patch, cause) {
     const cur = (live0(m));
-    const changes = Object.keys(patch).filter((k) => k !== 'sheet' && trackText(k, cur[k]) !== trackText(k, patch[k]))
-      .map((k) => [TRACK_LABEL[k] || k, trackText(k, cur[k]), trackText(k, patch[k])]);
+    const now = (State().state.party || []).find((x) => x.id === m.id) || m;
+    // XP held only on the sheet (Total / Spent Experience) is its "before" until play changes it
+    const before = (k) => (cur[k] != null ? cur[k] : k === 'xpEarned' ? xp(now).earned : k === 'xpSpent' ? xp(now).spent : cur[k]);
+    const changes = Object.keys(patch).filter((k) => NOT_TRACKS.indexOf(k) === -1 && trackText(k, before(k)) !== trackText(k, patch[k]))
+      .map((k) => [TRACK_LABEL[k] || k, trackText(k, before(k)), trackText(k, patch[k])]);
     State().commit('setPartyLive', [m.id, patch]);
     if (changes.length) State().commit('appendLog', [{ at: Date.now(), kind: 'track', memberId: m.id, who: m.name || null, changes, cause: cause || null }]);
   }
@@ -401,6 +422,85 @@ window.VtmSheet = (function () {
     change(cur, { willpower: damage(size, live0(cur).willpower || {}, 'sup', 1) }, cause);
   }
 
+  // ── Experience ──
+  // The ACTOR's Total Experience is XP earned and its Spent Experience XP spent; play changes
+  // either (live.xpEarned, live.xpSpent), and a spend adds its cost to spent and a line to the
+  // ledger — cost, what it bought, a note, the date — logged. A printed ^"Experience Ledger"
+  // ("cost · what · note · when", an instance's layer) is the ledger until play adds to it.
+  function xp(m) {
+    const lv = m.live || {};
+    const v = values(m);
+    const earned = lv.xpEarned != null ? +lv.xpEarned : (+v['Total Experience'] || 0);
+    const spent = lv.xpSpent != null ? +lv.xpSpent : (+v['Spent Experience'] || 0);
+    const printed = (v['Experience Ledger'] || []).map((x) => { const q = String(x).split(' · '); return { cost: parseInt(q[0], 10) || 0, what: q[1] || '', note: q[2] || null, when: q[3] || null }; });
+    return { earned, spent, available: earned - spent, ledger: lv.xpLedger || printed };
+  }
+  const memberNow = (m) => (State().state.party || []).find((x) => x.id === m.id) || m;
+  function xpBlock(m, ro) {
+    const x = xp(m);
+    const adj = (key, d) => { const cur = xp(memberNow(m)); change(memberNow(m), { [key]: Math.max(0, (key === 'xpEarned' ? cur.earned : cur.spent) + d) }, key === 'xpEarned' ? 'experience awarded' : 'corrected by hand'); };
+    const cost = el('input', { class: 'text num small', type: 'number', min: 1, placeholder: 'cost' });
+    const what = el('input', { class: 'text small', type: 'text', placeholder: 'on what (Brawl 2 → 3, a Discipline power…)' });
+    const note = el('input', { class: 'text small', type: 'text', placeholder: 'note' });
+    const stat = (label, key, n) => el('span', { class: 'xp-stat' }, [el('span', { class: 'prop-k' }, [label]),
+      ro || !key ? null : button('−', () => adj(key, -1), 'ghost tiny'), el('b', { class: 'num' }, [String(n)]), ro || !key ? null : button('+', () => adj(key, 1), 'ghost tiny')]);
+    return el('div', { class: 'xp' }, [
+      el('div', { class: 'chiprow tight' }, [stat('Total Experience', 'xpEarned', x.earned), stat('Spent', 'xpSpent', x.spent), stat('Available', null, x.available)]),
+      x.ledger.length ? el('ul', { class: 'items xp-ledger' }, x.ledger.map((e) => el('li', {}, [el('b', { class: 'num' }, [String(e.cost)]), ' ', e.what, e.note ? el('em', { class: 'muted' }, [' ' + e.note]) : null, e.when ? el('span', { class: 'muted small' }, [' · ' + e.when]) : null]))) : null,
+      ro ? null : el('div', { class: 'chiprow tight' }, [cost, what, note, button('Spend', () => {
+        const n = parseInt(cost.value || '0', 10);
+        if (!(n > 0) || !what.value.trim()) return;
+        const mm = memberNow(m);
+        const cur = xp(mm);
+        const line = { cost: n, what: what.value.trim(), note: note.value.trim() || null, when: new Date().toISOString().slice(0, 10) };
+        change(mm, { xpLedger: cur.ledger.concat([line]), xpSpent: cur.spent + n }, 'spent on ' + line.what + (line.note ? ' (' + line.note + ')' : ''));
+      }, 'ghost tiny')]),
+    ]);
+  }
+
+  // ── Versions ──
+  // An archived copy of the character and its trackers, read-only; the picker shows one in place
+  // of the live sheet (a view in this window — the member does not change). Archiving is an op
+  // (system/vtm5e/ops.js archivePartyVersion), so the room keeps it with the member.
+  const viewing = {};
+  const versionsOf = (m) => m.versions || [];
+  const isViewingArchive = (m) => !!viewing[m.id] && versionsOf(m).some((x) => x.id === viewing[m.id]);
+  function archive(m) {
+    const mm = memberNow(m);
+    const label = window.prompt('Name this version (it is kept read-only):', 'Version ' + (versionsOf(mm).length + 1));
+    if (!label) return;
+    const snap = JSON.parse(JSON.stringify({ character: mm.character || {}, live: mm.live || {} }));
+    State().commit('archivePartyVersion', [mm.id, { id: State().genId('v'), label, date: new Date().toISOString().slice(0, 10), character: snap.character, live: snap.live }]);
+    State().commit('appendLog', [{ at: Date.now(), kind: 'track', memberId: mm.id, who: mm.name, changes: [], cause: 'archived this version as “' + label + '”' }]);
+  }
+  const redrawAll = () => window.VttBus.emit('state:remote', { view: true }, { local: true });
+  function versionPicker(m) {
+    const vs = versionsOf(m);
+    const sel = el('select', { class: 'scope tiny', title: 'The live sheet, or an archived version (read-only)' },
+      [el('option', { value: '' }, ['Current'])].concat(vs.map((x) => el('option', { value: x.id, selected: viewing[m.id] === x.id || null }, [x.label + (x.date ? ' · ' + x.date : '')]))));
+    sel.addEventListener('change', () => { viewing[m.id] = sel.value || null; redrawAll(); });
+    return el('div', { class: 'chiprow tight version-pick' }, [vs.length ? sel : null, button('Archive this version…', () => archive(m), 'ghost tiny')]);
+  }
+  function archived(m, o) {
+    const ver = versionsOf(m).find((x) => x.id === viewing[m.id]);
+    const am = { id: m.id, name: m.name, character: ver.character, live: ver.live || {} };
+    const v = values(am);
+    const lv = am.live;
+    const box = el('div', { class: 'sheet live archived' });
+    box.appendChild(el('div', { class: 'sheet-head' }, [el('h2', { class: 'chapter-h' }, [m.name]), el('div', { class: 'entity-sub' }, [memberSentence(am)])]));
+    box.appendChild(versionPicker(m));
+    box.appendChild(el('div', { class: 'archive-banner' }, ['Viewing “' + ver.label + '”' + (ver.date ? ' (' + ver.date + ')' : '') + ' — archived, read-only. Its file waits until you return to Current.']));
+    const h = +v.Humanity || 0;
+    box.appendChild(el('div', { class: 'trackers' }, [
+      el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Health']), tracker(+v.Health || derived(v).Health, lv.health || {}, null)]),
+      el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Willpower']), tracker(+v.Willpower || derived(v).Willpower, lv.willpower || {}, null)]),
+      el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Humanity']), humanityTrack(h, +lv.stains || 0, null)]),
+    ]));
+    box.appendChild(xpBlock(am, true));
+    box.appendChild(el('details', { class: 'sheet-details', open: o.player ? 'open' : null }, [el('summary', {}, ['The sheet']), render(v, { edit: null })]));
+    return box;
+  }
+
   // Build a pool from the sheet: an Attribute plus a Skill or a Discipline.
   function poolBuilder(m, roller) {
     const v = values(m);
@@ -438,6 +538,7 @@ window.VtmSheet = (function () {
   // opts: { player, onRule }
   function live(m, opts) {
     const o = opts || {};
+    if (isViewingArchive(m)) return archived(m, o);
     const v = values(m);
     const lv = m.live || {};
     const box = el('div', { class: 'sheet live' });
@@ -464,9 +565,14 @@ window.VtmSheet = (function () {
         }, 'ghost tiny') : null]),
       el('div', { class: 'muted small' }, ['Click a box: empty → ', MARK.sup, ' Superficial → ', MARK.agg, ' Aggravated. ', ruleLink(RULES.tracking, 'Tracking Damage'), ' · ', ruleLink(RULES.impairment, 'Impairment'), ' · ', ruleLink(RULES.stains, 'Stains'), ' · ', ruleLink(RULES.remorse, 'Remorse')]),
     ]));
+    box.appendChild(versionPicker(m));
     const roller = rollerFor(m, o);
     box.appendChild(poolBuilder(m, roller));
     box.appendChild(roller);
+    box.appendChild(el('details', { class: 'sheet-details xp-details' }, [el('summary', {}, ['Experience · ' + xp(m).available + ' available']), xpBlock(m, false)]));
+    const history = logOf(m);
+    if (history.length) box.appendChild(el('details', { class: 'sheet-details' }, [el('summary', {}, ['This character’s log (' + history.length + ')']),
+      el('div', { class: 'char-log' }, history.slice().reverse().map((x) => (x.kind === 'roll' ? Dice.rollLine(x, o.onRule || window.VtmOpenEntity) : trackLine(x))))]));
     box.appendChild(el('details', { class: 'sheet-details', open: o.player ? 'open' : null }, [
       el('summary', {}, ['The sheet']),
       render(v, { edit: o.player || o.gmEdit !== false ? (nv) => updateValues(m, nv) : null }),
@@ -491,6 +597,7 @@ window.VtmSheet = (function () {
     ACTOR, BOOKS, FILE_KIND, OLD_TEMPLATE_ID, HEALTH_FROM, WILLPOWER_FROM, RULES,
     spec, field, blank, complete, attributes, skills, derived, potencyRow, groupOf, sentence, render,
     fileOf, download, readMember, newMember, downloadMember, values, hunger, setHunger, change, damage, spendWillpower, trackLine,
+    xp, logOf, isViewingArchive, versionsOf,
     memberSentence, live, powersFor, templateId,
   };
 })();
