@@ -119,6 +119,18 @@ window.VtmSheet = (function () {
     return row ? { columns: table.columns, row } : null;
   }
 
+  // A Blood Surge's dice for this character: the chart's Blood Surge cell for their Blood Potency
+  // ("Add 2 dice"), read, never restated. null when the chart has no such row.
+  function surgeFor(m) {
+    const v = values(memberNow(m));
+    const pr = potencyRow(v['Blood Potency'] || 0);
+    if (!pr) return null;
+    const k = pr.columns.findIndex((c) => /blood surge/i.test(c));
+    const cell = k >= 0 ? String(pr.row[k] || '') : '';
+    const n = /Add\s+(\d+)\s+di(?:e|ce)/i.exec(cell);
+    return n ? { dice: +n[1], text: cell } : null;
+  }
+
   // ── a sentence for who this is ──
   const traits = (v) => [v.Clan, v.Predator ? v.Predator : null, v.Generation ? v.Generation + 'th Generation' : null].filter(Boolean);
   function sentence(v) {
@@ -408,8 +420,12 @@ window.VtmSheet = (function () {
         onHunger: (n, cause) => setHunger({ id, name: m.name }, n, cause),
         onRoll: (entry) => State().commit('appendLog', [Object.assign(entry, { memberId: id })]),
         onWillpower: (dice) => spendWillpower({ id, name: m.name }, 'Willpower re-roll of ' + dice + (dice === 1 ? ' die' : ' dice')),
+        surge: () => surgeFor({ id }),
       });
-    } else if (r.hunger() !== hunger(m)) r.setHunger(hunger(m));
+    } else {
+      if (r.hunger() !== hunger(m)) r.setHunger(hunger(m));
+      else r.refresh();
+    }
     return r;
   }
 
@@ -597,7 +613,7 @@ window.VtmSheet = (function () {
     ACTOR, BOOKS, FILE_KIND, OLD_TEMPLATE_ID, HEALTH_FROM, WILLPOWER_FROM, RULES,
     spec, field, blank, complete, attributes, skills, derived, potencyRow, groupOf, sentence, render,
     fileOf, download, readMember, newMember, downloadMember, values, hunger, setHunger, change, damage, spendWillpower, trackLine,
-    xp, logOf, isViewingArchive, versionsOf,
+    xp, logOf, isViewingArchive, versionsOf, surgeFor, potencyRow,
     memberSentence, live, powersFor, templateId,
   };
 })();

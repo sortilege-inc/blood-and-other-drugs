@@ -22,6 +22,7 @@ window.VtmDice = (function () {
     margin: { id: '#v97HP5FymeoRpSUz0kTLUoK', name: 'Margin' },
     checks: { id: '#v10w0gdVHbJ63tG0munfJOC', name: 'Checks' },
     rouse: { id: '#vvuLXMTKNtUlmyl4Aebtg2H', name: 'Rousing the Blood' },
+    bloodSurge: { id: '#vlsG1r0BIHle5ztAtncW8DF', name: 'Blood Surge' },
   };
 
   // "every individual die result of 6 or higher is a *success*, including a result of 10"
@@ -213,11 +214,16 @@ window.VtmDice = (function () {
 
   // ── the roller: pool, Hunger, Difficulty, re-roll, Rouse ───────────
   // opts: { pool, hunger, difficulty, label, who, onRoll(entry), onRule(id), onHunger(n, cause),
-  //         onWillpower(dice) } — onWillpower pays a re-roll's point for a character (their sheet
-  //         marks it); a roll for no one (the Storyteller's, the site's) pays nothing
+  //         onWillpower(dice), surge() } — onWillpower pays a re-roll's point for a character (their
+  //         sheet marks it); a roll for no one (the Storyteller's, the site's) pays nothing. surge()
+  //         gives the character's Blood Surge dice ({ dice, text } from the Blood Potency chart), or
+  //         null; the roller then offers a Blood Surge
+  // a roll's label with its Blood Surge: "Strength + Brawl + Blood Surge (2)", or "Blood Surge (2)"
+  const withSurge = (label, n) => (n ? (label ? label + ' + ' : '') + 'Blood Surge (' + n + ')' : label || null);
+
   function roller(opts) {
     const o = Object.assign({ pool: 5, hunger: 1, difficulty: '' }, opts || {});
-    let state = { pool: o.pool, hunger: o.hunger, difficulty: o.difficulty, noHunger: false, twoRouse: false, dice: null, selected: [], rerolled: false, rouse: null, note: '', rolledNoHunger: false };
+    let state = { pool: o.pool, hunger: o.hunger, difficulty: o.difficulty, noHunger: false, twoRouse: false, dice: null, selected: [], rerolled: false, rouse: null, note: '', rolledNoHunger: false, surge: false, surged: 0 };
     const box = R.el('div', { class: 'roller' });
 
     function stepper(label, key, min, max) {
@@ -244,12 +250,28 @@ window.VtmDice = (function () {
       ]);
     }
     function doRoll() {
-      state.dice = rollPool(state.pool, state.hunger, state.noHunger);
+      // A Blood Surge: "the player can add a number of dice to a dice pool incorporating an
+      // Attribute … A Blood Surge requires a Rouse Check … Blood Surge applies only to a single
+      // roll of the dice. (Dice added in a Blood Surge remain throughout any Willpower
+      // re-rolls.) Characters cannot use a Blood Surge for Willpower or Humanity rolls" — Blood Surge
+      state.surged = 0;
+      const sg = state.surge && !state.noHunger && o.surge ? o.surge() : null;
+      state.surge = false;
+      if (sg && sg.dice > 0) {
+        const r = rouse(false);
+        if (r.hungerGain && state.hunger < HUNGER_MAX) {
+          state.hunger = Math.min(HUNGER_MAX, state.hunger + r.hungerGain);
+          if (o.onHunger) o.onHunger(state.hunger, 'Rouse Check for a Blood Surge failed (' + r.faces.join(', ') + ')');
+        }
+        if (o.onRoll) o.onRoll(entry({ who: o.who, label: 'Rouse Check · Blood Surge', mode: 'rouse', pool: 1, hunger: 0, dice: r.faces.map((f) => ({ kind: 'regular', face: f })), hungerGain: r.hungerGain }));
+        state.surged = sg.dice;
+      }
+      state.dice = rollPool(state.pool + state.surged, state.hunger, state.noHunger);
       state.selected = [];
       state.rerolled = false;
       state.rouse = null;
       state.rolledNoHunger = state.noHunger;
-      if (o.onRoll) o.onRoll(entry({ who: o.who, label: o.label, pool: state.pool, hunger: state.noHunger ? 0 : state.hunger, difficulty: state.difficulty === '' ? null : state.difficulty, dice: state.dice, note: state.note.trim() }));
+      if (o.onRoll) o.onRoll(entry({ who: o.who, label: withSurge(o.label, state.surged), pool: state.pool + state.surged, hunger: state.noHunger ? 0 : state.hunger, difficulty: state.difficulty === '' ? null : state.difficulty, dice: state.dice, note: state.note.trim() }));
       draw();
     }
     function doReroll() {
@@ -257,7 +279,7 @@ window.VtmDice = (function () {
       state.dice = reroll(state.dice, state.selected);
       state.selected = [];
       state.rerolled = true;
-      if (o.onRoll) o.onRoll(entry({ who: o.who, label: o.label, pool: state.pool, hunger: state.noHunger ? 0 : state.hunger, difficulty: state.difficulty === '' ? null : state.difficulty, dice: state.dice, willpower: true, note: state.note.trim() }));
+      if (o.onRoll) o.onRoll(entry({ who: o.who, label: withSurge(o.label, state.surged), pool: state.pool + state.surged, hunger: state.noHunger ? 0 : state.hunger, difficulty: state.difficulty === '' ? null : state.difficulty, dice: state.dice, willpower: true, note: state.note.trim() }));
       // "A spent point of Willpower counts as having sustained a level of Superficial damage to
       //  Willpower (see p. 126) and is marked as such." — Willpower
       if (o.onWillpower) o.onWillpower(n);
@@ -284,11 +306,20 @@ window.VtmDice = (function () {
         stepper('Difficulty', 'difficulty', 0, 15),
       ]));
       box.appendChild(R.el('div', { class: 'chiprow' }, [
-        R.el('button', { type: 'button', class: 'btn roll-btn', onclick: doRoll }, ['Roll ' + state.pool + (state.noHunger ? '' : ' · ' + Math.min(state.pool, state.hunger) + ' Hunger')]),
+        R.el('button', { type: 'button', class: 'btn roll-btn', onclick: doRoll }, ['Roll ' + state.pool + (state.surge && !state.noHunger && o.surge && o.surge() ? ' + ' + o.surge().dice : '') + (state.noHunger ? '' : ' · ' + Math.min(state.pool, state.hunger) + ' Hunger')]),
         R.el('button', { type: 'button', class: 'btn ghost', onclick: doRouse, title: 'One die; 6 or higher and Hunger holds' }, ['Rouse Check']),
         R.el('label', { class: 'small' }, [R.el('input', { type: 'checkbox', checked: state.twoRouse || null, onchange: (ev) => { state.twoRouse = ev.target.checked; } }), ' two dice, keep the highest']),
         R.el('label', { class: 'small' }, [R.el('input', { type: 'checkbox', checked: state.noHunger || null, onchange: (ev) => { state.noHunger = ev.target.checked; draw(); } }), ' no Hunger dice (a check, a Willpower or a Humanity roll)']),
       ]));
+      const sg = o.surge ? o.surge() : null;
+      if (sg && sg.dice > 0) {
+        box.appendChild(R.el('div', { class: 'chiprow small surge-row' }, [
+          R.el('label', { class: 'small' + (state.noHunger ? ' muted' : '') }, [R.el('input', { type: 'checkbox', checked: state.surge || null, disabled: state.noHunger ? 'disabled' : null,
+            onchange: (ev) => { state.surge = ev.target.checked; draw(); } }), ' Blood Surge: ' + sg.text + ' — a Rouse Check first']),
+          state.noHunger ? R.el('span', { class: 'muted' }, ['(not for a Willpower or Humanity roll)']) : null,
+          rule('bloodSurge'),
+        ]));
+      }
       if (o.onRoll) box.appendChild(R.el('input', { type: 'text', class: 'text small roll-for', placeholder: 'What for? (goes in the log)', value: state.note, oninput: (ev) => { state.note = ev.target.value; } }));
       if (state.dice) {
         const res = evaluate(state.dice, state.difficulty === '' ? null : state.difficulty);
@@ -329,6 +360,8 @@ window.VtmDice = (function () {
     box.setPool = (n, label) => { state.pool = n; o.label = label || o.label; state.dice = null; state.rouse = null; draw(); };
     box.setHunger = (n) => { state.hunger = n; draw(); };
     box.hunger = () => state.hunger;
+    // the sheet changed (Blood Potency, say): what the roller offers is read again
+    box.refresh = () => { if (!box.contains(document.activeElement)) draw(); };
     draw();
     return box;
   }

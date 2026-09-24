@@ -254,6 +254,7 @@
         onHunger: m ? (n, cause) => Sheet.setHunger(m, n, cause) : null,
         onRoll: (entry) => log(m ? Object.assign(entry, { memberId: m.id }) : entry),
         onWillpower: m ? (dice) => Sheet.spendWillpower(m, 'Willpower re-roll of ' + dice + (dice === 1 ? ' die' : ' dice')) : null,
+        surge: m ? () => Sheet.surgeFor(m) : null,
         onRule: window.VtmOpenEntity,
       }));
     };
