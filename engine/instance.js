@@ -9,7 +9,7 @@
 //       data:  ['campaign/data/index.js'],             // after data/records.js — every page
 //       site:  ['campaign/site/site.js'],              // after the system's site tabs, before engine/site.js
 //       gm:    ['campaign/site/gm.js'],                // after the system's panels, before engine/app.js
-//       table: [], play: [],                           // before the table's and the player's boot
+//       table: [], play: [], maps: [],                 // before the table's, the player's and the maps' boot
 //     },
 //   }
 //

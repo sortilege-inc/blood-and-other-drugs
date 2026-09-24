@@ -7,7 +7,7 @@ window.VttConfig = {
   dataGlobal: 'VTM5E',                   // the global data/*.js registers into
   // The pages, relative to the site root; the gm/ pages carry <base href="../"> so every
   // path stays root-relative.
-  pages: { site: './', gm: 'gm/', table: 'gm/vtt.html', play: 'gm/play.html' },
+  pages: { site: './', gm: 'gm/', table: 'gm/vtt.html', play: 'gm/play.html', maps: 'gm/maps.html' },
   // what a fresh browser opens on until a campaign is created or restored.
   // An instance may add `seed: 'campaign/pack/seed.json'` — a pack whose keys fill what its
   // campaign has never had (its arc, its threads), once (engine/state.js seed).

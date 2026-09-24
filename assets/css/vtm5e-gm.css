@@ -283,3 +283,51 @@ body.play { display: block; background: var(--night); }
   body.play .conflict-tab .small, body.play .conflict-tab .muted.small, body.play .conflict-pools .muted.small, body.play .conflict-tab .rule-link { font-size: 13px; }
   body.play .conflict-tab .conflict-head { font-size: 19px; }
 }
+
+/* ── relationship and scene maps (V9, system/vtm5e/maps.js): the book's paper and inks ── */
+.relmap-body { flex: 1; min-height: 0; display: flex; }
+.relmap-stage { background: var(--paper); }
+.relmap-cy { position: absolute; inset: 0; }
+.relmap-stage .vtt-hint { color: var(--ink-2); text-shadow: none; }
+.relmap-side { width: 300px; flex: none; overflow-y: auto; background: var(--paper-2); color: var(--ink); border-left: 1px solid var(--rule); padding: 12px 14px; font-size: 15px; }
+.relmap-side h4 { font-family: var(--font-display); font-weight: 400; font-size: 21px; margin: 0 0 8px; }
+.relmap-side .ref, .slot-relmaps .ref { background: none; border: none; padding: 0; color: var(--blood); text-decoration: underline; cursor: pointer; font: inherit; }
+.relmap-f { display: block; margin: 0 0 8px; }
+.relmap-f .prop-k { display: block; padding: 0 0 2px; }
+.relmap-f input, .relmap-f select, .relmap-f textarea { width: 100%; background: #fff; color: var(--ink); border: 1px solid var(--rule); font-size: 14px; padding: 4px 6px; }
+.relmap-key div { display: flex; align-items: center; gap: 8px; margin: 3px 0; font-family: var(--font-ui); font-size: 13px; }
+.relmap-key .sw { width: 22px; height: 14px; border-radius: 3px; border: 1.5px solid #4b4246; background: var(--paper); }
+.relmap-key .sw.pc { background: #1a1618; border-color: #1a1618; }
+.relmap-key .sw.kindred { background: #9c0a1d; border-color: #9c0a1d; }
+.relmap-key .sw.mortal { background: #1d4f91; border-color: #1d4f91; }
+.relmap-key .sw.place { border: 2px solid #1a1618; border-radius: 0; }
+.relmap-key .sw.other { border-style: dashed; }
+.relmap-rules { margin: 10px 0; padding-left: 18px; }
+.relmap-tracks { position: absolute; left: 10px; top: 10px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; background: rgba(246, 242, 235, .92); padding: 6px 8px; border: 1px solid var(--rule); font-family: var(--font-ui); font-size: 12px; color: var(--ink); max-width: 60%; }
+.relmap-tracks summary { cursor: pointer; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: 11px; color: var(--ink-2); }
+.relmap-tracks[open] summary { margin-bottom: 4px; }
+.relmap-tracks-list { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.relmap-track { display: flex; align-items: center; gap: 8px; }
+.relmap-track-name { font-weight: 600; }
+.relmap-boxes { display: inline-flex; gap: 3px; }
+.relmap-box { width: 16px; height: 16px; border: 1.5px solid var(--ink); background: #fff; padding: 0; cursor: pointer; }
+.relmap-box.on { background: var(--blood); border-color: var(--blood); }
+.relmap-x { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 15px; padding: 0 2px; }
+.relmap-tracks .btn.ghost { color: var(--ink-2); border-color: var(--rule); }
+.relmap-row { padding: 8px 0; border-bottom: 1px solid var(--night-3); }
+.relmap-row.hidden-map strong { opacity: .7; }
+.relmap-new { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 12px 0 8px; }
+@media (max-width: 760px) {
+  .relmap-body { flex-direction: column; }
+  .relmap-side { width: auto; max-height: 42vh; border-left: none; border-top: 1px solid var(--rule); }
+  .relmap-stage { min-height: 50vh; }
+  .relmap-box { width: 24px; height: 24px; }
+  .relmap-side .btn, body.relmaps .vtt-toolbar .btn { min-height: 36px; }
+  /* one row that scrolls sideways, so the paper keeps the screen */
+  body.relmaps .vtt-toolbar { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  body.relmaps .vtt-toolbar .group { flex: none; }
+  body.relmaps .vtt-toolbar .group.last { margin-left: 0; }
+  body.relmaps .vtt-toolbar .muted { display: none; }
+  body.relmaps .vtt-select { max-width: 160px; }
+  .relmap-tracks { max-width: calc(100% - 20px); }
+}

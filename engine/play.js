@@ -122,6 +122,8 @@
     if (!m) return el('div', { class: 'play-card' }, [el('p', { class: 'muted' }, ['Your character isn’t in the party any more.'])]);
     const bar = el('div', { class: 'chiprow play-bar' }, [
       el('a', { class: 'btn ghost', href: CFG.pages.table + '?view=player', target: (CFG.channel || 'vtt') + '-player' }, ['Open the table']),
+      // relationship and scene maps (system/vtm5e/maps.js), where the system has them
+      CFG.pages.maps ? el('a', { class: 'btn ghost', href: CFG.pages.maps + '?view=player', target: (CFG.channel || 'vtt') + '-maps' }, ['Open the maps']) : null,
       button('Download my character', () => Sys.downloadCharacter(m), 'ghost'),   // as played, right now — the file the join screen takes back
       button('Release character', () => Session.unclaim(m.id), 'ghost'),
     ]);

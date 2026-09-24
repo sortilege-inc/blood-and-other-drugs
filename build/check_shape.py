@@ -193,6 +193,12 @@ def main():
     check("rules the dice cite (%d) are in the core under those names" % len(cited),
           [(h, n) for h, n in cited if not (h in ents and ents[h]["name"] == n and ents[h]["book"] == "core")], [])
 
+    # ── the rules the maps cite (system/vtm5e/maps.js RULES: the core's and Blood Sigils'), by id, name and book ──
+    maps_js = open(os.path.join(HERE, "system", "vtm5e", "maps.js"), encoding="utf-8").read()
+    mcited = re.findall(r"\{ id: '(#[A-Za-z0-9]+)', name: '([^']+)', book: '([a-z-]+)' \}", maps_js)
+    check("rules the maps cite (%d) are in their books under those names" % len(mcited),
+          [(h, n, b) for h, n, b in mcited if not (h in ents and ents[h]["name"] == n and ents[h]["book"] == b)], [])
+
     print("check_shape: %s (%d assertions)" % ("OK" if not FAILS else "FAILED: " + ", ".join(FAILS), COUNT[0]))
     return 1 if FAILS else 0
 

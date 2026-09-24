@@ -16,6 +16,8 @@
 //                                                (archivePartyVersion, the player's own)
 //   loresheets [ids]                              the loresheets the Storyteller made available
 //                                                (setLoresheets; shared, the Storyteller's to set)
+//   relmaps [ { id, name, nodes, edges, … } ]    relationship and scene maps (V9, below; shared,
+//                                                drawn by everyone, a hidden one the Storyteller's)
 //   A party member's live state is the engine's setPartyLive: { hunger } until the corpus
 //   declares the character (PLAN.md D1).
 (function (root, factory) {
@@ -62,6 +64,82 @@
   // variant, turn, modules, a one-roll conflict's Difficulty and track. Shared; the Storyteller's.
   Ops.shared(['conflict']);
   Ops.register('setConflict', (s, c) => { s.conflict = c ? JSON.parse(JSON.stringify(c)) : null; });
+
+  // Relationship and scene maps (V9, system/vtm5e/maps.js): the core's Relationship Map, Blood
+  // Sigils' Scene Map, a Sabbat Pack Map — people and places, and labelled arrows between them.
+  //   relmaps [ { id, name, kind, hidden, nodes:[…], edges:[…], tracks:[…] } ]
+  //     node  { id, name, kind (pc|kindred|mortal|place|note|other), clan, path, sect, embrace,
+  //             caption, x, y, member (a party id), record (an entity id), struck }
+  //     edge  { id, from, to, arrow (to|none), label, fromLabel, toLabel, struck } — the arrow
+  //           points from the dominant party to the weaker; none where they are equals (core,
+  //           "Arrows and Descriptors"); fromLabel and toLabel are each party's own descriptor
+  //     track { id, name, boxes, filled } — Blood Sigils' "Deep Trouble" checkboxes
+  // Shared, and drawn by the Storyteller and the players alike (owner, 2026-09-24). A hidden map
+  // is the Storyteller's alone ("perhaps on a private version of the scene map", Blood Sigils,
+  // Step Six): never in a player's view, and no op on it is forwarded. Only the Storyteller hides,
+  // shows or deletes a map; a player may add one, shown.
+  Ops.shared(['relmaps']);
+  const NODE_KEYS = ['id', 'name', 'kind', 'clan', 'path', 'sect', 'embrace', 'caption', 'x', 'y', 'member', 'record', 'struck'];
+  const EDGE_KEYS = ['id', 'from', 'to', 'arrow', 'label', 'fromLabel', 'toLabel', 'struck'];
+  const TRACK_KEYS = ['id', 'name', 'boxes', 'filled'];
+  const pick = (o, keys) => { const out = {}; keys.forEach((k) => { if (o && o[k] !== undefined) out[k] = o[k]; }); return out; };
+  const relmap = (s, id) => (s.relmaps || []).find((m) => m.id === id) || null;
+  const cleanMap = (m) => ({ id: m.id, name: String(m.name || 'Map'), kind: m.kind || 'relationship', hidden: !!m.hidden,
+    nodes: (m.nodes || []).map((n) => pick(n, NODE_KEYS)), edges: (m.edges || []).map((e) => pick(e, EDGE_KEYS)), tracks: (m.tracks || []).map((t) => pick(t, TRACK_KEYS)) });
+  const upsert = (list, item) => { const i = list.findIndex((x) => x.id === item.id); if (i === -1) list.push(item); else list[i] = Object.assign({}, list[i], item); };
+  const onShownMap = (s, me, a) => { const m = relmap(s, a[0]); return !!m && !m.hidden; };
+  const ifShown = (name) => (s, a) => { const m = relmap(s, a[0]); return m && !m.hidden ? { name, args: a } : null; };
+  // a whole map, as players get it: a map made hidden is taken from them, one shown is sent whole
+  const wholeForPlayers = (s, id) => { const m = relmap(s, id); return m && !m.hidden ? { name: 'putRelMap', args: [m] } : { name: 'removeRelMap', args: [id] }; };
+
+  Ops.register('putRelMap', (s, map) => {
+    if (!map || !map.id) return;
+    if (!s.relmaps) s.relmaps = [];
+    upsert(s.relmaps, cleanMap(map));
+  }, (s, me, a) => !!a[0] && !relmap(s, a[0].id) && !a[0].hidden, (s, a) => wholeForPlayers(s, a[0] && a[0].id));
+  Ops.register('setRelMapMeta', (s, id, patch) => {
+    const m = relmap(s, id);
+    if (m) Object.assign(m, pick(patch, ['name', 'kind', 'hidden']));
+  }, null, (s, a) => wholeForPlayers(s, a[0]));
+  Ops.register('removeRelMap', (s, id) => { s.relmaps = (s.relmaps || []).filter((m) => m.id !== id); });
+  Ops.register('putRelNode', (s, mapId, node) => {
+    const m = relmap(s, mapId);
+    if (m && node && node.id) upsert(m.nodes, pick(node, NODE_KEYS));
+  }, onShownMap, ifShown('putRelNode'));
+  // positions after a drag or a layout: [[id, x, y], …]
+  Ops.register('moveRelNodes', (s, mapId, moves) => {
+    const m = relmap(s, mapId);
+    if (!m) return;
+    (moves || []).forEach(([id, x, y]) => { const n = m.nodes.find((k) => k.id === id); if (n) { n.x = Math.round(x); n.y = Math.round(y); } });
+  }, onShownMap, ifShown('moveRelNodes'));
+  Ops.register('removeRelNode', (s, mapId, id) => {
+    const m = relmap(s, mapId);
+    if (!m) return;
+    m.nodes = m.nodes.filter((n) => n.id !== id);
+    m.edges = m.edges.filter((e) => e.from !== id && e.to !== id);
+  }, onShownMap, ifShown('removeRelNode'));
+  Ops.register('putRelEdge', (s, mapId, edge) => {
+    const m = relmap(s, mapId);
+    if (!m || !edge || !edge.id) return;
+    const e = Object.assign({}, m.edges.find((x) => x.id === edge.id) || {}, pick(edge, EDGE_KEYS));
+    if (m.nodes.some((n) => n.id === e.from) && m.nodes.some((n) => n.id === e.to)) upsert(m.edges, e);
+  }, onShownMap, ifShown('putRelEdge'));
+  Ops.register('removeRelEdge', (s, mapId, id) => {
+    const m = relmap(s, mapId);
+    if (m) m.edges = m.edges.filter((e) => e.id !== id);
+  }, onShownMap, ifShown('removeRelEdge'));
+  Ops.register('putRelTrack', (s, mapId, track) => {
+    const m = relmap(s, mapId);
+    if (m && track && track.id) upsert(m.tracks, pick(track, TRACK_KEYS));
+  }, onShownMap, ifShown('putRelTrack'));
+  Ops.register('removeRelTrack', (s, mapId, id) => {
+    const m = relmap(s, mapId);
+    if (m) m.tracks = m.tracks.filter((t) => t.id !== id);
+  }, onShownMap, ifShown('removeRelTrack'));
+  Ops.playerFilter((doc) => {
+    if (doc.relmaps) doc.relmaps = doc.relmaps.filter((m) => !m.hidden);
+    return doc;
+  });
 
   // The Storyteller's own pack state (the family's I9): free notes, the arc, open threads. Never
   // shared: no player may send them, none is in a player's view, and none is forwarded.
