@@ -8,12 +8,6 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
     # Every value is the world's own; the shape is the corpus's (Chicago by Night's
     # Storyteller characters). Regenerate rather than edit by hand.
 
-    #bodfHomebrew00000001 ^"The chronicle's own rules" DEF {
-        DESCRIPTION "Written for this chronicle and printed in no book. Every other rule a character carries is the publisher's and is read from the corpus; these are the table's own, carried here with the world's own wording."
-        #bodi5kYHXMnpQAP7gIFA ^"False Love (Trieste)" DEF {
-            DESCRIPTION "With a SPC as an obsession, when in their presence treat the character's treat Humanity as one higher (Max 10) for purposes of using Blush of Life, eating, drinking, or sexual intercourse. Gain three Stains if they die."
-        }
-    }
     #bodfaBHQrKu5cIWQhL4g ^"Coterie" DEF {
         #bodcTns8VDwWHrdIqEf ^"Barbara Hall Park" DEF {
             ^"Chronicle" STRING "Blood & Other Drugs"
@@ -21,6 +15,14 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 0, Willpower 0"
             ^"Advantages" STRING "City Secrets 1, Furcus 1, Postern 1, Business Establishment 2, Security System 1"
             ^"Flaws" STRING "Haunted 3"
+            REFERENCES {
+                "Advantage" -> #vONMhEZaQvi8RmrE0DbQBkx ^"City Secrets •"
+                "Advantage" -> #v6qeZjWETX43c8HW5qawrhB ^"Furcus • to •••"
+                "Advantage" -> #v3g1M3oQWUW2VSdiEkMS3cC ^"• Postern"
+                "Advantage" -> #vz87d2pCB8xBsMB0iIRVd1i ^"Business Establishment •• or •••"
+                "Advantage" -> #vH1I8WK6KejDTXBzK3WWBIo ^"• Security System"
+                "Flaw" -> #vALsg84GQT6LgtSwKyxoRYK ^"Haunted (•+)"
+            }
         }
         #bodvdlWHrBCEx8Hoz63 ^"Claude" DEF {
             ^"Chronicle" STRING "Blood & Other Drugs"
@@ -37,13 +39,19 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 6, Willpower 6"
             ^"Skills" STRING "Craft (Fixatio) 1, Firearms 2; Insight 2, Persuasion 3, Streetwise (Street Medic) 1; Academics (Medical Terminology) 1, Awareness 3, Medicine (Phlebotomy) 4, Occult 2, Science (Organic Chemistry) 3"
             ^"Disciplines" STRING "Auspex 1, Blood Sorcery 1, Thin-Blood Alchemy 1"
-            ^"Advantages" STRING "Thin-blood Alchemist 1, Mawla (Moth) 2, Discipline Affinity (Auspex) 1, Dark Secret: Masquerade Breacher"
-            ^"Flaws" STRING "Branded by the Camarilla 1, Vitae Dependency 1, Prey Exclusion: Non-Consensual 1, Knowledge Hungry 1"
+            ^"Advantages" STRING "Thin-blood Alchemist 1, Mawla (Moth) 2, Discipline Affinity (Auspex) 1, Dark Secret (Masquerade Breacher)"
+            ^"Flaws" STRING "Branded by the Camarilla 1, Vitae Dependency 1, Prey Exclusion (Non-Consensual) 1, Knowledge Hungry 1"
             ^"Appearance" STRING "Claudette is tall, nearly 6’2” and lanky. She is covered in tattoos, all she had done prior to her undeath. The tattoos are flowers of every variety. Her arms are covered in roses and clematis, her neck is twining iris tattoos, Claude’s legs have marigolds, dahlias, and orchids. Her back covered in lotuses. Her hair is cut short, in sharp angles, to her chin. She is often dressed in slacks, button shirt rolled at the to the elbows with many pens in the breast pocket. She carries a pocket notebook that allows her to take quick notes about whatever she’s currently learning about."
             REFERENCES {
                 "Discipline power" -> #vgpG99ZHvzpfOjcCe5XXIlX ^"A Taste for Blood"
                 "Discipline power" -> #vkdpGoIyRJODcw35u7DRRgL ^"Heightened Senses"
                 "Discipline power" -> #vIqI2Kw23I4usIyWuo7Lfqi ^"Plug-in"
+                "Advantage" -> #vPZI9rup6bcVulTU49WSNTx ^"Thin-blood Merits"
+                "Advantage" -> #vaf7kWzi9lcbxuQDaMx75rL ^"Mawla"
+                "Advantage" -> #vfFXmPFLhHqi82HMxFlOD3F ^"Dark Secret"
+                "Flaw" -> #vZyzwKMxQywW3TeJaFlX2Xt ^"Thin-blood Flaws"
+                "Flaw" -> #vJfzwZJ8o6GKGsaGTHjag2j ^"Prey Exclusion (•)"
+                "Flaw" -> #vOTLzbtRteILL1CqGw8E9sG ^"Knowledge Hungry (•)"
             }
         }
         #bod1z6tH9CvLqOF9YnQ ^"Ethan Cole" DEF {
@@ -58,10 +66,17 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 6, Willpower 4"
             ^"Skills" STRING "Athletics 1, Brawl 2, Drive 1, Larceny (Security) 2, Melee 3, Stealth 2, Survival 1; Insight 1, Intimidation 3, Persuasion 3, Streetwise (Black Market) 2, Subterfuge 1; Awareness 2, Investigation 1, Technology 1"
             ^"Disciplines" STRING "Potence 1"
-            ^"Advantages" STRING "Lifelike 1, Vampiric Resilience 1, Influence 1, Resources 2, Contact (Mike Harrison, Money Launderer) 2, Dark Secret (Debt) 1, Enemy 1"
-            ^"Flaws" STRING "Bestial Temper 1, Clan Curse [Brujah], Prey Exclusion: Children 1"
+            ^"Advantages" STRING "Lifelike 1, Vampiric Resilience 1, Influence 1, Resources 2, Contacts (Mike Harrison, Money Launderer) 2, Dark Secret (Debt) 1, Enemy 1"
+            ^"Flaws" STRING "Bestial Temper 1, Clan Curse (Brujah), Prey Exclusion (Children) 1"
             REFERENCES {
                 "Discipline power" -> #vAlqUUUdv3GFRP6ZFnLTHuu ^"Lethal Body"
+                "Advantage" -> #vPZI9rup6bcVulTU49WSNTx ^"Thin-blood Merits"
+                "Advantage" -> #vgZ3xLnBpVytReetFQLfA3Q ^"Influence"
+                "Advantage" -> #vFCosYA1I8DEwVJcPrGzEtG ^"Resources"
+                "Advantage" -> #vJl5tkmIz5EnaeqCnOL9rv0 ^"Contacts"
+                "Advantage" -> #vfFXmPFLhHqi82HMxFlOD3F ^"Dark Secret"
+                "Flaw" -> #vZyzwKMxQywW3TeJaFlX2Xt ^"Thin-blood Flaws"
+                "Flaw" -> #vJfzwZJ8o6GKGsaGTHjag2j ^"Prey Exclusion (•)"
             }
         }
         #bodIw9SpbRcS5T9IvXG ^"Olly" DEF {
@@ -79,14 +94,17 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 6, Willpower 4"
             ^"Skills" STRING "Athletics 1, Craft (TBD) 3, Drive 2, Firearms 3, Larceny 1, Stealth (Stakeout) 2, Survival 1; Insight 1, Persuasion 1, Streetwise (TBD) 2, Subterfuge 1; Investigation 2, Occult 3, Politics 1, Technology 2"
             ^"Disciplines" STRING "Obfuscate 1"
-            ^"Advantages" STRING "Retainer (Dimitri) 2, Thin-blood Alchemist 1, Lifelike 1, The Pony Express: Station Agent 2"
+            ^"Advantages" STRING "Retainers (Dimitri) 2, Thin-blood Alchemist 1, Lifelike 1, The Pony Express: Station Agent 2"
             ^"Flaws" STRING "Clan Curse 1, Bestial Temper 1, False Love (Trieste) 1"
             ^"Equipment" STRING "Strength of Sadness"
             ^"Resonance" STRING "Sanguine"
             ^"Appearance" STRING "Olly has straight black hair, overgrown bangs, green eyes. Wears mostly black, usually sporting the camo colored backpack that carries his camera. 5' 8\", appears to be around 26 or 27. Walks/stands at the slightest odd angle due to a bone on his right leg that healed wrong. Fidgety unless he's on something that levels him out. Is used to commanding a certain level of respect (in the underground), less from charisma than because of his reputation for running his mouth and then backing it up. If you can't tell if he's joking, you kind of have to default to assuming he's serious. In retrospect, he'd say that the shocking part is that he lived long enough to become undead."
             REFERENCES {
                 "Discipline power" -> #v0fpCnY383zItnG96inmHVi ^"Silence of Death"
-                "The chronicle's own rule" -> #bodi5kYHXMnpQAP7gIFA ^"False Love (Trieste)"
+                "Advantage" -> #v8qIOULRw0EmoUcRgTx5des ^"Retainers"
+                "Advantage" -> #vPZI9rup6bcVulTU49WSNTx ^"Thin-blood Merits"
+                "Flaw" -> #vZyzwKMxQywW3TeJaFlX2Xt ^"Thin-blood Flaws"
+                "Flaw" -> #vQ3oxkrvSUrSSC78SUAziyo ^"• False Love"
             }
         }
         #bodRNuGzLlPkpfeKE0N ^"Ralph Begg" DEF {
@@ -107,10 +125,17 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 6, Willpower 3"
             ^"Skills" STRING "Athletics 1, Brawl 2, Drive 1, Firearms 2, Larceny 2, Melee 2, Stealth (Breaking & Entering) 3; Insight 1, Persuasion 2, Streetwise 1, Subterfuge 3; Awareness 2, Investigation 2, Medicine 1, Occult 1, Politics 1, Technology 3"
             ^"Disciplines" STRING "Obfuscate 1"
-            ^"Advantages" STRING "•• Beautiful: 2, Base Haven 1, Resources 2, Linguistics (Spanish, English, Russian) 1, Mask 2, Vampiric Resilience 1"
+            ^"Advantages" STRING "Beautiful 2, Base Haven 1, Resources 2, Linguistics (Spanish, English, Russian) 1, Mask 2, Vampiric Resilience 1"
             ^"Flaws" STRING "Bestial Temper 1, Shunned by Sire 2"
             REFERENCES {
                 "Discipline power" -> #v0fpCnY383zItnG96inmHVi ^"Silence of Death"
+                "Advantage" -> #v5ehHyXJoGzocJtelizHdDu ^"•• Beautiful"
+                "Advantage" -> #vJS0EEntRBzf63zD4drYNGP ^"Base Haven"
+                "Advantage" -> #vFCosYA1I8DEwVJcPrGzEtG ^"Resources"
+                "Advantage" -> #vldbHgsYdnv5ZG86YvyI26U ^"Linguistics"
+                "Advantage" -> #vBWPJgbqv45HIUR6VPEuZtm ^"Mask"
+                "Advantage" -> #vPZI9rup6bcVulTU49WSNTx ^"Thin-blood Merits"
+                "Flaw" -> #vZyzwKMxQywW3TeJaFlX2Xt ^"Thin-blood Flaws"
             }
         }
         #bodlS0ziEzl6cUK1OT8 ^"Rose" DEF {
@@ -196,7 +221,7 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 7, Willpower 7"
             ^"Skills" STRING "Athletics 1, Brawl 2, Craft 2, Drive 2, Firearms 1, Larceny 2, Stealth 2; Etiquette 4, Insight (Detecting weakness) 4, Intimidation 3, Leadership 3, Performance (Playing roles) 4, Persuasion 4, Streetwise 2, Subterfuge (Convincing lies) 5; Academics 3, Awareness 3, Finance 3, Investigation 2, Medicine 2, Occult 3, Politics (Camarilla intrigue) 5, Science 1, Technology 2"
             ^"Disciplines" STRING "Auspex 2, Blood Sorcery 2, Dominate 3"
-            ^"Advantages" STRING "Resources 4, Haven 3, Herd 4, Status (Camarilla) 2, Contacts 3, Retainers 2, Convincing Lies 3, Status Symbol 2, Haven: Luxury 2, Language 1"
+            ^"Advantages" STRING "Resources 4, Haven 3, Herd 4, Status (Camarilla) 2, Contacts 3, Retainers 2, Convincing Lies 3, Status Symbol 2, Luxury (Haven) 2, Language 1"
             ^"Flaws" STRING "Dark Secret 2, Enemy 1, Infamous Deed 3, Rival 3"
             ^"Appearance" STRING "Dominik is handsome in a predatory way - sharp features, calculating eyes, immaculate grooming. He dresses in expensive tailored suits (Armani, Hugo Boss), always perfectly pressed. Dark hair touched with silver at temples. Thin-framed designer glasses (affectation, not needed). Every detail curated to project authority and sophistication."
             REFERENCES {
@@ -206,6 +231,14 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Discipline power" -> #v2tdbmdtY1g1WIkv5zPfCSd ^"Premonition"
                 "Discipline power" -> #vv7uPjmJpdT3lDG1O5CuYBM ^"Sense the Unseen"
                 "Discipline power" -> #vJWN1f5NKrB8rMeHQ4pOXlM ^"The Forgetful Mind"
+                "Advantage" -> #vFCosYA1I8DEwVJcPrGzEtG ^"Resources"
+                "Advantage" -> #vizNfaUsZZDXxHHPmGq2qLL ^"Haven"
+                "Advantage" -> #vPY5vMqsA06vnLzMGh7pQi5 ^"Herd"
+                "Advantage" -> #vyh4u32gJOIZ4DRUXeMZA7y ^"Status"
+                "Advantage" -> #vJl5tkmIz5EnaeqCnOL9rv0 ^"Contacts"
+                "Advantage" -> #v8qIOULRw0EmoUcRgTx5des ^"Retainers"
+                "Advantage" -> #vPh5EoQXNQ3xlZr8UAVtmak ^"• Luxury"
+                "Flaw" -> #vfFXmPFLhHqi82HMxFlOD3F ^"Dark Secret"
             }
         }
         #bodsgsQzpldiiHqgHMl ^"Elijah Kane (Sheriff)" DEF {
@@ -234,8 +267,8 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 7, Willpower 8"
             ^"Skills" STRING "Athletics 1, Craft (Oil painting) 4, Drive 1, Melee 1, Stealth 1; Etiquette (Camarilla court) 5, Insight 4, Intimidation 2, Leadership 4, Performance (Princely bearing) 5, Persuasion 4, Streetwise 1, Subterfuge 3; Academics 4, Awareness 3, Finance 3, Investigation 2, Occult 2, Politics (Camarilla Inner Circle) 5, Technology 1"
             ^"Disciplines" STRING "Auspex 3, Celerity 2, Dominate 2, Presence 5"
-            ^"Advantages" STRING "Status (Camarilla) 5, Domain 5, Haven 5, Herd 4, Resources 5, Retainers 4, Contacts 4, Allies 3, Prestigious Sire 1, Linguistics 3, Eat Food 1, Natural Leader 2"
-            ^"Flaws" STRING "Dark Secret 1, Prey Exclusion 1, Enemy 4, Obsession Target 2, Weak-Willed Regarding Art 2"
+            ^"Advantages" STRING "Status (Camarilla) 5, Domain 5, Haven 5, Herd 4, Resources 5, Retainers 4, Contacts 4, Allies 3, Prestigious Sire 1, Linguistics 3, Eat food 1, Natural Leader 2"
+            ^"Flaws" STRING "Dark Secret 1, Prey Exclusion 1, Enemy 4, Obsession Target 2, Weak-willed (Regarding Art) 2"
             ^"Appearance" STRING "Lucien is elegant in the Old World style - impeccably tailored suits (Brioni, bespoke), silver hair swept back, pale calculating eyes that never quite meet others' gaze directly. Thin hands with long fingers (pianist's hands, artist's hands). Every detail curated: pocket squares, cufflinks, fountain pens. He looks like museum piece - beautiful, valuable, fragile."
             REFERENCES {
                 "Discipline power" -> #vZlcHUBgchPa0MYGRQZfoSL ^"Awe"
@@ -254,6 +287,19 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Discipline power" -> #vv7uPjmJpdT3lDG1O5CuYBM ^"Sense the Unseen"
                 "Discipline power" -> #vOuTsu6r9O0licN6pRsMbQM ^"Spirit’s Touch"
                 "Discipline power" -> #vQsuBK6jJ9YfLOFxfpglnBH ^"Summon"
+                "Advantage" -> #vyh4u32gJOIZ4DRUXeMZA7y ^"Status"
+                "Advantage" -> #vWgSYLz9igr2CdZ0w6wyisk ^"Domain"
+                "Advantage" -> #vizNfaUsZZDXxHHPmGq2qLL ^"Haven"
+                "Advantage" -> #vPY5vMqsA06vnLzMGh7pQi5 ^"Herd"
+                "Advantage" -> #vFCosYA1I8DEwVJcPrGzEtG ^"Resources"
+                "Advantage" -> #v8qIOULRw0EmoUcRgTx5des ^"Retainers"
+                "Advantage" -> #vJl5tkmIz5EnaeqCnOL9rv0 ^"Contacts"
+                "Advantage" -> #vyZ8Dd60qSufS9sHWC88PDm ^"Allies"
+                "Advantage" -> #vldbHgsYdnv5ZG86YvyI26U ^"Linguistics"
+                "Advantage" -> #vVygPuhul2lEyciF2a3Oyfe ^"•• Eat food"
+                "Flaw" -> #vfFXmPFLhHqi82HMxFlOD3F ^"Dark Secret"
+                "Flaw" -> #vJfzwZJ8o6GKGsaGTHjag2j ^"Prey Exclusion (•)"
+                "Flaw" -> #vSRDTDy6Lo8RVoeRuWigTai ^"Weak-willed (••)"
             }
         }
         #bodlV9I1hAsYVF2NdJU ^"Maeva Rousseau (Seneschal, Ventrue Primogen)" DEF {
@@ -332,6 +378,10 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Discipline power" -> #vkdpGoIyRJODcw35u7DRRgL ^"Heightened Senses"
                 "Discipline power" -> #v2tdbmdtY1g1WIkv5zPfCSd ^"Premonition"
                 "Discipline power" -> #vv7uPjmJpdT3lDG1O5CuYBM ^"Sense the Unseen"
+                "Advantage" -> #vFCosYA1I8DEwVJcPrGzEtG ^"Resources"
+                "Advantage" -> #vizNfaUsZZDXxHHPmGq2qLL ^"Haven"
+                "Advantage" -> #vJl5tkmIz5EnaeqCnOL9rv0 ^"Contacts"
+                "Advantage" -> #v8qIOULRw0EmoUcRgTx5des ^"Retainers"
             }
         }
     }
@@ -380,6 +430,15 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Discipline power" -> #vOuTsu6r9O0licN6pRsMbQM ^"Spirit’s Touch"
                 "Discipline power" -> #vJONkKTzhSj1L605YwJj3KM ^"Toughness"
                 "Discipline power" -> #vKzXuOnJL1dHE0pliWQeet9 ^"Unswayable Mind"
+                "Advantage" -> #vyh4u32gJOIZ4DRUXeMZA7y ^"Status"
+                "Advantage" -> #vWgSYLz9igr2CdZ0w6wyisk ^"Domain"
+                "Advantage" -> #vizNfaUsZZDXxHHPmGq2qLL ^"Haven"
+                "Advantage" -> #vPY5vMqsA06vnLzMGh7pQi5 ^"Herd"
+                "Advantage" -> #vJl5tkmIz5EnaeqCnOL9rv0 ^"Contacts"
+                "Advantage" -> #vFCosYA1I8DEwVJcPrGzEtG ^"Resources"
+                "Advantage" -> #v8qIOULRw0EmoUcRgTx5des ^"Retainers"
+                "Advantage" -> #vibwE3pzLa2Jj4IUKE5N5fx ^"Necromantic Prodigy"
+                "Flaw" -> #vJfzwZJ8o6GKGsaGTHjag2j ^"Prey Exclusion (•)"
             }
         }
         #bodfsf3gtVqTwEYpYbI ^"Jason Cho" DEF {
@@ -458,6 +517,11 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Discipline power" -> #v0fpCnY383zItnG96inmHVi ^"Silence of Death"
                 "Discipline power" -> #v5jF3RfphjrQRKrewAIvsow ^"Unseen Passage"
                 "Discipline power" -> #vbX4xdcu0KaexLn2WdTibSt ^"Weight of the Feather"
+                "Advantage" -> #vFCosYA1I8DEwVJcPrGzEtG ^"Resources"
+                "Advantage" -> #vJl5tkmIz5EnaeqCnOL9rv0 ^"Contacts"
+                "Advantage" -> #vBWPJgbqv45HIUR6VPEuZtm ^"Mask"
+                "Advantage" -> #vldbHgsYdnv5ZG86YvyI26U ^"Linguistics"
+                "Flaw" -> #vALsg84GQT6LgtSwKyxoRYK ^"Haunted (•+)"
             }
         }
         #bodIu6xYmOw9VEbKI3O ^"Andre Baptiste (Baron)" DEF {
@@ -617,6 +681,13 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Discipline power" -> #vpfO9jx1woGeqg5JF34mBnA ^"Mask of a Thousand Faces"
                 "Discipline power" -> #v0fpCnY383zItnG96inmHVi ^"Silence of Death"
                 "Discipline power" -> #v5jF3RfphjrQRKrewAIvsow ^"Unseen Passage"
+                "Advantage" -> #vFCosYA1I8DEwVJcPrGzEtG ^"Resources"
+                "Advantage" -> #vJl5tkmIz5EnaeqCnOL9rv0 ^"Contacts"
+                "Advantage" -> #vxuohKrqV1gGHciasfRd4GF ^"Fame"
+                "Advantage" -> #vBWPJgbqv45HIUR6VPEuZtm ^"Mask"
+                "Advantage" -> #vnvee6BbVbSag7n4iOXuzD7 ^"Collector"
+                "Flaw" -> #vJfzwZJ8o6GKGsaGTHjag2j ^"Prey Exclusion (•)"
+                "Flaw" -> #v3XwPv4AeWAXCXwhvFYGqjb ^"••••• Unbondable"
             }
         }
         #bodoqQENH5zr1gOAByf ^"Raya Wong (Noddist Priest)" DEF {

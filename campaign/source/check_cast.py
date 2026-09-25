@@ -30,7 +30,7 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(ROOT, "build"))
 from parse_dsl import parse_files  # noqa: E402
-from cast_aliases import ALIASES, HOMEBREW  # noqa: E402
+from cast_aliases import ALIASES, ANNOTATED  # noqa: E402
 
 DATA_BLOB = re.compile(r"var d=(\{.*?\});var T=window\.VTM5E", re.S)
 
@@ -141,15 +141,33 @@ def norm(s):
 FEATURE_FIELDS = [("Advantages", ("merit", "background")), ("Flaws", ("flaw",))]
 
 
-def feature_pairs(s):
-    """'City Secrets 1, Clan Curse [Brujah], Contact (Mike H, Launderer) 2' -> [(name, dots)].
-    A name may carry parentheses, brackets, colons and commas of its own, so the split is the
-    paren-aware one and the dots are a trailing integer, which is optional."""
+def feature_entries(s):
+    """'Contacts (Mike H, Launderer) 2, Clan Curse (Brujah)' -> [(name, annotation, dots)].
+    The split is the paren-aware one; the dots are a trailing integer, optional; the
+    annotation is everything in the brackets."""
     out = []
     for chunk in split_entries(s):
         m = re.match(r"^(.*?)\s+(\d+)$", chunk)
-        out.append((m.group(1).strip(), int(m.group(2))) if m else (chunk, 0))
+        head, n = (m.group(1).strip(), int(m.group(2))) if m else (chunk, 0)
+        ann = ""
+        if head.endswith(")") and "(" in head:
+            i = head.index("(")
+            head, ann = head[:i].strip(), head[i + 1:-1].strip()
+        out.append((head, ann, n))
     return out
+
+
+def world_forms(head, ann):
+    """Every way the world may have written an Advantage the DSL writes as `head (ann)`: the
+    annotation bracketed, after a colon either way round, run on (ANNOTATED), or with an
+    ALIASES head — normalised, with the books' dots off."""
+    heads = {head} | {w for w, (t, _why) in ALIASES.items() if norm(t) == norm(head)}
+    forms = set()
+    for h in heads:
+        forms |= {h} if not ann else {"%s (%s)" % (h, ann), "%s [%s]" % (h, ann),
+                                      "%s: %s" % (h, ann), "%s: %s" % (ann, h)}
+    forms |= {w for w, (t, a, _why) in ANNOTATED.items() if norm(t) == norm(head) and a == ann}
+    return {norm(undotted(f)) for f in forms}
 
 
 def bare_name(s):
@@ -159,15 +177,28 @@ def bare_name(s):
     return (m.group(1).strip() if m and m.group(1).strip() else (s or "").strip())
 
 
+def undotted(s):
+    """A name with the books' dot notation taken off, by this checker's own pattern."""
+    s = (s or "").strip().rstrip(":").strip()
+    for _ in range(3):
+        s = re.sub(r"^•+\s*", "", s)
+        s = re.sub(r"\s*\((?:[•+ ]|to|or)+\)$", "", s)
+        s = re.sub(r"\s+[•][• ]*(?:(?:to|or) *•+ *)?$", "", s).strip()
+    return s
+
+
 def published_names():
-    """Every name the books print, read straight out of data/ — this checker's own reading,
-    so a name the converter invented has nowhere to hide."""
+    """Every name the books print — headings and field names, with and without their dots —
+    read straight out of data/: this checker's own reading, so a name the converter invented
+    has nowhere to hide."""
     out, data = set(), os.path.join(ROOT, "data")
     for fn in sorted(os.listdir(data)):
         m = DATA_BLOB.search(open(os.path.join(data, fn), encoding="utf-8").read()) if fn.endswith(".js") else None
         if m:
-            out.update(e["name"] for e in json.loads(m.group(1))["entities"].values())
-    return {norm(n) for n in out}
+            for e in json.loads(m.group(1))["entities"].values():
+                out.add(e["name"])
+                out.update(p["name"] for p in e.get("props") or [])
+    return {norm(n) for n in out} | {norm(undotted(n)) for n in out}
 
 
 def main():
@@ -288,35 +319,36 @@ def main():
             if want and p.get(label, "") != want:
                 bad("%s differs from the export" % label)
 
-        # Advantages and Flaws: re-derived from the export's own items, compared as
-        # (name, dots) pairs rather than as a string — the world's spelling is kept as is,
-        # so this is a straight correspondence check in both directions
+        # Advantages and Flaws, re-derived from the export's own items. Each world item must be
+        # matched by exactly one written entry with the same dots whose name + annotation is a
+        # form of the world's name; nothing may be written that no item accounts for; and
+        # every name written is one a book prints, or the world's own spelling
         feats = [i for i in (d.get("items") or []) if i.get("type") == "feature"]
         for label, kinds in FEATURE_FIELDS:
             want = []
             for i in feats:
                 fs = i.get("system") or {}
-                if (fs.get("featuretype") or "") not in kinds:
+                if (fs.get("featuretype") or "") not in kinds or not (i.get("name") or "").strip():
                     continue
                 pts = fs.get("points")
                 pts = int(pts) if isinstance(pts, (int, float)) or (isinstance(pts, str) and pts.isdigit()) else 0
-                nm = (i.get("name") or "").strip()
-                if nm:
-                    want.append((nm, pts))
-            got = feature_pairs(p.get(label, ""))
+                want.append((i["name"].strip(), pts))
+            got = feature_entries(p.get(label, ""))
+            left = list(got)
             checked += 1
-            if sorted(got) != sorted(want):
-                miss = [x for x in want if x not in got]
-                extra = [x for x in got if x not in want]
-                bad("%s differ — missing %s, extra %s" % (label, miss or "none", extra or "none"))
-        # the chronicle's own rules: referenced exactly by the items whose names
-        # cast_aliases.HOMEBREW claims, and by no others
-        want_home = sorted({(i.get("name") or "").strip() for i in (d.get("items") or [])
-                            if (i.get("name") or "").strip() in HOMEBREW})
-        got_home = sorted(set(refnames(ent, "The chronicle's own rule")))
-        checked += 1
-        if got_home != want_home:
-            bad("the chronicle's own rules differ — expected %s, referenced %s" % (want_home or "none", got_home or "none"))
+            for wname, pts in want:
+                hit = next((g for g in left if g[2] == pts and norm(undotted(wname)) in world_forms(g[0], g[1])), None)
+                if hit is None:
+                    bad("%s: the world's %r (%d) is not written" % (label, wname, pts))
+                else:
+                    left.remove(hit)
+            if left:
+                bad("%s: written but in no world item: %s" % (label, left))
+            for head, ann, _n in got:
+                checked += 1
+                own = any(not ann and norm(head) == norm(w) for w, _ in want)
+                if norm(head) not in printed and not own:
+                    bad("%s %r is in no book, and is not the world's own spelling either" % (label, head))
 
         for label, itype in (("Equipment", "gear"), ("Resonance", "resonance")):
             want = ", ".join((i.get("name") or "").strip() for i in (d.get("items") or [])

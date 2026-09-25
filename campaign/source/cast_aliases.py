@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-cast_aliases.py — where the Foundry world names a published power differently from the book.
+cast_aliases.py — where the Foundry world names a published thing differently from the book.
 
 Each entry asserts that the world's name IS that printed power, and says why. These are
 NAME differences, not corpus gaps: every target below is printed in the corpus, and each
@@ -22,6 +22,17 @@ ALIASES = {
     # until check_cast grew a gate for rewritten names and refused it, which is the point.
     "Thin-Blooded":            ("The Thin-Blooded",      "the core heads the chapter with the article"),
     "Thin-Blood":              ("The Thin-Blooded",      "the core heads the chapter with the article"),
+    # Advantages: the world writes a Background in the singular where the books head it plural
+    "Contact":                 ("Contacts",              "the core heads the Background in the plural"),
+    "Retainer":                ("Retainers",             "the core heads the Background in the plural"),
+}
+
+# Advantages the world writes with its annotation run on, with no bracket or colon to split
+# at. Each is the owner's ruling (2026-09-24): the published Advantage, and what the world
+# adds to it. Everything bracketed or after a colon is split by rule and needs no entry.
+ANNOTATED = {
+    "Weak-Willed Regarding Art": ("Weak-willed", "Regarding Art",
+                                  "owner: the Players Guide's Flaw; 'Regarding Art' is what it concerns"),
 }
 
 # Absolver, Ripper, Domina and Hedonist stood here while the third-party shelf was unbuilt.
@@ -30,22 +41,3 @@ ALIASES = {
 # convert_cast.corpus_names() registers the bare form as a second key and resolve() reports
 # each one. Upstream V10 loads the shelf (sortilege-vtt-vtm5e f154fdb).
 
-
-# The chronicle's OWN rules — the only Foundry world items written into the layer as
-# definitions, with the world's text as their DESCRIPTION.
-#
-# This list is deliberately not inferred. Most of a Foundry item's description is the
-# publisher's rules text pasted into the world ("These Merits and Flaws only apply to
-# thin-blood characters…" is the core's Thin-Blood Merits and Flaws; "The haven is rented out
-# to a business…" is its Haven Merits), and writing that into the campaign layer would
-# republish the books' text as this table's homebrew. The world carries no flag that tells
-# the two apart, so nothing is added here without the owner saying it is theirs.
-#
-# PLAN.md O4 enumerates the homebrew: the custom Predator Types *Extortionist* and *Montero*,
-# the power *Plug-In*, and *False Love (Trieste)*. The first three turn out to be published —
-# Extortionist and Montero are the Players Guide's Predator Types and Plug-In is a corpus
-# power, and all three resolve — so O4's list reduces to one.
-HOMEBREW = {
-    "False Love (Trieste)": "PLAN.md O4 names it; it cites an SPC and a named character and is"
-                            " in no book — the chronicle's own Flaw",
-}

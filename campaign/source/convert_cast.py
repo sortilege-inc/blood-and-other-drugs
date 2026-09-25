@@ -23,16 +23,13 @@ Deliberate choices, recorded in campaign/PLAN.md:
   Foundry items carry one-line GM shorthand ("Command attention and admiration") where the book
   carries paragraphs. Rules text is verbatim or it is a reference; it is never a paraphrase.
   The shorthand is presentation and goes nowhere near the gate.
-* **Advantages and Flaws are carried, and are not resolved against the corpus.** The world
-  records 114 of them across 30 of the 49 characters; dropping them would drop a third of a
-  sheet. The books do not name them (see FEATURE_FIELDS), so there is no published spelling to
-  prefer and O7 does not reach them: they are written as the world spells them, with the dots
-  the world gives them.
-* **The chronicle's own rules are written; the publisher's are not.** A Foundry item's
-  description is usually the books' text pasted into the world, so writing it into the layer
-  would republish the publisher's rules as this table's homebrew. Only the items
-  `cast_aliases.HOMEBREW` names — the owner's own enumeration, PLAN.md O4 — become DEFs, and
-  the characters that carry them reference them by hash.
+* **Advantages and Flaws are resolved against the books too.** The books head each one with
+  its dots (*"• False Love"*, *"Knowledge Hungry (•)"*, *"Furcus • to •••"*), or print it as a
+  field of a list (the core's Thin-blood Flaws: `^"Bestial Temper" STRING …`). The world writes
+  the Advantage and runs what it concerns onto it — *False Love (Trieste)*, *Dark Secret:
+  Masquerade Breacher*. That annotation is split off and kept in brackets after the book's
+  name, and the book's entry is referenced by hash. Nothing is written as a definition here:
+  every Advantage the world carries is the publisher's, and its text is the book's.
 * **Live state is not a record.** Current Hunger, damage taken, stains and the Werewolf/Hunter
   scaffolding the shared wod5e system carries for every actor are all dropped.
 """
@@ -46,7 +43,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from cast_aliases import ALIASES, HOMEBREW  # noqa: E402
+from cast_aliases import ALIASES, ANNOTATED  # noqa: E402
 ROOT = os.path.dirname(os.path.dirname(HERE))
 
 ATTRS = [("Strength", "strength"), ("Dexterity", "dexterity"), ("Stamina", "stamina"),
@@ -267,7 +264,7 @@ def powers_of(actor, idx, warn):
     return sorted(set(out))
 
 
-def fields_of(actor, warn, clans=None, preds=None):
+def fields_of(actor, warn, clans=None, preds=None, advs=None, refs=None):
     """The record, in the corpus's own order and labels. Only non-empty fields are written."""
     sysd = actor.get("system") or {}
     h = sysd.get("headers") or {}
@@ -309,8 +306,10 @@ def fields_of(actor, warn, clans=None, preds=None):
     add("Skills", skills_line(sysd))
     if kindred:
         add("Disciplines", disciplines_line(sysd, actor.get("name", "?"), warn))
-    for label, line in feature_lines(actor):
+    for label, line, rs in feature_lines(actor, advs or {}, warn):
         add(label, line)
+        if refs is not None:
+            refs.extend(rs)
     add("Equipment", items_named(actor, "gear"))
     add("Resonance", items_named(actor, "resonance"))
     add("Appearance", text_of(sysd.get("appearance")))
@@ -322,35 +321,134 @@ def def_id(fid):
     return "#bod" + fid                        # deterministic, and traceable to the Foundry id
 
 
-# A character's Advantages and Flaws are written AS THE WORLD SPELLS THEM, and are the one
-# published-looking thing here that is NOT resolved against the corpus. The books do not name
-# them: the core's Advantages chapter prints its Merits and Flaws as bulleted `Items` under
-# CATEGORY headings — Linguistics, Looks, Substance Use, Bonding, Feeding, Haven Merits and
-# Flaws — while Foundry's wod5e system keeps a flat list of its own, and several of its names
-# ("Iron Will", "Efficient Digestion", "Prestigious Sire") appear nowhere in any of the 19
-# official books. O7 governs names the books print; it has nothing to say about these, and
-# rewriting "Eat Food" to the core's "•• Eat food" would put the book's level notation inside
-# a name while the character's own rating sits beside it. So they are carried verbatim.
-FEATURE_FIELDS = [("Advantages", ("merit", "background")), ("Flaws", ("flaw",))]
+FEATURE_FIELDS = [("Advantages", "Advantage", ("merit", "background")), ("Flaws", "Flaw", ("flaw",))]
+# a heading's dot notation, in every form the books print it: "• False Love", "Unbondable
+# •••••", "Knowledge Hungry (•)", "Dark Secret (• to ••••)", "Haunted (•+)", "Furcus • to •••",
+# "Business Establishment •• or •••"
+DOT_NOTATION = re.compile(r"^\s*•+\s*|\s*\((?:[•+\s]|to|or)+\)\s*$|\s+•[•\s]*(?:(?:to|or)\s*•+\s*)?$")
+# fields of an entity that are its structure, not the names of Advantages it lists
+NOT_ADVANTAGES = {"Items", "Examples", "Epigraph", "Steps", "Notes", "Note", "Quote", "System"}
+ADVANTAGE_HEADINGS = re.compile(r"(?i)\b(merits?|flaws?|backgrounds?|advantages)\b")
 
 
-def feature_lines(actor):
-    """(label, line) for Advantages and Flaws: the world's own name, then its dots."""
+def published(name):
+    """A book's Advantage heading as its name: the dot notation and a trailing colon off."""
+    n, prev = name.strip().rstrip(":").strip(), None
+    while prev != n:
+        prev, n = n, DOT_NOTATION.sub("", n).strip()
+    return n
+
+
+def corpus_advantages():
+    """norm(name) -> (hash, entity name, the name as the book spells it). An Advantage is a
+    heading anywhere under a Merits / Flaws / Backgrounds / Advantages heading, a loresheet or
+    one of its levels, or a field of a heading that lists them (the core's "Thin-blood Flaws":
+    `^"Bestial Temper" STRING …`) — whose own entity is what gets referenced. Where several
+    books print one, the first in shelf order wins, a chapter before an appendix."""
+    data = os.path.join(ROOT, "data")
+    ents, rank = {}, {}
+    idx = json.loads(re.search(r"T\.index=(\{.*\});\}\)\(\);", open(os.path.join(data, "index.js"),
+                     encoding="utf-8").read(), re.S).group(1))
+    for i, b in enumerate(idx["books"]):
+        rank[b["id"]] = i
+    for fn in sorted(os.listdir(data)):
+        m = BLOB.search(open(os.path.join(data, fn), encoding="utf-8").read()) if fn.endswith(".js") else None
+        if m:
+            ents.update(json.loads(m.group(1))["entities"])
+
+    def trail(e):
+        out = []
+        while e:
+            out.append(e["name"])
+            e = ents.get(e.get("parent"))
+        return out
+
+    cands = []
+    for h, e in ents.items():
+        t = trail(e)
+        order = (rank.get(e["book"], 999), "appendi" in (e.get("file") or ""), e.get("file") or "", h)
+        if any(ADVANTAGE_HEADINGS.search(x) for x in t[1:]) or e.get("type") in ("Loresheet", "Loresheet Level"):
+            cands.append((order, norm(published(e["name"])), (h, e["name"], published(e["name"]))))
+        if ADVANTAGE_HEADINGS.search(e["name"]):
+            for pr in e.get("props") or []:
+                if pr.get("vk") == "scalar" and pr["name"] not in NOT_ADVANTAGES:
+                    cands.append((order, norm(published(pr["name"])), (h, e["name"], published(pr["name"]))))
+    out = {}
+    for _o, key, hit in sorted(cands, key=lambda c: c[0]):
+        if key:
+            out.setdefault(key, hit)
+    return out
+
+
+def resolve_advantage(raw, advs, who, warn):
+    """(name, annotation, hit): the book's name for a world Advantage, what the world adds to
+    it, and the book's entry — or the world's own spelling and no hit, reported."""
+    raw = raw.strip()
+
+    aliased = []
+
+    def look(n):
+        n = published(n)
+        hit = advs.get(norm(n))
+        if not hit and n in ALIASES:
+            hit = advs.get(norm(ALIASES[n][0]))
+            if hit and n not in aliased:
+                aliased.append(n)
+        return hit
+
+    def done(name, note, hit):
+        for n in aliased:                               # reported once, for the reading taken
+            if norm(ALIASES[n][0]) == norm(name):
+                warn.append("%s: Advantage %r read as %r (%s)" % (who, n, ALIASES[n][0], ALIASES[n][1]))
+        return name, note, hit
+
+    if raw in ANNOTATED:
+        name, note, why = ANNOTATED[raw]
+        hit = look(name)
+        if hit:
+            warn.append("%s: Advantage %r read as %r, annotation %r (%s)" % (who, raw, hit[2], note, why))
+            return hit[2], note, hit
+    hit = look(raw)
+    if hit:
+        return done(hit[2], "", hit)
+    m = re.match(r"^(.*?)\s*[\(\[](.*)[\)\]]$", raw)             # "False Love (Trieste)", "Clan Curse [Brujah]"
+    if m:
+        hit = look(m.group(1))
+        if hit:
+            return done(hit[2], m.group(2).strip(), hit)
+    m = re.match(r"^([^:]+):\s*(.+)$", raw)                           # "Haven: Luxury", "Prey Exclusion: Children"
+    if m:
+        head, tail = m.group(1).strip(), m.group(2).strip()
+        hit = look(tail)
+        if hit:                                                        # the category, then the Advantage in it
+            return done(hit[2], head, hit)
+        hit = look(head)
+        if hit:                                                        # the Advantage, then what it concerns
+            return done(hit[2], tail, hit)
+    warn.append("%s: Advantage %r is in no book — kept as the world spells it" % (who, raw))
+    return raw, "", None
+
+
+def feature_lines(actor, advs, warn):
+    """[(label, line, [(ref label, hash, entity name)])] for Advantages and Flaws: the book's
+    name, the world's annotation in brackets, the world's dots; each resolved one referenced."""
     items = [i for i in (actor.get("items") or []) if i.get("type") == "feature"]
     out = []
-    for label, kinds in FEATURE_FIELDS:
-        got = []
+    for label, reflabel, kinds in FEATURE_FIELDS:
+        got, refs = [], []
         for i in items:
             sysd = i.get("system") or {}
-            if (sysd.get("featuretype") or "") not in kinds:
+            if (sysd.get("featuretype") or "") not in kinds or not (i.get("name") or "").strip():
                 continue
             n = sysd.get("points")
             n = int(n) if isinstance(n, (int, float)) or (isinstance(n, str) and n.isdigit()) else 0
-            nm = (i.get("name") or "").strip()
-            if nm:
-                got.append("%s %d" % (nm, n) if n > 0 else nm)
+            name, note, hit = resolve_advantage(i["name"], advs, actor.get("name", "?"), warn)
+            txt = "%s (%s)" % (name, note) if note else name
+            got.append("%s %d" % (txt, n) if n > 0 else txt)
+            if hit and (reflabel, hit[0]) not in [(x[0], x[1]) for x in refs]:
+                refs.append((reflabel, hit[0], hit[1]))
         if got:
-            out.append((label, ", ".join(got)))
+            out.append((label, ", ".join(got), refs))
     return out
 
 
@@ -360,52 +458,23 @@ def items_named(actor, itype):
                      if i.get("type") == itype and (i.get("name") or "").strip())
 
 
-def homebrew_defs(src, warn):
-    """{name: (hash, text)} for the chronicle's own rules — the world items cast_aliases.
-    HOMEBREW names, with the world's own text. Anything named there and not in the export is
-    reported, so the list cannot rot quietly."""
-    out = {}
-    d = os.path.join(src, "Item")
-    for fn in sorted(os.listdir(d)) if os.path.isdir(d) else []:
-        if not fn.endswith(".json"):
-            continue
-        it = json.load(open(os.path.join(d, fn), encoding="utf-8"))
-        nm = (it.get("name") or "").strip()
-        if nm in HOMEBREW:
-            out[nm] = ("#bodi" + it["_id"], text_of((it.get("system") or {}).get("description")))
-    for nm in HOMEBREW:
-        if nm not in out:
-            warn.append("homebrew %r is named in cast_aliases but is in no world item" % nm)
-    return out
-
-
-def homebrew_of(actor, home):
-    """The chronicle's own rules this character carries, by the names on their items."""
-    seen = []
-    for i in (actor.get("items") or []):
-        nm = (i.get("name") or "").strip()
-        if nm in home and nm not in [x[0] for x in seen]:
-            seen.append((nm, home[nm][0]))
-    return seen
-
-
-def render_actor(actor, indent, warn, idx, clans, preds, home=None):
+def render_actor(actor, indent, warn, idx, clans, preds, advs):
     pad = " " * indent
     lines = ["%s%s ^\"%s\" DEF {" % (pad, def_id(actor["_id"]), esc(actor["name"]))]
     notes = text_of((actor.get("system") or {}).get("description")) or \
         text_of((actor.get("system") or {}).get("biography"))
     if notes:
         lines.append("%s    DESCRIPTION \"%s\"" % (pad, esc(notes)))
-    for label, value in fields_of(actor, warn, clans, preds):
+    refs = []
+    for label, value in fields_of(actor, warn, clans, preds, advs, refs):
         lines.append("%s    ^\"%s\" STRING \"%s\"" % (pad, esc(label), esc(value)))
     powers = powers_of(actor, idx, warn)
-    mine = homebrew_of(actor, home or {})
-    if powers or mine:
+    if powers or refs:
         lines.append("%s    REFERENCES {" % pad)
         for nm, h in powers:
             lines.append("%s        \"Discipline power\" -> %s ^\"%s\"" % (pad, h, esc(nm)))
-        for nm, h in mine:
-            lines.append("%s        \"The chronicle's own rule\" -> %s ^\"%s\"" % (pad, h, esc(nm)))
+        for label, h, nm in refs:
+            lines.append("%s        \"%s\" -> %s ^\"%s\"" % (pad, label, h, esc(nm)))
         lines.append("%s    }" % pad)
     lines.append("%s}" % pad)
     return lines
@@ -444,33 +513,20 @@ def main():
     body = []
     idx = corpus_powers()
     clans, preds = corpus_names()
-    home = homebrew_defs(src, warn)
-    if home:
-        body.append("    #bodfHomebrew00000001 ^\"The chronicle's own rules\" DEF {")
-        body.append("        DESCRIPTION \"Written for this chronicle and printed in no book. "
-                    "Every other rule a character carries is the publisher's and is read from "
-                    "the corpus; these are the table's own, carried here with the world's own "
-                    "wording.\"")
-        for nm in sorted(home):
-            h, txt = home[nm]
-            body.append("        %s ^\"%s\" DEF {" % (h, esc(nm)))
-            if txt:
-                body.append("            DESCRIPTION \"%s\"" % esc(txt))
-            body.append("        }")
-        body.append("    }")
+    advs = corpus_advantages()
 
     def emit(fid, indent):
         f = folders[fid]
         body.append("%s%s ^\"%s\" DEF {" % (" " * indent, "#bodf" + fid, esc(f["name"])))
         for aid in sorted(in_folder.get(fid, []), key=lambda i: actors[i]["name"]):
-            body.extend(render_actor(actors[aid], indent + 4, warn, idx, clans, preds, home))
+            body.extend(render_actor(actors[aid], indent + 4, warn, idx, clans, preds, advs))
         for k in sorted(kids.get(fid, []), key=lambda i: folders[i]["name"]):
             emit(k, indent + 4)
         body.append("%s}" % (" " * indent))
 
     if a.only:
         for aid in sorted(actors, key=lambda i: actors[i]["name"]):
-            body.extend(render_actor(actors[aid], 4, warn, idx, clans, preds, home))
+            body.extend(render_actor(actors[aid], 4, warn, idx, clans, preds, advs))
     else:
         for fid in sorted([f for f in kids.get(None, []) if f in folders],
                           key=lambda i: folders[i]["name"]):
@@ -480,7 +536,7 @@ def main():
         if loose:
             body.append("    #bodfUnfiled000000001 ^\"Unfiled\" DEF {")
             for aid in loose:
-                body.extend(render_actor(actors[aid], 8, warn, idx, clans, preds, home))
+                body.extend(render_actor(actors[aid], 8, warn, idx, clans, preds, advs))
             body.append("    }")
 
     head = [
