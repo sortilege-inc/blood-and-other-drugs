@@ -462,10 +462,24 @@ window.VtmSheet = (function () {
   const hunger = (m) => Math.max(0, Math.min(Dice.HUNGER_MAX, +((m.live || {}).hunger || 0)));
   // under the member's name (the heading), so it says what they are, not who
   // a character made with The Black Hand says so, and says when this table has not allowed it
+  // (and a loresheet level whose loresheet the Storyteller has not made available)
+  const unavailableLoresheets = (v) => {
+    const st = ((State() || {}).state) || {};
+    const on = new Set(st.loresheets || []);
+    const recs = D.records();
+    const names = [];
+    (v['Advantages & Flaws'] || []).forEach((r) => {
+      const lv = r.Advantage && recs.find((x) => x.id === r.Advantage && x.kind === 'loresheet level');
+      if (lv && !on.has(lv.loresheet)) { const ls = recs.find((x) => x.id === lv.loresheet); if (ls && names.indexOf(ls.name) === -1) names.push(ls.name); }
+    });
+    return names;
+  };
   const sourceNote = (v) => {
-    if (!isSabbat(v)) return '';
-    const allowed = !!((((State() || {}).state || {}).creation || {}).blackHand);
-    return ' · The Black Hand' + (allowed ? '' : ' (not allowed at this table)');
+    const bits = [];
+    if (isSabbat(v)) bits.push(' · The Black Hand' + ((((State() || {}).state || {}).creation || {}).blackHand ? '' : ' (not allowed at this table)'));
+    const ls = unavailableLoresheets(v);
+    if (ls.length) bits.push(' · ' + ls.join(', ') + ' (loresheet not available here)');
+    return bits.join('');
   };
   const memberSentence = (m) => (traits(values(m)).join(' · ') || 'Kindred') + sourceNote(values(m)) + ' · Hunger ' + hunger(m) + ((values(m).player) ? ' · played by ' + values(m).player : '');
 
@@ -850,7 +864,7 @@ window.VtmSheet = (function () {
   }
 
   return {
-    ACTOR, BOOKS, FILE_KIND, OLD_TEMPLATE_ID, HEALTH_FROM, WILLPOWER_FROM, RULES, SABBAT, SABBAT_BOOK, isSabbat, booksFor, sabbatDecl,
+    ACTOR, BOOKS, FILE_KIND, OLD_TEMPLATE_ID, HEALTH_FROM, WILLPOWER_FROM, RULES, SABBAT, SABBAT_BOOK, isSabbat, booksFor, sabbatDecl, unavailableLoresheets,
     spec, field, blank, complete, attributes, skills, derived, potencyRow, groupOf, sentence, render,
     fileOf, download, readMember, newMember, downloadMember, values, hunger, setHunger, change, damage, spendWillpower, trackLine,
     xp, logOf, isViewingArchive, versionsOf, surgeFor, potencyRow,

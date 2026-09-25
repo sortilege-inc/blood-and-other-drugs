@@ -37,7 +37,7 @@ window.VtmCreator = (function () {
   // ACTOR's labels); a step with a group key takes a whole kind of field.
   const STEP_FIELDS = {
     'CORE CONCEPT': ['Name', 'Concept', 'Chronicle', 'Ambition', 'Desire'],
-    'CLAN AND SIRE': ['Clan', 'Sire', 'Clan Bane'],
+    'CLAN AND SIRE': ['Clan', 'Sire', 'Sire Clan', 'Clan Bane'],
     ATTRIBUTES: ['@attributes'],
     SKILLS: ['@skills', 'Specialties'],
     DISCIPLINES: ['Disciplines'],
@@ -298,7 +298,7 @@ window.VtmCreator = (function () {
       .concat([el('div', { class: 'group-h side-h' }, ['On your sheet from this step'])], [said.length ? el('ul', { class: 'step-said' }, said.map((x) => el('li', {}, [el('span', { class: 'said-k' }, [x[0]]), ' ', x[1]]))) : el('p', { class: 'small said-none' }, ['Nothing yet.'])])
       .concat(cs.length ? [el('div', { class: 'group-h side-h' }, ['Checks']), el('ul', { class: 'checks' }, cs.map((c) => el('li', { class: c.ok ? 'ok' : 'warn' }, [c.text])))] : []));
     const main = el('div', { class: 'creator-step' });
-    if (s.key === 'SOURCES') main.appendChild(sourcesStep(v, meta, changeSources));
+    if (s.key === 'SOURCES') main.appendChild(sourcesStep(v, meta, changeSources, setMeta));
     else main.appendChild(stepControls(s, v, (nv) => { commit(nv); draw(page); }, meta, setMeta));
     main.appendChild(el('div', { class: 'chiprow' }, [
       stepIndex > 0 ? button('← ' + walk[stepIndex - 1].label, () => { stepIndex--; draw(page); }, 'ghost tiny') : null,
@@ -377,7 +377,7 @@ window.VtmCreator = (function () {
     const w = Object.assign({}, v, { Health: v.Health || d.Health, Willpower: v.Willpower || d.Willpower });
     const part = (names) => Sheet.render(w, { readOnly: true, only: names.filter((n) => Sheet.field(n) || (n === 'Path of Enlightenment' && Sheet.isSabbat(w))) });
     const sec = (title, node) => el('section', { class: 'cs-sec' }, [el('div', { class: 'cs-h' }, [title]), node]);
-    const top = ['Concept', 'Predator', 'Chronicle', 'Ambition', 'Clan', 'Sire', 'Desire', 'Generation'].concat(Sheet.isSabbat(w) ? ['Path of Enlightenment'] : []);
+    const top = ['Concept', 'Predator', 'Chronicle', 'Ambition', 'Clan', 'Sire', 'Sire Clan', 'Desire', 'Generation'].concat(Sheet.isSabbat(w) ? ['Path of Enlightenment'] : []);
     return el('div', { class: 'creator-sheet' }, [
       el('div', { class: 'sheet-head' }, [
         el('div', { class: 'sheet-name' }, [w.Name || 'An unnamed Kindred']),
@@ -403,12 +403,48 @@ window.VtmCreator = (function () {
   // Hand takes effect (the draft becomes a Sabbat Kindred) only with all three; untaking it clears
   // what it added — the Path, a Sabbat Predator type — after asking.
   // Step 0: the sources. The Core Rulebook always; third-party books by the player's choice.
-  function sourcesStep(v, meta, change) {
+  function sourcesStep(v, meta, change, setMeta) {
     return el('div', {}, [
       el('div', { class: 'prop-k' }, ['The rules']),
       el('p', {}, ['Core Rulebook · Players Guide — always.']),
       thirdParty(v, meta, change),
+      loresheetsBlock(v, meta, setMeta),
     ]);
+  }
+  // Loresheets, as third-party books are: the player picks the ones this character may draw on
+  // (each, or all), acknowledging that a loresheet is played only where the Storyteller allows it
+  // (the campaign's loresheets). Their levels are then offered on the Advantages step.
+  function loresheetsBlock(v, meta, setMeta) {
+    const all = D.records().filter((r) => r.kind === 'loresheet');
+    if (!all.length) return el('span', {});
+    const cur = Object.assign({ on: false, ids: [], ack: false }, meta.lore || {});
+    const apply = (patch) => setMeta({ lore: Object.assign({}, cur, patch) });
+    const box = el('div', { class: 'third-party' + (cur.on ? ' on' : '') });
+    box.appendChild(el('label', { class: 'tp-row' }, [el('input', { type: 'checkbox', checked: cur.on || null, onchange: (ev) => apply({ on: ev.target.checked }) }), ' Use loresheets',
+      el('span', { class: 'muted small' }, [' — ' + all.length + ' in the books; the core: “The Storyteller always has the final word on which Loresheets are available for player characters.”'])]));
+    if (!cur.on) return box;
+    const on = new Set(cur.ids);
+    box.appendChild(el('div', { class: 'chiprow tight tp-source' }, [
+      button('Select all', () => apply({ ids: all.map((r) => r.id) }), 'ghost tiny'),
+      button('None', () => apply({ ids: [] }), 'ghost tiny'),
+      el('span', { class: 'muted small' }, [on.size + ' of ' + all.length + ' chosen']),
+    ]));
+    const byBook = {};
+    all.forEach((r) => (byBook[r.book] = byBook[r.book] || []).push(r));
+    const list = el('div', { class: 'lore-pick' });
+    D.books().forEach((b) => {
+      const rs = byBook[b.id];
+      if (!rs) return;
+      list.appendChild(el('div', { class: 'power-level' }, [b.label]));
+      rs.forEach((r) => list.appendChild(el('div', { class: 'power-row' }, [
+        el('input', { type: 'checkbox', checked: on.has(r.id) || null, onchange: (ev) => apply({ ids: ev.target.checked ? cur.ids.concat([r.id]) : cur.ids.filter((x) => x !== r.id) }) }),
+        G() ? G().detailsOf([r.name, el('span', { class: 'muted small' }, [' · ' + (r.levels || []).length + ' levels'])], r.id, r.book) : el('span', {}, [r.name]),
+      ])));
+    });
+    box.appendChild(list);
+    box.appendChild(el('label', { class: 'tp-row tp-ack' }, [el('input', { type: 'checkbox', checked: cur.ack || null, onchange: (ev) => apply({ ack: ev.target.checked }) }),
+      ' I understand these loresheets can be played only where my Storyteller allows them.']));
+    return box;
   }
   function thirdParty(v, meta, change) {
     const shelf = D.books().filter((b) => b.shelf === 'third-party');
@@ -448,6 +484,40 @@ window.VtmCreator = (function () {
     if (cur.sources.length && !cur.ack) box.appendChild(el('p', { class: 'muted small' }, ['Tick the acknowledgment and the options take effect.']));
     // on a player's page, whether this table allows it
     if (opts.where === 'play' && sabbat) box.appendChild(el('p', { class: 'small' }, [opts.blackHand ? '✓ Your Storyteller allows The Black Hand at this table.' : opts.joined ? 'Your Storyteller has not allowed The Black Hand at this table yet (their Loresheets panel).' : 'Whether this table allows The Black Hand shows once you have joined.']));
+    return box;
+  }
+
+  // ── the Clan Curse thin-blood Flaw: the sire's clan, and that clan's Bane ──
+  // "You must pick a Clan Bane to suffer from … You can only pick the Brujah or Gangrel Bane if you
+  // possess the Bestial Temper Flaw, and the Tremere Bane only if you have the Catenating Blood
+  // Merit." The limits are read from that text; the Banes are the clan's own and the Players
+  // Guide's variants for it (VtmData.clanBanes). The sire's clan goes on the sheet (Sire Clan).
+  const CLAN_CURSE = 'Clan Curse';
+  function curseLimits(text) {
+    const out = {};
+    const re = /(?:pick|and) the ([A-Z][A-Za-z]+(?: or [A-Z][A-Za-z]+)?) Bane (?:only )?if you (?:possess|have) the ([A-Z][\w-]+(?: [A-Z][\w-]+)*) (Flaw|Merit)/g;
+    let m;
+    while ((m = re.exec(text))) m[1].split(' or ').forEach((c) => { out[c] = { name: m[2], flaw: m[3] === 'Flaw' }; });
+    return out;
+  }
+  function clanCurse(v, rows, tb, set) {
+    const t = tb.flaws.find((x) => x.name === CLAN_CURSE) || { text: '' };
+    const limits = curseLimits(t.text);
+    const holds = (need) => rows.some((r) => r.Name === need.name && !!r.Flaw === need.flaw);
+    const allowed = (c) => { const k = Object.keys(limits).find((x) => c === x || c.startsWith(x)); return !k || holds(limits[k]); };
+    const box = el('div', { class: 'curse' }, [el('div', { class: 'prop-k' }, ['Clan Curse — your sire’s clan and its Bane']), el('p', { class: 'small' }, [t.text])]);
+    const cl = clans();
+    box.appendChild(el('div', { class: 'chiprow tight' }, [el('select', { class: 'scope', onchange: (ev) => set({ 'Sire Clan': ev.target.value, 'Clan Bane': '' }) },
+      [el('option', { value: '' }, ['the sire’s clan…'])].concat(cl.map((c) => el('option', { value: c.name, disabled: allowed(c.name) ? null : 'disabled', selected: c.name === v['Sire Clan'] || null },
+        [c.name + (allowed(c.name) ? '' : ' — needs ' + limits[Object.keys(limits).find((x) => c.name === x || c.name.startsWith(x))].name)]))))]));
+    if (v['Sire Clan']) {
+      const banes = D.clanBanes(v['Sire Clan']);
+      box.appendChild(el('div', { class: 'dist-cards' }, banes.map((b) => el('button', { type: 'button', class: 'dist-card' + (v['Clan Bane'] === b.text ? ' on' : ''), onclick: () => set({ 'Clan Bane': b.text }) }, [
+        el('div', { class: 'dist-name' }, [v['Sire Clan'] + (b.name === 'Bane' ? ' · Bane' : ' · ' + b.name)]),
+        el('div', { class: 'small' }, [b.text.length > 260 ? b.text.slice(0, 260) + '…' : b.text]),
+        el('div', { class: 'muted small' }, [(D.indexBook(b.book) || {}).label || b.book]),
+      ]))));
+    }
     return box;
   }
 
@@ -515,11 +585,13 @@ window.VtmCreator = (function () {
       const tb = D.thinBloodTraits();
       const rows = v['Advantages & Flaws'] || [];
       const has = (n, flaw) => rows.some((r) => r.Name === n && !!r.Flaw === flaw);
-      const toggle = (n, flaw) => set({ 'Advantages & Flaws': has(n, flaw) ? rows.filter((r) => !(r.Name === n && !!r.Flaw === flaw)) : rows.concat([{ Name: n, Dots: 0, Flaw: flaw }]) });
+      const toggle = (n, flaw) => set(Object.assign({ 'Advantages & Flaws': has(n, flaw) ? rows.filter((r) => !(r.Name === n && !!r.Flaw === flaw)) : rows.concat([{ Name: n, Dots: 0, Flaw: flaw }]) },
+        n === CLAN_CURSE && has(n, flaw) ? { 'Clan Bane': '' } : {}));
       const chips = (list, flaw) => el('div', { class: 'chiprow tight' }, list.map((t) => { const b = button(t.name + (has(t.name, flaw) ? ' ✓' : ''), () => toggle(t.name, flaw), has(t.name, flaw) ? 'tiny' : 'ghost tiny'); b.title = t.text || ''; return b; }));
       if (tb.entity) box.appendChild(el('div', { class: 'muted small' }, [tb.entity.desc]));
       box.appendChild(el('div', { class: 'prop' }, [el('div', { class: 'prop-k' }, ['Thin-blood Merits']), el('div', { class: 'prop-v' }, [chips(tb.merits, false)])]));
       box.appendChild(el('div', { class: 'prop' }, [el('div', { class: 'prop-k' }, ['Thin-blood Flaws']), el('div', { class: 'prop-v' }, [chips(tb.flaws, true)])]));
+      if (has(CLAN_CURSE, true)) box.appendChild(clanCurse(v, rows, tb, set));
     }
     // the sheet's fields for the step (Clan/Predator/Path drawn above as picks; Attributes and Skills by the guides)
     const shown = names.filter((n) => hidden.indexOf(n) === -1 && !(s.key === 'CLAN AND SIRE' && n === 'Clan') && !(s.key === 'PREDATOR' && n === 'Predator') && n !== 'Path of Enlightenment');
@@ -560,6 +632,8 @@ window.VtmCreator = (function () {
       const tp = (meta || {}).thirdParty != null ? meta.thirdParty : Sheet.isSabbat(v);
       const ack = (meta || {}).ack != null ? meta.ack : Sheet.isSabbat(v);
       const src = ((meta || {}).sources || (Sheet.isSabbat(v) ? [BH_BOOK] : []));
+      const lore = (meta || {}).lore || {};
+      if (lore.on) out.push({ ok: !!(lore.ack && (lore.ids || []).length), text: !(lore.ids || []).length ? 'Choose the loresheets to use, or untick loresheets.' : lore.ack ? (lore.ids.length + ' loresheet' + (lore.ids.length === 1 ? '' : 's') + ' to draw on; playable where the Storyteller allows them.') : 'Tick the loresheets acknowledgment for them to take effect.' });
       if (!tp) out.push({ ok: true, text: 'Core Rulebook only.' });
       else if (!src.length) out.push({ ok: false, text: 'Choose the third-party books to use, or untick third-party options.' });
       else out.push({ ok: !!ack, text: ack ? 'Third-party options in effect; playable where the Storyteller allows them.' : 'Tick the acknowledgment for the options to take effect.' });
@@ -624,6 +698,7 @@ window.VtmCreator = (function () {
         const f = rows.filter((r) => r.Flaw && tb.flaws.some((t) => t.name === r.Name)).length;
         out.push({ ok: m >= num(tm[1]) && m <= num(tm[2]) && m === f, text: tm[0] + ' This sheet: ' + m + ' and ' + f + '.' });
       }
+      if (isThin(v) && rows.some((r) => r.Name === CLAN_CURSE && r.Flaw)) out.push({ ok: !!(v['Sire Clan'] && v['Clan Bane']), text: v['Sire Clan'] && v['Clan Bane'] ? 'Clan Curse: ' + v['Sire Clan'] + '’s Bane, at Bane Severity 1.' : 'Clan Curse: pick your sire’s clan and its Bane.' });
       const fb = isThin(v) && thinForbidden();
       if (fb) {
         const names = /buy (.+) during/.exec(fb)[1].split(/,\s*(?:or\s+)?|\s+or\s+/).map((x) => x.trim()).filter(Boolean);

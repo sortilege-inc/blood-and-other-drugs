@@ -159,7 +159,10 @@ SHAPES = [
 SHAPE_NAMES = [s[0] for s in SHAPES]
 # Records by DECLARED type (BASE 0.5.3): a DEF that EXTENDS ^"Loresheet" is a loresheet, one that
 # EXTENDS ^"Loresheet Level" (an Advantage) is one of its levels. The ids are read from BASE.
-TYPED_KINDS = {"Loresheet": "loresheet", "Loresheet Level": "loresheet level"}
+TYPED_KINDS = {"Loresheet": "loresheet", "Loresheet Level": "loresheet level",
+               # BASE 0.5.4: a DEF that EXTENDS ^"Advantage" or one of the types that extend it (Merit,
+               # Flaw, Background) is an Advantage the creator offers, from every book
+               "Advantage": "advantage", "Merit": "advantage", "Flaw": "advantage", "Background": "advantage"}
 # "Level 3", or a label that names what the level holds ("Level 4 Powers", "Level 3
 # Ceremonies", "Level 5 Formula" -- Tattered Facade, and the rituals appendices)
 LEVEL_HEADING = re.compile(r"^Level \d+( (Powers?|Rituals?|Ceremony|Ceremonies|Formulae?))?$")
@@ -559,6 +562,11 @@ def records_of(entities, orders, disciplines):
                     # its dots, and the loresheet it is printed under
                     rec["rating"] = scalar(e, "Rating")
                     rec["loresheet"] = e["parent"]
+                elif kind == "advantage":
+                    # its declared type, its dots (a Rating, or the printed range), what it sits under
+                    rec["type"] = e.get("type")
+                    rec["rating"] = scalar(e, "Rating")
+                    rec["dots"] = scalar(e, "Dots")
                 else:
                     rec["levels"] = [c for c in e.get("children", []) if entities.get(c, {}).get("typeHash") in typed]
                 out.append(rec)

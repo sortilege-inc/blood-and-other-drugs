@@ -80,9 +80,12 @@ window.VttSystem = (function () {
   // takes the character to the table as a loaded file would.
   // what a player is told when a character arrives: one made with The Black Hand needs the table to allow it
   function memberNotice(m) {
-    if (!Sheet.isSabbat(Sheet.values(m))) return null;
-    if (((S() || {}).creation || {}).blackHand) return null;
-    return m.name + ' is made with The Black Hand’s options: playable here once your Storyteller allows them.';
+    const v = Sheet.values(m);
+    const out = [];
+    if (Sheet.isSabbat(v) && !((S() || {}).creation || {}).blackHand) out.push(m.name + ' is made with The Black Hand’s options: playable here once your Storyteller allows them.');
+    const ls = Sheet.unavailableLoresheets(v);
+    if (ls.length) out.push(m.name + ' draws on ' + ls.join(', ') + ': playable here once your Storyteller makes ' + (ls.length === 1 ? 'that loresheet' : 'those loresheets') + ' available.');
+    return out.join(' ') || null;
   }
   function makeCharacter(container, done, o) {
     if (!window.VtmCreator) return false;

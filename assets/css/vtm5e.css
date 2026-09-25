@@ -422,3 +422,5 @@ dl.power-head { color: var(--ink); }   /* its panel is paper: its values read in
 .adv-list { margin: 6px 0; max-height: 520px; overflow: auto; border: 1px solid #2a2227; padding: 4px 8px; }
 .adv-hit { display: flex; gap: 8px; align-items: baseline; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #221b20; }
 .adv-hit .book-details { flex: 1; min-width: 0; }
+.lore-pick { max-height: 360px; overflow: auto; margin: 6px 0 6px 1.4em; }
+.curse { margin: 12px 0; padding: 10px 12px; border: 1px solid #3a2f35; }

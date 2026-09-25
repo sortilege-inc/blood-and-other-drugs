@@ -201,18 +201,20 @@ window.VtmCreatorGuides = (function () {
   // Guide's summary sheet adds the rest of the line's, each citing its book and page.
   let advQuery = '', advKind = 'all';
   function advantageCatalogue() {
-    const out = [], seen = new Set();
-    D.all(['core', 'players-guide']).filter((e) => /^(Advantage|Merit|Flaw|Background)$/.test(e.type || '')).forEach((e) => {
-      const flaw = e.type === 'Flaw';
-      const k = e.name.toLowerCase() + '|' + flaw;
-      if (seen.has(k)) return;
-      seen.add(k);
-      const dots = D.val(e, 'Dots') || '';
-      const rating = D.val(e, 'Rating');
+    // every book's, from the records index (data/records.js): no book is loaded to list them
+    const order = D.books().map((b) => b.id);
+    const out = [], seen = {};
+    D.records().filter((r) => r.kind === 'advantage').sort((a, b) => order.indexOf(a.book) - order.indexOf(b.book)).forEach((r) => {
+      const dots = r.dots || '';
+      const flaw = r.type === 'Flaw' || /\bFlaw\b/i.test(dots) || /\bFlaws?$/i.test(r.under || '');
+      const k = r.name.toLowerCase() + '|' + flaw;
       const groups = String(dots).split(/\s+(?:to|or)\s+/).map((g) => (g.match(/[•●]/g) || []).length).filter(Boolean);
-      let choices = rating ? [+rating] : groups.length === 2 && /\bto\b/.test(dots) ? Array.from({ length: groups[1] - groups[0] + 1 }, (_, n) => groups[0] + n) : groups.length ? groups : [];
-      const parent = (D.entity(e.parent) || {}).name || '';
-      out.push({ e, name: e.name, flaw, kind: flaw ? 'Flaw' : e.type === 'Background' ? 'Background' : 'Merit', choices, dots, parent });
+      const choices = r.rating ? [+r.rating] : groups.length === 2 && /\bto\b/.test(dots) ? Array.from({ length: groups[1] - groups[0] + 1 }, (_, n) => groups[0] + n) : groups;
+      const x = { r, name: r.name, flaw, kind: flaw ? 'Flaw' : r.type === 'Background' ? 'Background' : 'Merit', choices, dots, parent: r.under || '', books: [r.book] };
+      // a name printed in several books is one entry, citing each (the core's text first)
+      if (seen[k]) { if (seen[k].books.indexOf(r.book) === -1) seen[k].books.push(r.book); return; }
+      seen[k] = x;
+      out.push(x);
     });
     return out;
   }
@@ -228,7 +230,8 @@ window.VtmCreatorGuides = (function () {
     if (!rows.length) box.appendChild(el('p', { class: 'muted small' }, ['None yet — find them below.']));
     rows.forEach((r, i) => {
       const t = theirs.indexOf(JSON.stringify(r));
-      const f = r.Advantage ? D.entity(r.Advantage) : fullest(r.Name);
+      const rec = r.Advantage ? D.records().find((q) => q.id === r.Advantage) : null;
+      const f = rec ? { id: rec.id, book: rec.book } : fullest(r.Name);
       box.appendChild(el('div', { class: 'adv-row' }, [
         el('span', { class: 'adv-name' }, [(r.Flaw ? 'Flaw · ' : '') + r.Name]),
         el('span', { class: 'alloc-levels' }, [1, 2, 3, 4, 5].map((l) => button(String(l), () => { const n = rows.slice(); n[i] = Object.assign({}, r, { Dots: +r.Dots === l ? 0 : l }); set({ 'Advantages & Flaws': n }); }, 'tiny' + (+r.Dots === l ? '' : ' ghost')))),
@@ -236,6 +239,27 @@ window.VtmCreatorGuides = (function () {
         f ? detailsOf(['details'], f.id, f.book) : null,
       ]));
     });
+    // the loresheets chosen on step 0: each level, readable, taken like any Advantage
+    const lore = ctx.meta.lore || {};
+    if (lore.on && lore.ack && (lore.ids || []).length) {
+      box.appendChild(el('div', { class: 'prop-k adv-find' }, ['Your loresheets']));
+      const recs = D.records();
+      lore.ids.forEach((id) => {
+        const ls = recs.find((r) => r.id === id);
+        if (!ls) return;
+        const card = el('div', { class: 'disc-card' }, [detailsOf([el('b', {}, [ls.name]), el('span', { class: 'muted small' }, [' · ' + ((D.indexBook(ls.book) || {}).label || ls.book)])], ls.id, ls.book)]);
+        recs.filter((r) => r.kind === 'loresheet level' && r.loresheet === id).sort((a, b) => (a.rating || 0) - (b.rating || 0)).forEach((lv) => {
+          const i = rows.findIndex((r) => r.Advantage === lv.id);
+          const take = button(i !== -1 ? 'taken ✓' : 'take ' + DOT.repeat(lv.rating || 0), () => {
+            const n = rows.slice();
+            if (i !== -1) n.splice(i, 1); else n.push({ Name: lv.name, Dots: lv.rating || 0, Flaw: false, Advantage: lv.id });
+            set({ 'Advantages & Flaws': n });
+          }, i !== -1 ? 'tiny' : 'ghost tiny');
+          card.appendChild(el('div', { class: 'power-row' + (i !== -1 ? ' on' : '') }, [take, detailsOf([lv.name + ' ' + DOT.repeat(lv.rating || 0)], lv.id, lv.book)]));
+        });
+        box.appendChild(card);
+      });
+    }
     // the finder
     const cat = advantageCatalogue();
     const q = el('input', { type: 'search', class: 'search', placeholder: 'Find a Merit, Background or Flaw…', value: advQuery });
@@ -247,10 +271,10 @@ window.VtmCreatorGuides = (function () {
     const shown = hits.slice(0, 40);
     const list = el('div', { class: 'adv-list' });
     shown.forEach((x) => {
-      const add = (dots) => set({ 'Advantages & Flaws': rows.concat([{ Name: x.name, Dots: dots, Flaw: x.flaw, Advantage: x.e.id }]) });
+      const add = (dots) => set({ 'Advantages & Flaws': rows.concat([{ Name: x.name, Dots: dots, Flaw: x.flaw, Advantage: x.r.id }]) });
       const adds = x.choices.length ? x.choices.map((d) => button('+ ' + DOT.repeat(d), () => add(d), 'ghost tiny')) : [button('+ add', () => add(0), 'ghost tiny')];
       list.appendChild(el('div', { class: 'adv-hit' }, [
-        detailsOf([el('b', {}, [x.name]), el('span', { class: 'muted small' }, [' · ' + x.kind + (x.parent && !/^(Merits|Flaws|Backgrounds)$/.test(x.parent) ? ' · ' + x.parent : '') + (x.dots ? ' · ' + x.dots : '')])], (fullest(x.name) || x.e).id, (fullest(x.name) || x.e).book),
+        detailsOf([el('b', {}, [x.name]), el('span', { class: 'muted small' }, [' · ' + x.kind + (x.parent && !/^(Merits|Flaws|Backgrounds)$/.test(x.parent) ? ' · ' + x.parent : '') + (x.dots ? ' · ' + x.dots : '') + ' · ' + x.books.map((b) => (D.indexBook(b) || {}).label || b).join(', ')])], x.r.id, x.r.book),
         el('span', { class: 'chiprow tight' }, adds),
       ]));
     });
@@ -487,5 +511,5 @@ window.VtmCreatorGuides = (function () {
     return 'in the Notes';
   }
 
-  return { allocator, skills, predator, disciplines, advantages, grantsOf, parseGrant, fromPredator, predatorDots, describe, titleCase };
+  return { detailsOf, allocator, skills, predator, disciplines, advantages, grantsOf, parseGrant, fromPredator, predatorDots, describe, titleCase };
 })();
