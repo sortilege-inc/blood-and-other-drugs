@@ -38,6 +38,10 @@ ALIASES = {
     "Efficient Digestion":     ("Iron Gullet",           "owner: nearest fit — a Merit widening what you can feed on"),
     "Obsession Target":        ("Stalkers",              "owner: nearest fit — hangers-on fixated on you"),
     "Status Symbol":           ("Fame",                  "owner: nearest fit"),
+    "Ritual Savant":           ("Shrine",                "owner: nearest fit — dice on acquiring ritual ingredients"),
+    "Danger Sense":            ("Object of Power",       "owner: nearest fit"),
+    "Natural Leader":          ("Embraced to Rule",      "owner: nearest fit — the High Clan loresheet's Leadership level"),
+    "Vengeful":                ("Risk-taker",            "owner: nearest fit — the books' compulsion Flaw"),
 }
 
 # Advantages the world writes with its annotation run on, with no bracket or colon to split
@@ -51,6 +55,7 @@ ANNOTATED = {
     "Shunned by Sire":         ("Shunned", "by Sire",   "owner: the Players Guide's Flaw; the world's text is the book's"),
     "Cult":                    ("Herd", "Cult",         "owner: nearest fit — the cult is the Herd"),
     "Prestigious Sire":        ("Mawla", "Sire",        "owner: nearest fit — the sire is the Mawla"),
+    "Amnesia":                 ("Dark Secret", "Amnesia", "owner: nearest fit — what she cannot remember is the secret"),
 }
 
 # Absolver, Ripper, Domina and Hedonist stood here while the third-party shelf was unbuilt.
