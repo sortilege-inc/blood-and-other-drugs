@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-build_data.py — the Vampire: The Masquerade 5e corpus (titterpig-dsl-vtm5e/0.5) → data/*.js.
+build_data.py — the Vampire: The Masquerade 5e corpora → data/*.js.
 
 Everything the site shows comes from here; nothing is hand-typed. The shape is GENERIC and
 hash-keyed — the engine reads it without knowing the game, and system/vtm5e/ interprets it:
@@ -13,11 +13,14 @@ hash-keyed — the engine reads it without knowing the game, and system/vtm5e/ i
 
 What this corpus needs that Troika's did not:
 
-  * **Eighteen books, 11 MB.** One data file per book (`data/<book>.js`), loaded on demand by
-    engine/data.js; a page costs only data/index.js and data/records.js until it opens a book.
-    A corpus file belongs to a book by its file-name PREFIX (`vtm5e-0.5-<book>-<chapter>`);
-    BOOKS below is the prefix map, the only hand-written list in the build, and every corpus
-    file must be claimed by exactly one book or this exits non-zero.
+  * **Twenty-one books, 12 MB, on two SHELVES.** One data file per book (`data/<book>.js`),
+    loaded on demand by engine/data.js; a page costs only data/index.js and data/records.js
+    until it opens a book. A corpus file belongs to a book by its file-name PREFIX
+    (`vtm5e-0.5-<book>-<chapter>`); BOOKS below is the prefix map, the only hand-written list
+    in the build, and every corpus file must be claimed by exactly one book, by a book on its
+    own shelf, or this exits non-zero. The second shelf is titterpig-dsl-vtm5e-3rdparty —
+    Storytellers Vault titles and Sortilege's homebrew, kept apart so the site can say which
+    text is the publisher's. See SHELVES for what it loads, what it excludes and why.
 
   * **Chapters in printed order.** Each chapter file opens with `# source: … (pages N-M)`;
     a book's chapters are sorted by that first page (a `.lore` file by its first "printed N").
@@ -38,7 +41,7 @@ What this corpus needs that Troika's did not:
 Every string is carried byte-for-byte from the DSL (only DSL escapes resolved); this file
 decides shape alone. verify_data.py then proves the round trip in both directions.
 
-    python3 build/build_data.py [<path to titterpig-dsl-vtm5e/0.5>]
+    python3 build/build_data.py [<titterpig-dsl-vtm5e/0.5>] [<titterpig-dsl-vtm5e-3rdparty>]
 """
 import json
 import os
@@ -50,7 +53,29 @@ from parse_dsl import parse_files  # noqa: E402
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_CORPUS = os.path.expanduser("~/Sortilege/Titterpig/DSL/titterpig-dsl-vtm5e/0.5")
+DEFAULT_THIRD_PARTY = os.path.expanduser("~/Sortilege/Titterpig/DSL/titterpig-dsl-vtm5e-3rdparty")
 FILE_PREFIX = "vtm5e-0.5-"
+
+# ───────────────────────── the shelves ─────────────────────────
+#
+# Two corpora, one system id. The official corpus is one flat directory of books. The
+# third-party repository is one directory per PRODUCT (`<product>/<content version>/`), and
+# it holds material this table does not play — so a shelf that names product directories
+# must ALSO name, with a reason, every product directory it leaves out. `dirs` and
+# `excluded` together have to equal what is on disk, or this build raises: "not loaded"
+# may not quietly mean "not noticed".
+SHELVES = [
+    {"id": "official", "label": "The books", "root": DEFAULT_CORPUS, "note": None},
+    {"id": "third-party", "label": "Third-party and homebrew", "root": DEFAULT_THIRD_PARTY,
+     "note": "Storytellers Vault titles and this table's own homebrew, shelved apart: none of "
+             "it is Renegade Game Studios' text, and a reader should not have to guess which.",
+     "dirs": ["the-black-hand/0.5", "sortilege/0.5"],
+     "excluded": {
+         "summoned-stories/0.5": "another Storyteller's chronicle documentation — a Road system "
+                                 "replacing Humanity, and a creation brief — house rules for a "
+                                 "different table, not rules this one plays by",
+     }},
+]
 
 # ───────────────────────── the prefix → book map ─────────────────────────
 #
@@ -77,10 +102,27 @@ BOOKS = [
     {"id": "bleed", "label": "Bleed and How to Deal With It", "kind": "book", "prefix": "bleed"},
     {"id": "wod-storyteller", "label": "Storyteller System: Expanded Mechanics", "kind": "book", "prefix": "wod-storyteller"},
     {"id": "errata", "label": "Errata and Rules Update", "kind": "errata", "prefix": "errata"},
+    # ── the third-party shelf ──
+    {"id": "black-hand", "label": "The Black Hand: Playing the Sabbat", "kind": "book",
+     "shelf": "third-party", "prefix": "black-hand"},
+    {"id": "sunburners", "label": "Path of the Sun: the Sunburners", "kind": "homebrew",
+     "shelf": "third-party", "prefix": "sortilege-sunburners"},
 ]
+for _b in BOOKS:
+    _b.setdefault("shelf", SHELVES[0]["id"])
 KINDS = {b["kind"] for b in BOOKS} | {"ttrpg", "lore"}
+# Kinds whose chapters have no printed page, legitimately: the BASE is the corpus's own
+# vocabulary, and homebrew was never in print. Everywhere else a missing `# source: …
+# (pages N-M)` is a conversion defect, and check_shape.py fails on it.
+UNPAGED_KINDS = {"base", "homebrew"}
 DSL_EXTS = (".ttrpg",)
 LORE_EXTS = (".lore",)
+# Extensions this build SEES and does not load, each with its reason. Naming them is what
+# keeps a file from going missing in silence; the build prints them on every run.
+DEFERRED_EXTS = {
+    ".arc": "a scenario's FLOW / PHASE / SCENE / CAST — constructs the reader does not carry "
+            "yet; shelving one as a book would drop the structure that makes it a scenario",
+}
 
 # ───────────────────────── records by shape ─────────────────────────
 # Field names the book prints on a record — keys only. A record is the FIRST shape it fits.
@@ -338,8 +380,9 @@ def corrections_of(doc, book):
 
 # ───────────────────────── files ─────────────────────────
 
-BANNER = ("/* Generated by build/build_data.py from titterpig-dsl-vtm5e/0.5 — do not edit by hand.\n"
-          "   Every string is verbatim from the DSL corpus; regenerate rather than patch. */\n")
+BANNER = ("/* Generated by build/build_data.py from titterpig-dsl-vtm5e/0.5 and\n"
+          "   titterpig-dsl-vtm5e-3rdparty — do not edit by hand.\n"
+          "   Every string is verbatim from the DSL corpora; regenerate rather than patch. */\n")
 
 REGISTER = """(function(){var d=%s;var T=window.VTM5E=window.VTM5E||{books:{},entities:{},loaded:{}};
 T.loaded[d.src]=true;T.books[d.book.id]=d.book;
@@ -347,13 +390,52 @@ for(var h in d.entities){T.entities[h]=d.entities[h];}})();
 """
 
 
-def corpus_files(corpus):
-    out = set()
-    for root, _dirs, files in os.walk(corpus):
-        for fn in files:
-            if fn.endswith(DSL_EXTS + LORE_EXTS):
-                out.add(os.path.relpath(os.path.join(root, fn), corpus))
-    return out
+def resolve_roots(argv):
+    """The corpus roots this build reads, in shelf order; either may be given on the command
+    line (`build_data.py [<official 0.5>] [<third-party repo>]`)."""
+    return {sh["id"]: os.path.abspath(os.path.expanduser(argv[i] if len(argv) > i else sh["root"]))
+            for i, sh in enumerate(SHELVES)}
+
+
+def product_dirs(root):
+    """A repository's product directories as they are ON DISK: every directory that holds a
+    file this build would read or defer. Read from disk, never from the list above — that is
+    what lets the list be wrong and be caught."""
+    exts = DSL_EXTS + LORE_EXTS + tuple(DEFERRED_EXTS)
+    return {os.path.relpath(r, root) for r, _d, files in os.walk(root)
+            if any(f.endswith(exts) for f in files)}
+
+
+def corpus_files(roots):
+    """(loaded, deferred): basename → path, over every shelf. The basename is this build's
+    file key, so it must be unique across the corpora."""
+    loaded, deferred = {}, {}
+    for sh in SHELVES:
+        root = roots[sh["id"]]
+        if sh.get("dirs") is not None:
+            named = set(sh["dirs"]) | set(sh.get("excluded", {}))
+            on_disk = product_dirs(root)
+            if on_disk != named:
+                raise SystemExit(
+                    "build_data: the %s shelf's product list is out of step with the repository.\n"
+                    "  %s\n"
+                    "  on disk, named by neither dirs nor excluded: %s\n"
+                    "  named here, not on disk: %s"
+                    % (sh["id"], root, sorted(on_disk - named) or "none", sorted(named - on_disk) or "none"))
+            walk = [os.path.join(root, d) for d in sh["dirs"]]
+        else:
+            walk = [root]
+        for w in walk:
+            for r, _dirs, files in os.walk(w):
+                for fn in sorted(files):
+                    into = deferred if os.path.splitext(fn)[1] in DEFERRED_EXTS else (
+                        loaded if fn.endswith(DSL_EXTS + LORE_EXTS) else None)
+                    if into is None:
+                        continue
+                    if fn in into or fn in (loaded if into is deferred else deferred):
+                        raise SystemExit("build_data: two corpus files are named %s" % fn)
+                    into[fn] = os.path.join(r, fn)
+    return loaded, deferred
 
 
 def book_of(fn):
@@ -367,24 +449,32 @@ def book_of(fn):
     return hits[0]["id"] if hits else None
 
 
-def claimed_files(corpus):
-    """file → book id; raises if any corpus file is claimed by no book."""
-    on_disk = corpus_files(corpus)
+def claimed_files(roots):
+    """(loaded, deferred) with every book's `_files` filled. Raises if a corpus file is
+    claimed by no book, if a book has no file, or if a file is claimed by a book shelved on
+    a different corpus — a prefix that reaches across the shelves is a bug, not a shortcut."""
+    loaded, deferred = corpus_files(roots)
     for b in BOOKS:
         b["_files"] = []
-    unclaimed = []
-    for fn in sorted(on_disk):
+    unclaimed, crossed = [], []
+    for fn in sorted(loaded):
         bid = book_of(fn)
         if not bid:
             unclaimed.append(fn)
             continue
-        next(b for b in BOOKS if b["id"] == bid)["_files"].append(fn)
+        b = next(x for x in BOOKS if x["id"] == bid)
+        if not loaded[fn].startswith(roots[b["shelf"]] + os.sep):
+            crossed.append("%s (claimed by %s, on the %s shelf)" % (fn, bid, b["shelf"]))
+            continue
+        b["_files"].append(fn)
     empty = [b["id"] for b in BOOKS if not b["_files"]]
-    if unclaimed or empty:
-        raise SystemExit("build_data: the prefix → book map is out of step with the corpus.\n"
-                         "  in the corpus, claimed by no book: %s\n"
-                         "  books with no file: %s" % (unclaimed or "none", empty or "none"))
-    return on_disk
+    if unclaimed or empty or crossed:
+        raise SystemExit("build_data: the prefix → book map is out of step with the corpora.\n"
+                         "  in the corpora, claimed by no book: %s\n"
+                         "  books with no file: %s\n"
+                         "  files claimed across shelves: %s"
+                         % (unclaimed or "none", empty or "none", crossed or "none"))
+    return loaded, deferred
 
 
 def first_page(path, lore):
@@ -470,10 +560,10 @@ def records_of(entities, orders, disciplines):
 # ───────────────────────── emit ─────────────────────────
 
 def main():
-    corpus = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_CORPUS
+    corpus_roots = resolve_roots(sys.argv[1:])
     data_dir = os.path.join(HERE, "data")
     os.makedirs(data_dir, exist_ok=True)
-    on_disk = claimed_files(corpus)
+    paths, deferred = claimed_files(corpus_roots)
 
     for fn in sorted(os.listdir(data_dir)):
         if fn.endswith(".js"):
@@ -486,7 +576,7 @@ def main():
     for b in BOOKS:
         chapters = []
         for fn in b["_files"]:
-            path = os.path.join(corpus, fn)
+            path = paths[fn]
             if fn.endswith(LORE_EXTS):
                 chapters.append(lore_chapter(path, fn))
                 continue
@@ -524,7 +614,7 @@ def main():
         for k in SHAPE_NAMES:
             counts[k] = sum(1 for r in records if r["book"] == b["id"] and r["kind"] == k)
         index_books.append({
-            "id": b["id"], "label": b["label"], "kind": b["kind"],
+            "id": b["id"], "label": b["label"], "kind": b["kind"], "shelf": b["shelf"],
             "files": {"main": ["data/%s.js" % b["id"]]},
             "chapters": [{"file": c["file"], "kind": c["kind"], "name": c.get("name"), "page": c["page"]} for c in chapters],
             "counts": counts,
@@ -533,7 +623,8 @@ def main():
 
     index = {"system": "vtm5e", "books": index_books, "disciplines": sorted(disciplines),
              "corrections": corrections,
-             "counts": {"books": len(index_books), "entities": total, "files": len(on_disk),
+             "shelves": [{"id": s["id"], "label": s["label"], "note": s.get("note")} for s in SHELVES],
+             "counts": {"books": len(index_books), "entities": total, "files": len(paths),
                         "records": {k: sum(1 for r in records if r["kind"] == k) for k in SHAPE_NAMES}}}
     with open(os.path.join(data_dir, "index.js"), "w", encoding="utf-8") as fh:
         fh.write(BANNER)
@@ -545,12 +636,18 @@ def main():
                  "T.records=%s;})();\n" % json.dumps(records, ensure_ascii=False, sort_keys=True))
 
     print("build_data: %d corpus files → %d books, %d entities; records: %s; %d Discipline headings; %d corrections"
-          % (len(on_disk), len(index_books), total,
+          % (len(paths), len(index_books), total,
              ", ".join("%s %d" % (k, index["counts"]["records"][k]) for k in SHAPE_NAMES), len(disciplines), len(corrections)))
-    for x in index_books:
-        c = x["counts"]
-        print("  %-24s %3d ch %6d ent %5d KB  %s" % (x["id"], c["chapters"], c["entities"], x["bytes"] // 1024,
-              " · ".join("%s %d" % (k, c[k]) for k in SHAPE_NAMES if c[k])))
+    for sh in SHELVES:
+        print("  ── %s (%s)" % (sh["label"], corpus_roots[sh["id"]]))
+        for x in [b for b in index_books if b["shelf"] == sh["id"]]:
+            c = x["counts"]
+            print("  %-24s %3d ch %6d ent %5d KB  %s" % (x["id"], c["chapters"], c["entities"], x["bytes"] // 1024,
+                  " · ".join("%s %d" % (k, c[k]) for k in SHAPE_NAMES if c[k])))
+        for d, why in sorted(sh.get("excluded", {}).items()):
+            print("  %-24s EXCLUDED — %s" % (d, why))
+    for fn in sorted(deferred):
+        print("  %-24s DEFERRED — %s" % (fn, DEFERRED_EXTS[os.path.splitext(fn)[1]]))
 
 
 if __name__ == "__main__":

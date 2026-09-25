@@ -13,7 +13,7 @@ Skips are by KEY name only, never by value, and each skipped key says why.
 
 Exit 0 = both clean. Never weaken this to make a build pass: fix the build.
 
-    python3 build/verify_data.py [<path to titterpig-dsl-vtm5e/0.5>]
+    python3 build/verify_data.py [<titterpig-dsl-vtm5e/0.5>] [<titterpig-dsl-vtm5e-3rdparty>]
 """
 import json
 import os
@@ -23,7 +23,8 @@ from collections import Counter
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from parse_dsl import tokenize, unescape, lift_rule_lines  # noqa: E402
-from build_data import BOOKS, DEFAULT_CORPUS, KINDS, SHAPE_NAMES, LORE_EXTS, corpus_files  # noqa: E402
+from build_data import (BOOKS, KINDS, SHAPE_NAMES, SHELVES, LORE_EXTS, corpus_files,  # noqa: E402
+                        resolve_roots)
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -31,6 +32,9 @@ SKIP_KEYWORDS = {
     "VERSION": "DSL content version of the source file",
     "SPEC_VERSION": "Titterpig spec version of the source file",
     "RELEASE_DATE": "conversion date of the source file",
+    "DEPENDS_ON": "the module identifier of a sibling extension this file is unusable without "
+                  "(the Sunburners on The Black Hand's Path template) — a name in the manifest, "
+                  "not text the book prints",
 }
 # Words the DSL grammar itself uses that survive into the data as field labels, not as text.
 TYPE_WORDS = {"STRING", "INTEGER", "BOOLEAN", "FLOAT", "TEXT", "DEF", "TEMPLATE", "ACTOR",
@@ -70,13 +74,12 @@ def lore_lines(text):
     return [ln for ln in text.split("\n") if ln.strip()]
 
 
-def corpus_strings(corpus):
-    """Every string the corpus prints."""
+def corpus_strings(paths):
+    """Every string the corpus prints, over an explicit list of corpus file paths."""
     want, skipped = Counter(), Counter()
-    for rel in sorted(corpus_files(corpus)):
-        path = os.path.join(corpus, rel)
+    for path in sorted(paths):
         text = open(path, encoding="utf-8").read()
-        if rel.endswith(LORE_EXTS):
+        if path.endswith(LORE_EXTS):
             for ln in lore_lines(text):
                 want[ln] += 1
             continue
@@ -148,14 +151,17 @@ def data_strings(blobs):
 
 
 def main():
-    corpus = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_CORPUS
-    want, skipped = corpus_strings(corpus)
+    loaded, _deferred = corpus_files(resolve_roots(sys.argv[1:]))
+    want, skipped = corpus_strings(loaded.values())
     got = data_strings(data_blobs())
 
-    # text this build writes of its own: the book labels, the kinds and record shapes, the
-    # data file paths, and the DSL's own type words as field labels.
+    # text this build writes of its own: the book labels, the shelves' own labels and notes,
+    # the kinds and record shapes, the data file paths, and the DSL's own type words as
+    # field labels.
     ours = set(TYPE_WORDS) | KINDS | set(SHAPE_NAMES) | {b["label"] for b in BOOKS}
     ours |= {"data/%s.js" % b["id"] for b in BOOKS}
+    ours |= {s["label"] for s in SHELVES} | {s["id"] for s in SHELVES}
+    ours |= {s["note"] for s in SHELVES if s.get("note")}
 
     missing = sorted(k for k in want if k not in got)
     unsourced = sorted(k for k in got if k not in want and k not in ours and k not in skipped)

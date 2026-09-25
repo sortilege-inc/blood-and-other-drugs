@@ -68,7 +68,10 @@ declarations, read at runtime (PLAYBOOK §1b); Invisible Sun (D1, owner 2026-09-
 (D1, owner 2026-09-22) both added the missing declaration to the corpus as its own commit. The
 owner also directed that the other ten corpus defects be fixed at the same time (above). M4.
 
-**D2 — load the third-party corpus too (owner, 2026-09-23: ON HOLD).** Detail below; not done.
+**D2 — load the third-party corpus too (owner, 2026-09-23: ON HOLD; TAKEN UP 2026-09-24).**
+The owner directed the *Blood & Other Drugs* instance to carry The Black Hand and the
+Sunburners, so the hold is lifted for those two products. Landed as V10 — a second **shelf**,
+not a second build. Detail below.
 
 **D3 — the deployment origin and the repo's visibility (owner, 2026-09-23: DROPPED).** This
 general build will not be hosted. Instead a **campaign-specific instantiation** of the VTT will
@@ -143,15 +146,31 @@ character file generically.
 blank lines; a typed `LIST OF #hash ^"Discipline Rating"` (name + dots + powers taken) makes the
 roller able to build pools from it. Recommended; the alternative is free text.
 
-### D2 — load the third-party corpus too (ON HOLD, owner 2026-09-23)
+### D2 — load the third-party corpus too (TAKEN UP 2026-09-24, owner)
 
 `titterpig-dsl-vtm5e-3rdparty` holds *The Black Hand* (with **the only two `.arc` scenarios** in
 either corpus, *Lost in the Garden* and *Our Graves Are Empty*), the owner's own Sunburners Path,
-and *Summoned Stories*. Its README says a consumer chooses whether to load it. *Recommendation:*
-load it as a second shelf, labelled third-party / house, and offer its two arcs as modules in the
-Chronicle panel; the build already takes a list of corpus roots. *Trade-off:* third-party text
-beside the official books (kept visibly apart); without it the GM's scene list is entirely
-hand-authored. *Now:* the official corpus only.
+and *Summoned Stories*. Its README says a consumer chooses whether to load it.
+
+The owner asked for The Black Hand and the Sunburners in the *Blood & Other Drugs* instance
+(2026-09-24), and they are load-bearing there: four of its Storyteller characters take Predator
+Types — **Absolver, Ripper, Domina, Hedonist** — that are published in The Black Hand
+(*Walking the Path*, as "… (Sabbat Only)") and nowhere in the official corpus, so without this
+shelf they cannot resolve against any book.
+
+**Loaded for every instance, not per instance** (autonomous, and flagged for the owner).
+`data/` is upstream's, on upstream's side of an instance's `merge=ours` boundary — an instance
+that wanted its own selection would have to regenerate a directory it does not own, which is
+exactly what the instance model forbids. So the shelf is in the build and on by default, and
+the separation is made where a reader can see it: its own heading, its own note saying none of
+it is the publisher's text, and a dashed rule on its cards.
+
+*Summoned Stories* is **excluded by name and with a reason** in `SHELVES` (another Storyteller's
+chronicle documentation — a Road system replacing Humanity — house rules for a different table).
+The two `.arc` scenarios are **deferred by name** in `DEFERRED_EXTS`: their FLOW / PHASE / SCENE /
+CAST is a construct the reader does not carry, and shelving one as a book would drop the
+structure that makes it a scenario. The build prints both lists on every run, so neither can
+become a file that quietly went missing. Offering the arcs in the Chronicle panel is still open.
 
 ### D3 — where it is deployed, and whether the repo goes public (DROPPED, owner 2026-09-23 — a campaign instantiation will be hosted instead)
 
@@ -306,6 +325,12 @@ terms from the corpus (never hand-listed rules).
 | V8 | **Advancement**: XP spent at the core's Trait Costs (a TABLE in the corpus), archived as *Before advancement* | I16 | **landed 2026-09-24** — `system/vtm5e/advance.js`: *Advancement…* in the Experience box (the Storyteller's and the player's) opens a page of its own. Prices are the core's Trait Costs table read from the corpus (one table since the owner's ruling, `2c4540a`: *Trait Costs: Experience*, printed 151 — the core prints it twice with the same numbers): Attributes ×5, Skills ×3, Specialty 3, Disciplines in-clan ×5 / other ×7 / Caitiff ×6, rituals and formulae level ×3 (at or below the Discipline), Advantages 3 a dot (a loresheet level only from the loresheets the Storyteller made available), Blood Potency ×10; one dot at a time ("You cannot skip ahead"), a power picked for each Discipline dot, Health/Willpower follow their Attributes. In-clan = the clan's own Disciplines heading (`VtmData.clanDisciplines`, now shared with the creator); Caitiff and a thin-blood's Thin-Blood Alchemy priced by their printed rules. Exit changes nothing; Save (never overspent) archives the character as *Before advancement* or the name given and makes the advanced one current in one op `advancePartyMember` (a player's own only), with ledger lines and a log entry. Headless: 7 purchases for 59 of 60 XP priced right, overspend blocked, Exit left no trace, Save archived *After Session Three* (Dexterity 2 kept), Health 5 → 6; a Tremere's rituals ≤ Blood Sorcery 2 at level ×3; the player's phone page opens it full-screen, no sideways scroll; 0 console errors; V6/V7/V9 re-run clean. Under node: a player may advance only their own; applied twice, one version. `check_shape` 38 (32 cited rules) |
 | V9 | **Maps on a canvas** (owner, 2026-09-24): relationship and scene maps like The Black Hand's Pack Maps and Blood Sigils' Scene Map — people and places as nodes (with clan / Path, caption), labelled arrows between them — drawn by the Storyteller and the players as a feature of its own; open-source libraries welcome | — | **landed 2026-09-24** — `system/vtm5e/maps.js` + `gm/maps.html`, drawn with **Cytoscape.js 3.34.3** (MIT, vendored in `assets/vendor/cytoscape/` with its LICENSE; npm tarball sha512 matched the registry). The Storyteller's **Maps** panel lists, opens, shows/hides and deletes maps, makes a new one, or **starts one from Blood Sigils' Scene Map**: Step Seven's table becomes the boxes and arrows (19 and 14), Step One's rows are the player characters, the rows new in Step Five the places, a printed clan makes a Kindred, the rest stay *Unmarked* (the book never calls them mortal), and *Deep Trouble*'s rows the checkbox tracks. The canvas draws in the core's colours (the key quotes the core's three lines from the corpus), clan marks on the boxes, an arrow from the dominant party or none between equals, a label on the line and each party's descriptor at its end (*Arrows and Descriptors*), crossed-out boxes and lines kept faint; Add person / place / note / the coterie, Connect, Arrange, Fit, Image (PNG), a private copy (hidden) for the Storyteller's breakers. Players draw too, on shown maps (the player's page gains *Open the maps*); a hidden map never reaches them. Headless (decision 24): the Blood Sigils map builds (4 PCs, 3 places, 6 Kindred, 6 unmarked; 3 tracks), add/label/swap/equals/cross-out/drag/delete all reach the state and the canvas, 0 console errors, no sideways scroll at 390px. Under node: a player may add to or move on a shown map and add a shown map, but not touch a hidden one, hide, delete or overwrite; unhiding sends players the whole map, hiding removes it; a line to a missing box is refused; deleting a box takes its lines. `wrangler deploy --dry-run` bundles the ops. `check_shape` asserts the 9 rules the maps cite are in their books under those names (38 assertions). Worker redeployed 2026-09-24 (version `6e64cfdd`) and checked live over two sockets: a player's box on a shown map reached the Storyteller; on a hidden map, hiding a map, and advancing another's character were refused; the player never received the hidden map until it was shown, then received it whole. Not checked: two browsers drawing at once through the UI |
 
+## V10 — the third-party shelf (2026-09-24)
+
+| # | Milestone | State |
+|---|---|---|
+| V10 | **The third-party shelf** (D2): a second corpus root, its books shelved and labelled apart | **landed 2026-09-24** — `build_data.py` gains `SHELVES` (official + third-party), each shelf naming its corpus root and, where it loads a repository of products, the product directories it loads **and** the ones it excludes with a reason; `product_dirs()` reads what is on disk and the build raises if the two sets differ, so the exclusion list cannot rot. `DEFERRED_EXTS` names `.arc` and why. Every book carries a `shelf`, `claimed_files` refuses a file claimed by a book on another shelf, and `corpus_files`/`corpus_strings`/`check_shape` work from a basename → path map over both roots instead of one flat directory. `UNPAGED_KINDS` exempts the BASE and homebrew from the printed-page gate (the Sunburners was never in print); everything else still fails without a `# source: … (pages N-M)`. `DEPENDS_ON` joins `SKIP_KEYWORDS` (a module identifier, not text). The site's shelf is grouped by `index.shelves` in the build's own order, with each shelf's note above it, and the hero line is now **summed from the official books' own counts** rather than taken from the corpus total and reduced — the arithmetic that broke in `0c65dd7` cannot break that way again. Gate: `build/build.sh` green — 141 → **155 corpus files, 19 → 21 books, 10,120 → 10,565 entities**, records power 211 → 235, ritual 101 → 108, character 513 → 520; verify_data **27,163 strings, 0 uncovered · 0 unsourced**; check_shape **OK, 44 assertions** (38 before). The four Sabbat Predator Types resolve: `Absolver (Sabbat Only)` and its seven siblings sit under a `Predator Types` heading in *Walking the Path* |
+
 ## STOPPED HERE — to resume
 
 **M0–M5 landed 2026-09-23**, each committed and pushed. D1 decided and landed (with the
@@ -320,7 +345,7 @@ deploy, `worker.deployed`, `ALLOWED_ORIGIN`, Pages + CNAME) for that instantiati
 To resume here: `bash build/build.sh` (gate green), start the launch entry `vtt-vtm5e` (8738)
 and open `/`, `/#create` and `/gm/`; for sessions also `vtt-vtm5e-worker` (8789; `worker/` has
 `node_modules`) and test a player from `http://127.0.0.1:8738/gm/play.html?s=CODE`.
-**If D2 is taken up:** add the third-party corpus root to `build_data.py` (a second BOOKS list
-with its own prefix map) and offer its two arcs in the Chronicle panel. Those books were
-re-extracted with the current conversion code on 2026-09-23 (titterpig-dsl-vtm5e-3rdparty
-`60688cc`), so they are ready.
+**D2 landed as V10** (the third-party shelf). Still open from it: the two `.arc` scenarios,
+deferred by name — offering *Lost in the Garden* and *Our Graves Are Empty* in the Chronicle
+panel needs the reader to carry FLOW / PHASE / SCENE / CAST, which nothing in either corpus
+has needed before.
