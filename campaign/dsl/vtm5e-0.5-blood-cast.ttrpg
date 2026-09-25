@@ -16,12 +16,12 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Advantages" STRING "City Secrets 1, Furcus 1, Postern 1, Business Establishment 2, Security System 1"
             ^"Flaws" STRING "Haunted 3"
             REFERENCES {
-                "Advantage" -> #vONMhEZaQvi8RmrE0DbQBkx ^"City Secrets •"
-                "Advantage" -> #v6qeZjWETX43c8HW5qawrhB ^"Furcus • to •••"
-                "Advantage" -> #v3g1M3oQWUW2VSdiEkMS3cC ^"• Postern"
-                "Advantage" -> #vz87d2pCB8xBsMB0iIRVd1i ^"Business Establishment •• or •••"
-                "Advantage" -> #vH1I8WK6KejDTXBzK3WWBIo ^"• Security System"
-                "Flaw" -> #vALsg84GQT6LgtSwKyxoRYK ^"Haunted (•+)"
+                "Advantage" -> #vONMhEZaQvi8RmrE0DbQBkx ^"City Secrets"
+                "Advantage" -> #v6qeZjWETX43c8HW5qawrhB ^"Furcus"
+                "Advantage" -> #v3g1M3oQWUW2VSdiEkMS3cC ^"Postern"
+                "Advantage" -> #vz87d2pCB8xBsMB0iIRVd1i ^"Business Establishment"
+                "Advantage" -> #vH1I8WK6KejDTXBzK3WWBIo ^"Security System"
+                "Flaw" -> #vALsg84GQT6LgtSwKyxoRYK ^"Haunted"
             }
         }
         #bodvdlWHrBCEx8Hoz63 ^"Claude" DEF {
@@ -50,8 +50,8 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Advantage" -> #vaf7kWzi9lcbxuQDaMx75rL ^"Mawla"
                 "Advantage" -> #vfFXmPFLhHqi82HMxFlOD3F ^"Dark Secret"
                 "Flaw" -> #vZyzwKMxQywW3TeJaFlX2Xt ^"Thin-blood Flaws"
-                "Flaw" -> #vJfzwZJ8o6GKGsaGTHjag2j ^"Prey Exclusion (•)"
-                "Flaw" -> #vOTLzbtRteILL1CqGw8E9sG ^"Knowledge Hungry (•)"
+                "Flaw" -> #vJfzwZJ8o6GKGsaGTHjag2j ^"Prey Exclusion"
+                "Flaw" -> #vOTLzbtRteILL1CqGw8E9sG ^"Knowledge Hungry"
             }
         }
         #bod1z6tH9CvLqOF9YnQ ^"Ethan Cole" DEF {
@@ -76,7 +76,7 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Advantage" -> #vJl5tkmIz5EnaeqCnOL9rv0 ^"Contacts"
                 "Advantage" -> #vfFXmPFLhHqi82HMxFlOD3F ^"Dark Secret"
                 "Flaw" -> #vZyzwKMxQywW3TeJaFlX2Xt ^"Thin-blood Flaws"
-                "Flaw" -> #vJfzwZJ8o6GKGsaGTHjag2j ^"Prey Exclusion (•)"
+                "Flaw" -> #vJfzwZJ8o6GKGsaGTHjag2j ^"Prey Exclusion"
             }
         }
         #bodIw9SpbRcS5T9IvXG ^"Olly" DEF {
@@ -104,7 +104,7 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Advantage" -> #v8qIOULRw0EmoUcRgTx5des ^"Retainers"
                 "Advantage" -> #vPZI9rup6bcVulTU49WSNTx ^"Thin-blood Merits"
                 "Flaw" -> #vZyzwKMxQywW3TeJaFlX2Xt ^"Thin-blood Flaws"
-                "Flaw" -> #vQ3oxkrvSUrSSC78SUAziyo ^"• False Love"
+                "Flaw" -> #vQ3oxkrvSUrSSC78SUAziyo ^"False Love"
             }
         }
         #bodRNuGzLlPkpfeKE0N ^"Ralph Begg" DEF {
@@ -129,7 +129,7 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Flaws" STRING "Bestial Temper 1, Shunned by Sire 2"
             REFERENCES {
                 "Discipline power" -> #v0fpCnY383zItnG96inmHVi ^"Silence of Death"
-                "Advantage" -> #v5ehHyXJoGzocJtelizHdDu ^"•• Beautiful"
+                "Advantage" -> #v5ehHyXJoGzocJtelizHdDu ^"Beautiful"
                 "Advantage" -> #vJS0EEntRBzf63zD4drYNGP ^"Base Haven"
                 "Advantage" -> #vFCosYA1I8DEwVJcPrGzEtG ^"Resources"
                 "Advantage" -> #vldbHgsYdnv5ZG86YvyI26U ^"Linguistics"
@@ -237,7 +237,7 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Advantage" -> #vyh4u32gJOIZ4DRUXeMZA7y ^"Status"
                 "Advantage" -> #vJl5tkmIz5EnaeqCnOL9rv0 ^"Contacts"
                 "Advantage" -> #v8qIOULRw0EmoUcRgTx5des ^"Retainers"
-                "Advantage" -> #vPh5EoQXNQ3xlZr8UAVtmak ^"• Luxury"
+                "Advantage" -> #vPh5EoQXNQ3xlZr8UAVtmak ^"Luxury"
                 "Flaw" -> #vfFXmPFLhHqi82HMxFlOD3F ^"Dark Secret"
             }
         }
@@ -296,10 +296,10 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Advantage" -> #vJl5tkmIz5EnaeqCnOL9rv0 ^"Contacts"
                 "Advantage" -> #vyZ8Dd60qSufS9sHWC88PDm ^"Allies"
                 "Advantage" -> #vldbHgsYdnv5ZG86YvyI26U ^"Linguistics"
-                "Advantage" -> #vVygPuhul2lEyciF2a3Oyfe ^"•• Eat food"
+                "Advantage" -> #vVygPuhul2lEyciF2a3Oyfe ^"Eat food"
                 "Flaw" -> #vfFXmPFLhHqi82HMxFlOD3F ^"Dark Secret"
-                "Flaw" -> #vJfzwZJ8o6GKGsaGTHjag2j ^"Prey Exclusion (•)"
-                "Flaw" -> #vSRDTDy6Lo8RVoeRuWigTai ^"Weak-willed (••)"
+                "Flaw" -> #vJfzwZJ8o6GKGsaGTHjag2j ^"Prey Exclusion"
+                "Flaw" -> #vSRDTDy6Lo8RVoeRuWigTai ^"Weak-willed"
             }
         }
         #bodlV9I1hAsYVF2NdJU ^"Maeva Rousseau (Seneschal, Ventrue Primogen)" DEF {
@@ -438,7 +438,7 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Advantage" -> #vFCosYA1I8DEwVJcPrGzEtG ^"Resources"
                 "Advantage" -> #v8qIOULRw0EmoUcRgTx5des ^"Retainers"
                 "Advantage" -> #vibwE3pzLa2Jj4IUKE5N5fx ^"Necromantic Prodigy"
-                "Flaw" -> #vJfzwZJ8o6GKGsaGTHjag2j ^"Prey Exclusion (•)"
+                "Flaw" -> #vJfzwZJ8o6GKGsaGTHjag2j ^"Prey Exclusion"
             }
         }
         #bodfsf3gtVqTwEYpYbI ^"Jason Cho" DEF {
@@ -521,7 +521,7 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Advantage" -> #vJl5tkmIz5EnaeqCnOL9rv0 ^"Contacts"
                 "Advantage" -> #vBWPJgbqv45HIUR6VPEuZtm ^"Mask"
                 "Advantage" -> #vldbHgsYdnv5ZG86YvyI26U ^"Linguistics"
-                "Flaw" -> #vALsg84GQT6LgtSwKyxoRYK ^"Haunted (•+)"
+                "Flaw" -> #vALsg84GQT6LgtSwKyxoRYK ^"Haunted"
             }
         }
         #bodIu6xYmOw9VEbKI3O ^"Andre Baptiste (Baron)" DEF {
@@ -686,8 +686,8 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Advantage" -> #vxuohKrqV1gGHciasfRd4GF ^"Fame"
                 "Advantage" -> #vBWPJgbqv45HIUR6VPEuZtm ^"Mask"
                 "Advantage" -> #vnvee6BbVbSag7n4iOXuzD7 ^"Collector"
-                "Flaw" -> #vJfzwZJ8o6GKGsaGTHjag2j ^"Prey Exclusion (•)"
-                "Flaw" -> #v3XwPv4AeWAXCXwhvFYGqjb ^"••••• Unbondable"
+                "Flaw" -> #vJfzwZJ8o6GKGsaGTHjag2j ^"Prey Exclusion"
+                "Flaw" -> #v3XwPv4AeWAXCXwhvFYGqjb ^"Unbondable"
             }
         }
         #bodoqQENH5zr1gOAByf ^"Raya Wong (Noddist Priest)" DEF {

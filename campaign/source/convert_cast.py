@@ -482,7 +482,11 @@ def render_actor(actor, indent, warn, idx, clans, preds, advs):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--date", default=datetime.date.today().isoformat())
+    # the newest dated export on disk, not today's date: an export is taken when the world
+    # changes, and a run after midnight must not look for one that was never made
+    exports = sorted(d for d in os.listdir(os.path.join(HERE, "foundry-export"))
+                     if re.match(r"^\d{4}-\d{2}-\d{2}$", d))
+    ap.add_argument("--date", default=exports[-1] if exports else datetime.date.today().isoformat())
     ap.add_argument("--only", help="convert just this actor (the pilot)")
     ap.add_argument("--out", default=os.path.join(ROOT, "campaign/dsl/vtm5e-0.5-blood-cast.ttrpg"))
     a = ap.parse_args()
