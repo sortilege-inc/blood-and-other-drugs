@@ -125,6 +125,9 @@ BOOKS = [
     {"id": "book-of-nod", "label": "The Book of Nod", "kind": "book", "prefix": "book-of-nod"},
     {"id": "fall-of-london", "label": "The Fall of London", "kind": "book", "prefix": "fall-of-london"},
     {"id": "found-notes", "label": "Found Notes", "kind": "book", "prefix": "found-notes"},
+    # ── Set 9 (corpus 94f79bf, 2026-09-25) ──
+    {"id": "succubus-club", "label": "Live from the Succubus Club", "kind": "book", "prefix": "succubus-club"},
+    {"id": "winters-teeth", "label": "Winter’s Teeth Vol. 1", "kind": "book", "prefix": "winters-teeth"},
     {"id": "errata", "label": "Errata and Rules Update", "kind": "errata", "prefix": "errata"},
     # ── the third-party shelf ──
     {"id": "black-hand", "label": "The Black Hand: Playing the Sabbat", "kind": "book",
