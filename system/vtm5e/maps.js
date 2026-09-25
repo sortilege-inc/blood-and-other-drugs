@@ -507,7 +507,7 @@
     if (!editingSide()) buildSide();
     buildTracks();
     syncHint();
-    document.title = ((current() || {}).name || 'Maps') + ' — Vampire: The Masquerade';
+    document.title = ((current() || {}).name || 'Maps') + ' — ' + (window.VttConfig.title || 'Vampire: The Masquerade');
     arrangeNew();
   }
 
