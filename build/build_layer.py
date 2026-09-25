@@ -226,7 +226,7 @@ def main():
 
     # ── gates, read back from the files as written ───────────────────
     fail = 0
-    want, skipped = corpus_strings(root)
+    want, skipped = corpus_strings(os.path.join(root, r) for r in rels)
     book_blob = json.loads(LAYER_BLOB.search(open(book_path, encoding="utf-8").read()).group(1))
     index_blob = json.loads(LAYER_BLOB.search(open(os.path.join(out_dir, "index.js"), encoding="utf-8").read()).group(1))
     everywhere = data_strings([book_blob]) + data_strings([index_blob])

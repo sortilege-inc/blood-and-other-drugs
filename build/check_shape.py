@@ -9,7 +9,7 @@ taken from the corpus itself — grep, or a line scanner that shares no code wit
 never a number typed here. Deliberately specific: if a parser or build change displaces a
 field, this says which.
 
-    python3 build/check_shape.py [<path to titterpig-dsl-vtm5e/0.5>]
+    python3 build/check_shape.py [<titterpig-dsl-vtm5e/0.5>] [<titterpig-dsl-vtm5e-3rdparty>]
 """
 import glob
 import json
@@ -19,7 +19,8 @@ import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from build_data import DEFAULT_CORPUS, BOOKS, FILE_PREFIX, SHAPES, LEVEL_HEADING  # noqa: E402
+from build_data import (BOOKS, FILE_PREFIX, SHAPES, SHELVES, LEVEL_HEADING,  # noqa: E402
+                        DEFERRED_EXTS, UNPAGED_KINDS, claimed_files, resolve_roots)
 from verify_data import BLOB, INDEX_BLOB, RECORDS_BLOB, HERE  # noqa: E402
 
 FAILS = []
@@ -52,10 +53,9 @@ def load():
     return ents, books, index, records
 
 
-def grep_count(corpus, pattern, files="*.ttrpg"):
+def grep_count(paths, pattern):
     """How many lines of the corpus match — the source's own count."""
-    paths = sorted(glob.glob(os.path.join(corpus, files)))
-    out = subprocess.run(["grep", "-c", "-E", pattern] + paths, capture_output=True, text=True)
+    out = subprocess.run(["grep", "-c", "-E", pattern] + sorted(paths), capture_output=True, text=True)
     return sum(int(line.rsplit(":", 1)[-1] or 0) for line in out.stdout.strip().split("\n") if line)
 
 
@@ -90,51 +90,64 @@ def scan(path):
 
 
 def main():
-    corpus = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_CORPUS
+    roots = resolve_roots(sys.argv[1:])
+    paths, deferred = claimed_files(roots)
+    ttrpg = [p for p in paths.values() if p.endswith(".ttrpg")]
     ents, books, index, records = load()
-    print("check_shape: the fields the site reads, against the corpus's own counts")
+    print("check_shape: the fields the site reads, against the corpora's own counts")
+
+    # ── the shelves ──
+    check("shelves in the index = the SHELVES map", [s["id"] for s in index["shelves"]], [s["id"] for s in SHELVES])
+    check("every book names a declared shelf", sorted({b["shelf"] for b in index["books"]} - {s["id"] for s in SHELVES}), [])
+    for s in SHELVES:
+        mine = [b["id"] for b in BOOKS if b["shelf"] == s["id"]]
+        check("the %s shelf's books all read from its own root" % s["id"],
+              [f for bid in mine for b in BOOKS if b["id"] == bid for f in b["_files"]
+               if not paths[f].startswith(roots[s["id"]] + os.sep)], [])
+    check("every deferred file is deferred by a declared extension",
+          sorted({os.path.splitext(f)[1] for f in deferred} - set(DEFERRED_EXTS)), [])
 
     # ── the books and their chapters ──
-    files = sorted(os.path.basename(p) for p in glob.glob(os.path.join(corpus, "*.ttrpg")) + glob.glob(os.path.join(corpus, "*.lore")))
+    files = sorted(paths)
     prefixes = {b["prefix"] for b in BOOKS}
     check("books in the index = the BOOKS map", len(index["books"]), len(BOOKS))
     check("chapters across the books = corpus files", sum(len(b["chapters"]) for b in books.values()), len(files))
-    check("lore chapters = .lore files", sum(1 for b in books.values() for c in b["chapters"] if c["kind"] == "lore"), len(glob.glob(os.path.join(corpus, "*.lore"))))
-    lore_ok = all(c["text"] == open(os.path.join(corpus, c["file"]), encoding="utf-8").read()
+    check("lore chapters = .lore files", sum(1 for b in books.values() for c in b["chapters"] if c["kind"] == "lore"), sum(1 for f in paths if f.endswith(".lore")))
+    lore_ok = all(c["text"] == open(paths[c["file"]], encoding="utf-8").read()
                   for b in books.values() for c in b["chapters"] if c["kind"] == "lore")
     check("every lore chapter's text is its file, byte for byte", lore_ok, True)
-    unpaged = [c["file"] for b in books.values() for c in b["chapters"] if c["page"] is None and b["id"] != "base"]
-    check("chapters with no printed page (outside the BASE)", unpaged, [])
-    order_ok = all([c["page"] for c in b["chapters"]] == sorted(c["page"] for c in b["chapters"])
-                   for b in books.values() if b["id"] != "base")
+    paged = [b for b in books.values() if b["kind"] not in UNPAGED_KINDS]
+    unpaged = [c["file"] for b in paged for c in b["chapters"] if c["page"] is None]
+    check("chapters with no printed page (outside the BASE and homebrew)", unpaged, [])
+    order_ok = all([c["page"] for c in b["chapters"]] == sorted(c["page"] for c in b["chapters"]) for b in paged)
     check("every book's chapters in printed-page order", order_ok, True)
     check("every chapter file carries its book's prefix", all(
         any(c["file"].startswith(FILE_PREFIX + b["prefix"]) for bb in BOOKS if bb["id"] == bid for b in [bb])
         for bid, b in books.items() for c in b["chapters"]), True)
 
     # ── entities and what they carry ──
-    check("entities = hashed DEF and ACTOR lines in the corpus", len(ents), grep_count(corpus, r'^\s*#[A-Za-z0-9]+ (\^|ACTOR )".*" DEF \{$'))
+    check("entities = hashed DEF and ACTOR lines in the corpus", len(ents), grep_count(ttrpg, r'^\s*#[A-Za-z0-9]+ (\^|ACTOR )".*" DEF \{$'))
     check("entities with a DESCRIPTION = DESCRIPTION lines", sum(1 for e in ents.values() if e["desc"] is not None),
-          grep_count(corpus, r'^\s*DESCRIPTION "'))
+          grep_count(ttrpg, r'^\s*DESCRIPTION "'))
     corr = index["corrections"]
     check("GUIDANCE entries (entities + corrections) = ENTRY lines",
           sum(len(e["guidance"]) for e in ents.values()) + sum(len(c["guidance"]) for c in corr),
-          grep_count(corpus, r'^\s*ENTRY \^"'))
+          grep_count(ttrpg, r'^\s*ENTRY \^"'))
     check("GUIDANCE entries with TEXT = TEXT lines",
           sum(1 for e in ents.values() for g in e["guidance"] if g["text"] is not None) + sum(1 for c in corr for g in c["guidance"] if g["text"] is not None),
-          grep_count(corpus, r'^\s*TEXT "'))
-    check("printed tables = TABLE blocks", sum(1 for e in ents.values() if e["table"]), grep_count(corpus, r'^\s*TABLE \{'))
-    check("table rows = ROW lines", sum(len(e["table"]["rows"]) for e in ents.values() if e["table"]), grep_count(corpus, r'^\s*ROW \['))
-    check("table headers = COLUMNS lines", sum(1 for e in ents.values() if e["table"] and e["table"]["columns"]), grep_count(corpus, r'^\s*COLUMNS \['))
-    check("tables typed ^\"Table\" (the BASE's one type)", sum(1 for e in ents.values() if e["type"] == "Table"), grep_count(corpus, r'^\s*EXTENDS #vtm5Table000000000001 \^"Table"'))
-    check("corrections = MODIFY / OVERRIDE lines", len(corr), grep_count(corpus, r'^\s*(MODIFY|OVERRIDE) #'))
+          grep_count(ttrpg, r'^\s*TEXT "'))
+    check("printed tables = TABLE blocks", sum(1 for e in ents.values() if e["table"]), grep_count(ttrpg, r'^\s*TABLE \{'))
+    check("table rows = ROW lines", sum(len(e["table"]["rows"]) for e in ents.values() if e["table"]), grep_count(ttrpg, r'^\s*ROW \['))
+    check("table headers = COLUMNS lines", sum(1 for e in ents.values() if e["table"] and e["table"]["columns"]), grep_count(ttrpg, r'^\s*COLUMNS \['))
+    check("tables typed ^\"Table\" (the BASE's one type)", sum(1 for e in ents.values() if e["type"] == "Table"), grep_count(ttrpg, r'^\s*EXTENDS #vtm5Table000000000001 \^"Table"'))
+    check("corrections = MODIFY / OVERRIDE lines", len(corr), grep_count(ttrpg, r'^\s*(MODIFY|OVERRIDE) #'))
     check("every correction names a target that is in the data", all(c["target"]["hash"] in ents for c in corr), True)
     check("the replacement Lingering Kiss carries its 4 printed fields", [p["name"] for c in corr if c["target"]["name"] == "Lingering Kiss" for p in c["props"]],
           ["Cost", "System", "Duration", "Restrictions"])
 
     # ── records by shape, against the independent scanner ──
     scanned = []
-    for path in sorted(glob.glob(os.path.join(corpus, "*.ttrpg"))):
+    for path in sorted(ttrpg):
         scanned.extend(scan(path))
     check("the scanner sees every entity", len(scanned), len(ents))
     for kind, test in SHAPES:
@@ -145,7 +158,7 @@ def main():
     # ── records by declared type (BASE 0.5.3), against the corpus's own EXTENDS lines ──
     for kind, word in (("loresheet", "Loresheet"), ("loresheet level", "Loresheet Level")):
         check("%s records = DEFs that EXTEND ^\"%s\"" % (kind, word), sum(1 for r in records if r["kind"] == kind),
-              grep_count(corpus, r'^\s*EXTENDS #\S+ \^"%s"$' % word))
+              grep_count(ttrpg, r'^\s*EXTENDS #\S+ \^"%s"$' % word))
     levels = [r for r in records if r["kind"] == "loresheet level"]
     check("every loresheet level names its loresheet, and is one of its levels",
           all(r["loresheet"] in ents and r["id"] in next((x.get("levels", []) for x in records if x["id"] == r["loresheet"]), []) for r in levels), True)
@@ -154,7 +167,7 @@ def main():
     check("every record's name is its entity's", all(ents[r["id"]]["name"] == r["name"] for r in records), True)
 
     # the core's Discipline chapter, read by the scanner: each power's Discipline and level
-    core = scan(os.path.join(corpus, FILE_PREFIX + "core-disciplines.ttrpg"))
+    core = scan(paths[FILE_PREFIX + "core-disciplines.ttrpg"])
     level, disc, want = None, None, {}
     names = set(index["disciplines"])
     for h, n, ps, _f in core:
@@ -168,7 +181,7 @@ def main():
     check("core Discipline powers and rituals placed as the scanner reads them", got == want, True)
     check("core powers with no Discipline or no level", sorted(by_id[h]["name"] for h, v in got.items() if None in v and by_id[h]["kind"] == "power"), [])
     # the BASE's ^"Discipline" ENUM, read off its line independently of the parser
-    base_src = open(os.path.join(corpus, FILE_PREFIX + "base.ttrpg"), encoding="utf-8").read()
+    base_src = open(paths[FILE_PREFIX + "base.ttrpg"], encoding="utf-8").read()
     m = re.search(r'\^"Discipline" DEF \{(?:\s*#[^\n]*)*\s*ENUM \[([^\]]*)\]', base_src)
     check("Discipline names = the BASE's ^\"Discipline\" ENUM (%d)" % len(index["disciplines"]), sorted(index["disciplines"]),
           sorted(re.findall(r'"([^"]+)"', m.group(1))) if m else None)
@@ -190,7 +203,7 @@ def main():
     for e in ents.values():
         for s in [e["desc"] or ""] + [g["text"] or "" for g in e["guidance"]]:
             seen.update(m.group(0) for m in tokens.finditer(s))
-    raw = subprocess.run(["grep", "-ohE", r"\[(Regular|Hunger) Die: [A-Za-z ]+\]"] + sorted(glob.glob(os.path.join(corpus, "*.ttrpg"))), capture_output=True, text=True).stdout.split("\n")
+    raw = subprocess.run(["grep", "-ohE", r"\[(Regular|Hunger) Die: [A-Za-z ]+\]"] + sorted(ttrpg), capture_output=True, text=True).stdout.split("\n")
     check("die-glyph tokens in the data = in the corpus", sorted(seen), sorted({x for x in raw if x}))
 
     # ── the rules the dice roller cites (system/vtm5e/dice.js RULES), by id and printed name ──
