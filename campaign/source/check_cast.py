@@ -134,6 +134,20 @@ def norm(s):
              .replace("\u2014", "-").strip().lower())
 
 
+FEATURE_FIELDS = [("Advantages", ("merit", "background")), ("Flaws", ("flaw",))]
+
+
+def feature_pairs(s):
+    """'City Secrets 1, Clan Curse [Brujah], Contact (Mike H, Launderer) 2' -> [(name, dots)].
+    A name may carry parentheses, brackets, colons and commas of its own, so the split is the
+    paren-aware one and the dots are a trailing integer, which is optional."""
+    out = []
+    for chunk in split_entries(s):
+        m = re.match(r"^(.*?)\s+(\d+)$", chunk)
+        out.append((m.group(1).strip(), int(m.group(2))) if m else (chunk, 0))
+    return out
+
+
 def bare_name(s):
     """A published heading without a trailing qualifier: The Black Hand prints its Predator
     Types "Absolver (Sabbat Only)", the world records "Absolver"."""
@@ -269,6 +283,34 @@ def main():
             checked += 1
             if want and p.get(label, "") != want:
                 bad("%s differs from the export" % label)
+
+        # Advantages and Flaws: re-derived from the export's own items, compared as
+        # (name, dots) pairs rather than as a string — the world's spelling is kept as is,
+        # so this is a straight correspondence check in both directions
+        feats = [i for i in (d.get("items") or []) if i.get("type") == "feature"]
+        for label, kinds in FEATURE_FIELDS:
+            want = []
+            for i in feats:
+                fs = i.get("system") or {}
+                if (fs.get("featuretype") or "") not in kinds:
+                    continue
+                pts = fs.get("points")
+                pts = int(pts) if isinstance(pts, (int, float)) or (isinstance(pts, str) and pts.isdigit()) else 0
+                nm = (i.get("name") or "").strip()
+                if nm:
+                    want.append((nm, pts))
+            got = feature_pairs(p.get(label, ""))
+            checked += 1
+            if sorted(got) != sorted(want):
+                miss = [x for x in want if x not in got]
+                extra = [x for x in got if x not in want]
+                bad("%s differ — missing %s, extra %s" % (label, miss or "none", extra or "none"))
+        for label, itype in (("Equipment", "gear"), ("Resonance", "resonance")):
+            want = ", ".join((i.get("name") or "").strip() for i in (d.get("items") or [])
+                             if i.get("type") == itype and (i.get("name") or "").strip())
+            checked += 1
+            if p.get(label, "") != want:
+                bad("%s is %r, the export's %s items are %r" % (label, p.get(label, ""), itype, want))
 
         # the two published names the converter rewrites, and the world's own annotation it
         # splits off them (the corpus is canon — owner, 2026-09-24)

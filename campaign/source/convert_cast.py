@@ -23,6 +23,11 @@ Deliberate choices, recorded in campaign/PLAN.md:
   Foundry items carry one-line GM shorthand ("Command attention and admiration") where the book
   carries paragraphs. Rules text is verbatim or it is a reference; it is never a paraphrase.
   The shorthand is presentation and goes nowhere near the gate.
+* **Advantages and Flaws are carried, and are not resolved against the corpus.** The world
+  records 114 of them across 30 of the 49 characters; dropping them would drop a third of a
+  sheet. The books do not name them (see FEATURE_FIELDS), so there is no published spelling to
+  prefer and O7 does not reach them: they are written as the world spells them, with the dots
+  the world gives them.
 * **Live state is not a record.** Current Hunger, damage taken, stains and the Werewolf/Hunter
   scaffolding the shared wod5e system carries for every actor are all dropped.
 """
@@ -299,6 +304,10 @@ def fields_of(actor, warn, clans=None, preds=None):
     add("Skills", skills_line(sysd))
     if kindred:
         add("Disciplines", disciplines_line(sysd, actor.get("name", "?"), warn))
+    for label, line in feature_lines(actor):
+        add(label, line)
+    add("Equipment", items_named(actor, "gear"))
+    add("Resonance", items_named(actor, "resonance"))
     add("Appearance", text_of(sysd.get("appearance")))
     add("History", text_of(bio.get("history")))
     return out
@@ -306,6 +315,44 @@ def fields_of(actor, warn, clans=None, preds=None):
 
 def def_id(fid):
     return "#bod" + fid                        # deterministic, and traceable to the Foundry id
+
+
+# A character's Advantages and Flaws are written AS THE WORLD SPELLS THEM, and are the one
+# published-looking thing here that is NOT resolved against the corpus. The books do not name
+# them: the core's Advantages chapter prints its Merits and Flaws as bulleted `Items` under
+# CATEGORY headings — Linguistics, Looks, Substance Use, Bonding, Feeding, Haven Merits and
+# Flaws — while Foundry's wod5e system keeps a flat list of its own, and several of its names
+# ("Iron Will", "Efficient Digestion", "Prestigious Sire") appear nowhere in any of the 19
+# official books. O7 governs names the books print; it has nothing to say about these, and
+# rewriting "Eat Food" to the core's "•• Eat food" would put the book's level notation inside
+# a name while the character's own rating sits beside it. So they are carried verbatim.
+FEATURE_FIELDS = [("Advantages", ("merit", "background")), ("Flaws", ("flaw",))]
+
+
+def feature_lines(actor):
+    """(label, line) for Advantages and Flaws: the world's own name, then its dots."""
+    items = [i for i in (actor.get("items") or []) if i.get("type") == "feature"]
+    out = []
+    for label, kinds in FEATURE_FIELDS:
+        got = []
+        for i in items:
+            sysd = i.get("system") or {}
+            if (sysd.get("featuretype") or "") not in kinds:
+                continue
+            n = sysd.get("points")
+            n = int(n) if isinstance(n, (int, float)) or (isinstance(n, str) and n.isdigit()) else 0
+            nm = (i.get("name") or "").strip()
+            if nm:
+                got.append("%s %d" % (nm, n) if n > 0 else nm)
+        if got:
+            out.append((label, ", ".join(got)))
+    return out
+
+
+def items_named(actor, itype):
+    """The world's own names for one item type, in the order the export carries them."""
+    return ", ".join((i.get("name") or "").strip() for i in (actor.get("items") or [])
+                     if i.get("type") == itype and (i.get("name") or "").strip())
 
 
 def render_actor(actor, indent, warn, idx, clans, preds):

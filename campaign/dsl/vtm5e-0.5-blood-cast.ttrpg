@@ -13,6 +13,8 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Chronicle" STRING "Blood & Other Drugs"
             ^"Attributes" STRING "Strength 0, Dexterity 0, Stamina 0; Charisma 0, Manipulation 0, Composure 0; Intelligence 0, Wits 0, Resolve 0"
             ^"Secondary Attributes" STRING "Health 0, Willpower 0"
+            ^"Advantages" STRING "City Secrets 1, Furcus 1, Postern 1, Business Establishment 2, Security System 1"
+            ^"Flaws" STRING "Haunted 3"
         }
         #bodvdlWHrBCEx8Hoz63 ^"Claude" DEF {
             ^"Chronicle" STRING "Blood & Other Drugs"
@@ -29,6 +31,8 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 6, Willpower 6"
             ^"Skills" STRING "Craft (Fixatio) 1, Firearms 2; Insight 2, Persuasion 3, Streetwise (Street Medic) 1; Academics (Medical Terminology) 1, Awareness 3, Medicine (Phlebotomy) 4, Occult 2, Science (Organic Chemistry) 3"
             ^"Disciplines" STRING "Auspex 1, Blood Sorcery 1, Thin-Blood Alchemy 1"
+            ^"Advantages" STRING "Thin-blood Alchemist 1, Mawla (Moth) 2, Discipline Affinity (Auspex) 1, Dark Secret: Masquerade Breacher"
+            ^"Flaws" STRING "Branded by the Camarilla 1, Vitae Dependency 1, Prey Exclusion: Non-Consensual 1, Knowledge Hungry 1"
             ^"Appearance" STRING "Claudette is tall, nearly 6’2” and lanky. She is covered in tattoos, all she had done prior to her undeath. The tattoos are flowers of every variety. Her arms are covered in roses and clematis, her neck is twining iris tattoos, Claude’s legs have marigolds, dahlias, and orchids. Her back covered in lotuses. Her hair is cut short, in sharp angles, to her chin. She is often dressed in slacks, button shirt rolled at the to the elbows with many pens in the breast pocket. She carries a pocket notebook that allows her to take quick notes about whatever she’s currently learning about."
             REFERENCES {
                 "Discipline power" -> #vgpG99ZHvzpfOjcCe5XXIlX ^"A Taste for Blood"
@@ -48,6 +52,8 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 6, Willpower 4"
             ^"Skills" STRING "Athletics 1, Brawl 2, Drive 1, Larceny (Security) 2, Melee 3, Stealth 2, Survival 1; Insight 1, Intimidation 3, Persuasion 3, Streetwise (Black Market) 2, Subterfuge 1; Awareness 2, Investigation 1, Technology 1"
             ^"Disciplines" STRING "Potence 1"
+            ^"Advantages" STRING "Lifelike 1, Vampiric Resilience 1, Influence 1, Resources 2, Contact (Mike Harrison, Money Launderer) 2, Dark Secret (Debt) 1, Enemy 1"
+            ^"Flaws" STRING "Bestial Temper 1, Clan Curse [Brujah], Prey Exclusion: Children 1"
             REFERENCES {
                 "Discipline power" -> #vAlqUUUdv3GFRP6ZFnLTHuu ^"Lethal Body"
             }
@@ -67,6 +73,10 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 6, Willpower 4"
             ^"Skills" STRING "Athletics 1, Craft (TBD) 3, Drive 2, Firearms 3, Larceny 1, Stealth (Stakeout) 2, Survival 1; Insight 1, Persuasion 1, Streetwise (TBD) 2, Subterfuge 1; Investigation 2, Occult 3, Politics 1, Technology 2"
             ^"Disciplines" STRING "Obfuscate 1"
+            ^"Advantages" STRING "Retainer (Dimitri) 2, Thin-blood Alchemist 1, Lifelike 1, The Pony Express: Station Agent 2"
+            ^"Flaws" STRING "Clan Curse 1, Bestial Temper 1, False Love (Trieste) 1"
+            ^"Equipment" STRING "Strength of Sadness"
+            ^"Resonance" STRING "Sanguine"
             ^"Appearance" STRING "Olly has straight black hair, overgrown bangs, green eyes. Wears mostly black, usually sporting the camo colored backpack that carries his camera. 5' 8\", appears to be around 26 or 27. Walks/stands at the slightest odd angle due to a bone on his right leg that healed wrong. Fidgety unless he's on something that levels him out. Is used to commanding a certain level of respect (in the underground), less from charisma than because of his reputation for running his mouth and then backing it up. If you can't tell if he's joking, you kind of have to default to assuming he's serious. In retrospect, he'd say that the shocking part is that he lived long enough to become undead."
             REFERENCES {
                 "Discipline power" -> #v0fpCnY383zItnG96inmHVi ^"Silence of Death"
@@ -90,6 +100,8 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 6, Willpower 3"
             ^"Skills" STRING "Athletics 1, Brawl 2, Drive 1, Firearms 2, Larceny 2, Melee 2, Stealth (Breaking & Entering) 3; Insight 1, Persuasion 2, Streetwise 1, Subterfuge 3; Awareness 2, Investigation 2, Medicine 1, Occult 1, Politics 1, Technology 3"
             ^"Disciplines" STRING "Obfuscate 1"
+            ^"Advantages" STRING "•• Beautiful: 2, Base Haven 1, Resources 2, Linguistics (Spanish, English, Russian) 1, Mask 2, Vampiric Resilience 1"
+            ^"Flaws" STRING "Bestial Temper 1, Shunned by Sire 2"
             REFERENCES {
                 "Discipline power" -> #v0fpCnY383zItnG96inmHVi ^"Silence of Death"
             }
@@ -177,6 +189,8 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 7, Willpower 7"
             ^"Skills" STRING "Athletics 1, Brawl 2, Craft 2, Drive 2, Firearms 1, Larceny 2, Stealth 2; Etiquette 4, Insight (Detecting weakness) 4, Intimidation 3, Leadership 3, Performance (Playing roles) 4, Persuasion 4, Streetwise 2, Subterfuge (Convincing lies) 5; Academics 3, Awareness 3, Finance 3, Investigation 2, Medicine 2, Occult 3, Politics (Camarilla intrigue) 5, Science 1, Technology 2"
             ^"Disciplines" STRING "Auspex 2, Blood Sorcery 2, Dominate 3"
+            ^"Advantages" STRING "Resources 4, Haven 3, Herd 4, Status (Camarilla) 2, Contacts 3, Retainers 2, Convincing Lies 3, Status Symbol 2, Haven: Luxury 2, Language 1"
+            ^"Flaws" STRING "Dark Secret 2, Enemy 1, Infamous Deed 3, Rival 3"
             ^"Appearance" STRING "Dominik is handsome in a predatory way - sharp features, calculating eyes, immaculate grooming. He dresses in expensive tailored suits (Armani, Hugo Boss), always perfectly pressed. Dark hair touched with silver at temples. Thin-framed designer glasses (affectation, not needed). Every detail curated to project authority and sophistication."
             REFERENCES {
                 "Discipline power" -> #v5uiWgyFE6d4UlvFvVvZDoc ^"Compel"
@@ -213,6 +227,8 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 7, Willpower 8"
             ^"Skills" STRING "Athletics 1, Craft (Oil painting) 4, Drive 1, Melee 1, Stealth 1; Etiquette (Camarilla court) 5, Insight 4, Intimidation 2, Leadership 4, Performance (Princely bearing) 5, Persuasion 4, Streetwise 1, Subterfuge 3; Academics 4, Awareness 3, Finance 3, Investigation 2, Occult 2, Politics (Camarilla Inner Circle) 5, Technology 1"
             ^"Disciplines" STRING "Auspex 3, Celerity 2, Dominate 2, Presence 5"
+            ^"Advantages" STRING "Status (Camarilla) 5, Domain 5, Haven 5, Herd 4, Resources 5, Retainers 4, Contacts 4, Allies 3, Prestigious Sire 1, Linguistics 3, Eat Food 1, Natural Leader 2"
+            ^"Flaws" STRING "Dark Secret 1, Prey Exclusion 1, Enemy 4, Obsession Target 2, Weak-Willed Regarding Art 2"
             ^"Appearance" STRING "Lucien is elegant in the Old World style - impeccably tailored suits (Brioni, bespoke), silver hair swept back, pale calculating eyes that never quite meet others' gaze directly. Thin hands with long fingers (pianist's hands, artist's hands). Every detail curated: pocket squares, cufflinks, fountain pens. He looks like museum piece - beautiful, valuable, fragile."
             REFERENCES {
                 "Discipline power" -> #vZlcHUBgchPa0MYGRQZfoSL ^"Awe"
@@ -301,6 +317,8 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 7, Willpower 4"
             ^"Skills" STRING "Craft 2, Drive 1, Stealth 1; Etiquette 3, Insight 3, Leadership 1, Persuasion 2, Streetwise 2, Subterfuge 2; Academics (Hermetic philosophy) 4, Awareness 2, Finance 2, Investigation (Cross-referencing sources) 3, Medicine (Hematology) 3, Occult (Blood Sorcery theory and ritual design) 5, Politics 2, Science 3, Technology 2"
             ^"Disciplines" STRING "Auspex 2, Blood Sorcery 4, Dominate 1"
+            ^"Advantages" STRING "Resources 2, Haven 2, Contacts 2, Retainers 1, Ritual Savant 3, Language 1, Inoffensive to Animals 1"
+            ^"Flaws" STRING "Impostor Syndrome 3, Nightmares 1, Enemy 2"
             ^"Appearance" STRING "Viorica is perpetually disheveled despite clear attempts at precision - her clothing is expensive and carefully chosen, but always slightly askew. Dark hair pulled into a bun that's coming loose. Reading glasses on a chain (doesn't need them, nervous habit from mortal life). Pale, with dark circles under eyes suggesting perpetual exhaustion. Hands stained with ink and reagents from ritual work."
             REFERENCES {
                 "Discipline power" -> #v5uiWgyFE6d4UlvFvVvZDoc ^"Compel"
@@ -341,6 +359,8 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 8, Willpower 7"
             ^"Skills" STRING "Athletics 2, Brawl 1, Craft 3, Drive 1, Stealth 1; Etiquette 2, Insight 4, Intimidation 2, Leadership (Inspiring marginalized groups) 4, Performance (Ritual theater) 3, Persuasion (Seduction (from Siren Predator Type) - inspiring devotion) 4, Streetwise 2, Subterfuge 2; Academics 3, Awareness 2, Finance 2, Investigation 3, Medicine 2, Occult (Necromancy and death magic) 5, Politics 3, Science 2, Technology 1"
             ^"Disciplines" STRING "Auspex 3, Dominate 2, Fortitude 2, Oblivion 4"
+            ^"Advantages" STRING "Status (Anarch) 3, Domain 4, Haven 3, Herd 3, Contacts 3, Resources 3, Retainers 2, Necromantic Prodigy 3, Cult 3, Language 1"
+            ^"Flaws" STRING "Disallowed Feeding 2, Prey Exclusion 2, Amnesia 3, Enemy 3"
             ^"Appearance" STRING "Evelyn is striking in an otherworldly way - pale skin (enhanced by Hecata nature), dark eyes that seem to look through rather than at people, shoulder-length black hair often adorned with bones, crystals, or occult jewelry. She dresses in layers of black and deep purple, mixing high-end goth aesthetic with practical occult practitioner gear. Silver rings on every finger, many engraved with necromantic symbols."
             REFERENCES {
                 "Discipline power" -> #vVLjTFZ8uv1H19vvtAXEQeA ^"Clairvoyance"
@@ -416,6 +436,8 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 7, Willpower 6"
             ^"Skills" STRING "Athletics 3, Brawl (Fighting dirty) 4, Drive 2, Firearms 2, Larceny 3, Melee 3, Stealth (Urban stalking) 4, Survival 3; Etiquette 1, Insight 3, Intimidation (Channeling grief into threat) 4, Leadership 1, Performance 2, Persuasion 2, Streetwise (Scarborough underground) 5, Subterfuge 3; Awareness 4, Finance 1, Investigation 3, Medicine 1, Occult 2, Politics 2, Technology 2"
             ^"Disciplines" STRING "Obfuscate 3, Presence 2, Protean 2"
+            ^"Advantages" STRING "Resources 1, Contacts 2, Mask 1, Danger Sense 2, Iron Will 3, Linguistics 1"
+            ^"Flaws" STRING "Disallowed Influence 2, Enemy 2, Enemy 4, Haunted 2, Vengeful 2"
             ^"Appearance" STRING "Amira's appearance reflects her internal chaos. She oscillates between manic energy and exhausted collapse. Wild curly dark hair often tangled or hastily tied back. Dark eyes with permanent shadows beneath from sleepless nights (unnecessary for vampires, but grief manifests physically). Clothing is mixture of practical (street wear for hunting) and symbolic (items that belonged to her sire - a scarf, jewelry)."
             REFERENCES {
                 "Discipline power" -> #vZlcHUBgchPa0MYGRQZfoSL ^"Awe"
@@ -575,6 +597,8 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 7, Willpower 5"
             ^"Skills" STRING "Craft (Preservation and restoration) 3, Drive 1, Larceny 3, Stealth 2, Survival 1; Etiquette 2, Insight 3, Leadership (Subcultural Group) 2, Performance 1, Persuasion 3, Streetwise 2, Subterfuge (Feigning ownership) 4; Academics 1, Awareness 3, Finance 2, Investigation (Art authentication) 3, Occult 2, Politics 1, Technology 2"
             ^"Disciplines" STRING "Animalism 1, Obfuscate 3, Presence 2"
+            ^"Advantages" STRING "Resources 2, Contacts 2, Fame 1, Mask 2, Collector 2, Efficient Digestion 3"
+            ^"Flaws" STRING "Disallowed Feeding 2, Prey Exclusion 2, Unbondable 3"
             ^"Appearance" STRING "Moth has an androgynous, deliberately cultivated aesthetic - layered vintage clothing in muted tones (grays, browns, faded blacks), often incorporating found objects as accessories. Their hair changes color frequently (currently ash-blonde fading to gray). They wear fingerless gloves to hide nervously picking fingers. Slight build, forgettable features that blend into crowds."
             REFERENCES {
                 "Discipline power" -> #vZlcHUBgchPa0MYGRQZfoSL ^"Awe"
