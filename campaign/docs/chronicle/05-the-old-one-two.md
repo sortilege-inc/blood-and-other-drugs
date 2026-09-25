@@ -1,7 +1,6 @@
 ---
 title: The Old One-Two
 part: Two
-date: November
 played: 2025-12-02
 ---
 
@@ -141,7 +140,7 @@ Ethan listened to the building. Apart from the four of them there was nobody in 
 Every door they'd passed stood open, rooms running into rooms, and he hadn't seen or heard another soul.
 
 "Initial assessments," Dominik said at last, straightening. "I think your guess is correct. This seems to be authentic.
-My estimation would be that this is *Samizhi Haudenosaunee*."
+My estimation would be that this is *Tzimisce Haudenosaunee*."
 
 He let it sit. "Obviously we would need more time. But what you are looking at is probably an incredibly potent spell. A
 curse. Something of that nature. Where did you get this, again?"

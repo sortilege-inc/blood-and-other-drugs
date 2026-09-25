@@ -1,7 +1,6 @@
 ---
 title: The COAG
 part: Two
-date: November
 played: 2025-11-18
 ---
 

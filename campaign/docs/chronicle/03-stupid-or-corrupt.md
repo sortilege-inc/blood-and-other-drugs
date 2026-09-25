@@ -1,7 +1,6 @@
 ---
 title: Stupid or Corrupt
 part: Two
-date: November
 played: 2025-11-04
 ---
 
