@@ -78,9 +78,10 @@ window.VttSystem = (function () {
   // Making a character on a player's page (the creator, system/vtm5e/creator.js): The Black
   // Hand's walk is offered where the Storyteller turned it on (creation.blackHand); done(member)
   // takes the character to the table as a loaded file would.
-  function makeCharacter(container, done) {
+  function makeCharacter(container, done, o) {
     if (!window.VtmCreator) return false;
     window.VtmCreator.render(container, [], null, {
+      where: 'play', joined: !!(o && o.joined),
       blackHand: !!((S() || {}).creation || {}).blackHand,
       done: (v) => { try { done(Sheet.readMember(Sheet.fileOf(v, { hunger: +v.Hunger || 0 }), null)); } catch (e) { window.alert(e.message); } },
     });

@@ -342,3 +342,32 @@ ul.checks li.warn::before { content: '!'; color: var(--blood-2); font-weight: 70
 .lore-book { margin: 8px 0; }
 .lore-row { display: block; padding: 1px 0; }
 .lore-row.on { font-weight: 600; }
+
+/* the creator's guides (system/vtm5e/creator-guides.js) */
+.alloc-tally { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 6px 0 12px; }
+.alloc-chip { font-family: var(--font-ui); font-size: 12px; letter-spacing: .06em; padding: 4px 9px; border: 1px solid var(--blood); color: var(--bone); }
+.alloc-chip.done { border-color: #3e5a3a; color: #9fc49a; }
+.alloc-chip.over { border-color: #b3862a; color: #e0b75a; }
+.alloc-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 4px 32px; }
+.alloc-group .group-h { margin-top: 6px; }
+.alloc-row, .spec-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 3px 0; border-bottom: 1px solid #2a2227; }
+.alloc-row.placed .alloc-name { color: var(--bone); }
+.alloc-name { min-width: 7.5em; color: var(--bone-2); }
+.alloc-levels { display: flex; gap: 4px; }
+.alloc-levels .btn { min-width: 30px; }
+.spec-guide { margin-top: 14px; }
+.spec-row .text { flex: 1; min-width: 0; }
+.spec-row.done .alloc-name { color: var(--bone); }
+.spec-row.done .alloc-name::after { content: ' ✓'; color: #9fc49a; }
+.dist-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; margin: 6px 0 12px; }
+.dist-card { text-align: left; background: transparent; color: var(--bone-2); border: 1px solid #4a3d44; padding: 10px 12px; cursor: pointer; font: inherit; }
+.dist-card:hover { border-color: var(--blood-2); color: var(--bone); }
+.dist-card.on { border-color: var(--blood-2); background: rgba(160, 20, 40, .18); color: var(--bone); }
+.dist-name { font-family: var(--font-ui); letter-spacing: .1em; text-transform: uppercase; font-size: 12px; margin-bottom: 4px; }
+.rules-choice { margin: 4px 0 10px; }
+.grants { margin: 6px 0 12px; padding-left: 1.3em; }
+.grant { padding: 6px 0; border-bottom: 1px solid #2a2227; }
+.grant.done .grant-text { color: var(--bone-2); opacity: .7; }
+.grant-done { color: #9fc49a; font-size: 13px; }
+.grant .chiprow { margin: 4px 0 0; }
+@media (max-width: 640px) { .alloc-name { min-width: 6em; } .alloc-groups { grid-template-columns: 1fr; } }
