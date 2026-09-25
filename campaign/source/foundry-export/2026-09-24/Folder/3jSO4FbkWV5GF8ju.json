@@ -1,0 +1,22 @@
+{
+  "_id": "3jSO4FbkWV5GF8ju",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767549456101,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767549456101,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "color": "#259098",
+  "description": "",
+  "flags": {},
+  "folder": "aBHQrKu5cIWQhL4g",
+  "name": "Olly's Touchstones",
+  "sort": 0,
+  "sorting": "a",
+  "type": "Actor"
+}

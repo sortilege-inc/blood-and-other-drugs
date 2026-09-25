@@ -1,0 +1,1325 @@
+{
+  "_id": "HodBFShTjhLjF1Pi",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "14.367",
+    "createdTime": 1770778859577,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1773706970903,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "active": false,
+  "drawings": [
+    {
+      "_id": "HdbLnggFOcGlWIag",
+      "author": "58f3S3bDXY6A0mwq",
+      "bezierFactor": 0.5,
+      "elevation": 0,
+      "fillAlpha": 0.5,
+      "fillColor": "#ffffff",
+      "fillType": 0,
+      "flags": {},
+      "fontFamily": "Signika",
+      "fontSize": 48,
+      "hidden": false,
+      "interface": false,
+      "levels": [],
+      "locked": false,
+      "rotation": 0,
+      "shape": {
+        "height": 216,
+        "points": [
+          0,
+          0,
+          85.49854264744295,
+          69.21310595269188,
+          154.71164860013482,
+          154.71164860013505,
+          195.4252403370126,
+          215.78203620545082,
+          191.3538811633248,
+          215.78203620545082,
+          138.42621190538375,
+          203.56795868438803
+        ],
+        "radius": null,
+        "type": "p",
+        "width": 195
+      },
+      "sort": 0,
+      "strokeAlpha": 1,
+      "strokeColor": "#ffffff",
+      "strokeWidth": 8,
+      "textAlpha": 1,
+      "textColor": "#ffffff",
+      "texture": null,
+      "x": 1709.1487274437636,
+      "y": 3084.9548128793394
+    },
+    {
+      "_id": "sMbnd8uFleeO5s7n",
+      "author": "58f3S3bDXY6A0mwq",
+      "bezierFactor": 0.5,
+      "elevation": 0,
+      "fillAlpha": 0.5,
+      "fillColor": "#ffffff",
+      "fillType": 0,
+      "flags": {},
+      "fontFamily": "Signika",
+      "fontSize": 48,
+      "hidden": false,
+      "interface": false,
+      "levels": [],
+      "locked": false,
+      "rotation": 0,
+      "shape": {
+        "height": 171,
+        "points": [
+          16.28543669475107,
+          0,
+          16.28543669475107,
+          48.85631008425298,
+          0,
+          170.99708529488544
+        ],
+        "radius": null,
+        "type": "p",
+        "width": 16
+      },
+      "sort": 1,
+      "strokeAlpha": 1,
+      "strokeColor": "#ffffff",
+      "strokeWidth": 8,
+      "textAlpha": 1,
+      "textColor": "#ffffff",
+      "texture": null,
+      "x": 1806.8613476122698,
+      "y": 3080.883453705652
+    },
+    {
+      "_id": "HLzahipKFLXwK4mg",
+      "author": "58f3S3bDXY6A0mwq",
+      "bezierFactor": 0.5,
+      "elevation": 0,
+      "fillAlpha": 0.5,
+      "fillColor": "#ffffff",
+      "fillType": 0,
+      "flags": {},
+      "fontFamily": "Signika",
+      "fontSize": 48,
+      "hidden": false,
+      "interface": false,
+      "levels": [],
+      "locked": false,
+      "rotation": 0,
+      "shape": {
+        "height": 81,
+        "points": [
+          0,
+          0,
+          48.85631008425298,
+          36.64223256318928,
+          97.71262016850596,
+          81.42718347375467
+        ],
+        "radius": null,
+        "type": "p",
+        "width": 98
+      },
+      "sort": 2,
+      "strokeAlpha": 1,
+      "strokeColor": "#ffffff",
+      "strokeWidth": 8,
+      "textAlpha": 1,
+      "textColor": "#ffffff",
+      "texture": null,
+      "x": 2678.1322107814512,
+      "y": 2482.3936551735505
+    },
+    {
+      "_id": "Ke6E7fndPiFuIRgc",
+      "author": "58f3S3bDXY6A0mwq",
+      "bezierFactor": 0.5,
+      "elevation": 0,
+      "fillAlpha": 0.5,
+      "fillColor": "#ffffff",
+      "fillType": 0,
+      "flags": {},
+      "fontFamily": "Signika",
+      "fontSize": 48,
+      "hidden": false,
+      "interface": false,
+      "levels": [],
+      "locked": false,
+      "rotation": 0,
+      "shape": {
+        "height": 126,
+        "points": [
+          65.14174677900428,
+          0,
+          48.85631008425344,
+          52.927669257941034,
+          12.214077521063246,
+          105.85533851588207,
+          0,
+          126.21213438432096
+        ],
+        "radius": null,
+        "type": "p",
+        "width": 65
+      },
+      "sort": 3,
+      "strokeAlpha": 1,
+      "strokeColor": "#ffffff",
+      "strokeWidth": 8,
+      "textAlpha": 1,
+      "textColor": "#ffffff",
+      "texture": null,
+      "x": 2694.417647476202,
+      "y": 2449.822781784048
+    }
+  ],
+  "environment": {
+    "base": {
+      "hue": 0,
+      "intensity": 0,
+      "luminosity": 0,
+      "saturation": 0,
+      "shadows": 0
+    },
+    "cycle": true,
+    "dark": {
+      "hue": 0.7138888888888889,
+      "intensity": 0,
+      "luminosity": -0.25,
+      "saturation": 0,
+      "shadows": 0
+    },
+    "darknessLevel": 0,
+    "darknessLock": false,
+    "globalLight": {
+      "alpha": 0.5,
+      "bright": false,
+      "color": null,
+      "coloration": 1,
+      "contrast": 0,
+      "darkness": {
+        "max": 0.3,
+        "min": 0
+      },
+      "enabled": false,
+      "luminosity": 0,
+      "saturation": 0,
+      "shadows": 0
+    }
+  },
+  "flags": {},
+  "fog": {
+    "colors": {
+      "explored": null,
+      "unexplored": null
+    },
+    "mode": 1
+  },
+  "folder": null,
+  "grid": {
+    "alpha": 0.2,
+    "color": "#000000",
+    "distance": 5,
+    "size": 110,
+    "style": "solidLines",
+    "thickness": 1,
+    "type": 1,
+    "units": "ft"
+  },
+  "height": 3864,
+  "initial": {
+    "scale": null,
+    "x": null,
+    "y": null
+  },
+  "initialLevel": "defaultLevel0000",
+  "journal": null,
+  "journalEntryPage": null,
+  "levels": [
+    {
+      "_id": "defaultLevel0000",
+      "background": {
+        "alphaThreshold": 0.75,
+        "color": "#999999",
+        "src": "sortilege/blood-and-other-drugs/maps/o26uocp6kf3d1.jpeg",
+        "tint": "#ffffff"
+      },
+      "elevation": {
+        "bottom": 0,
+        "top": 20
+      },
+      "flags": {},
+      "fog": {
+        "src": null
+      },
+      "foreground": {
+        "alphaThreshold": 0.75,
+        "src": null,
+        "tint": "#ffffff"
+      },
+      "name": "Precinct 4",
+      "sort": 0,
+      "textures": {
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "fill",
+        "offsetX": 0,
+        "offsetY": 0,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1
+      },
+      "visibility": {
+        "levels": []
+      }
+    }
+  ],
+  "lights": [],
+  "name": "Precinct 4",
+  "navName": "",
+  "navOrder": 0,
+  "navigation": true,
+  "notes": [],
+  "ownership": {
+    "58f3S3bDXY6A0mwq": 3,
+    "default": 0
+  },
+  "padding": 0.25,
+  "playlist": null,
+  "playlistSound": null,
+  "regions": [],
+  "shiftX": 0,
+  "shiftY": 0,
+  "sort": 0,
+  "sounds": [],
+  "thumb": "worlds/blood-and-other-drugs/assets/scenes/HodBFShTjhLjF1Pi-thumb.webp",
+  "tiles": [],
+  "tokenVision": false,
+  "tokens": [
+    {
+      "_id": "SZ98stvwDOh2KC0n",
+      "_movementHistory": [],
+      "_regions": [],
+      "actorId": "Sm0cHVuXxpvJLVy6",
+      "actorLink": true,
+      "alpha": 1,
+      "bar1": {
+        "attribute": "health"
+      },
+      "bar2": {
+        "attribute": "willpower"
+      },
+      "delta": {
+        "_id": "SZ98stvwDOh2KC0n",
+        "effects": [],
+        "flags": {},
+        "img": null,
+        "items": [],
+        "name": null,
+        "ownership": null,
+        "system": {},
+        "type": null
+      },
+      "depth": 1,
+      "detectionModes": {},
+      "displayBars": 0,
+      "displayName": 0,
+      "disposition": -1,
+      "elevation": 0,
+      "flags": {},
+      "height": 1,
+      "hidden": false,
+      "level": "defaultLevel0000",
+      "light": {
+        "alpha": 0.5,
+        "angle": 360,
+        "animation": {
+          "intensity": 5,
+          "reverse": false,
+          "speed": 5,
+          "type": null
+        },
+        "attenuation": 0.5,
+        "bright": 0,
+        "color": null,
+        "coloration": 1,
+        "contrast": 0,
+        "darkness": {
+          "max": 1,
+          "min": 0
+        },
+        "dim": 0,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "saturation": 0,
+        "shadows": 0
+      },
+      "lockRotation": false,
+      "locked": false,
+      "movementAction": null,
+      "name": "Cop 1",
+      "occludable": {
+        "radius": 0
+      },
+      "ring": {
+        "colors": {
+          "background": null,
+          "ring": null
+        },
+        "effects": 1,
+        "enabled": false,
+        "subject": {
+          "scale": 1,
+          "texture": null
+        }
+      },
+      "rotation": 0,
+      "shape": 4,
+      "sight": {
+        "angle": 360,
+        "attenuation": 0.1,
+        "brightness": 0,
+        "color": null,
+        "contrast": 0,
+        "enabled": false,
+        "range": 0,
+        "saturation": 0,
+        "visionMode": "basic"
+      },
+      "sort": 0,
+      "texture": {
+        "alphaThreshold": 0.75,
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "src": "icons/svg/mystery-man.svg",
+        "tint": "#ffffff"
+      },
+      "turnMarker": {
+        "animation": null,
+        "disposition": false,
+        "mode": 1,
+        "src": null
+      },
+      "width": 1,
+      "x": 2970,
+      "y": 4070
+    },
+    {
+      "_id": "QWpkzfQpznGc9NzC",
+      "_movementHistory": [],
+      "_regions": [],
+      "actorId": "1z6tH9CvLqOF9YnQ",
+      "actorLink": true,
+      "alpha": 1,
+      "bar1": {
+        "attribute": "health"
+      },
+      "bar2": {
+        "attribute": "willpower"
+      },
+      "delta": {
+        "_id": "QWpkzfQpznGc9NzC",
+        "effects": [],
+        "flags": {},
+        "img": null,
+        "items": [],
+        "name": null,
+        "ownership": null,
+        "system": {},
+        "type": null
+      },
+      "depth": 1,
+      "detectionModes": {},
+      "displayBars": 0,
+      "displayName": 0,
+      "disposition": -1,
+      "elevation": 0,
+      "flags": {},
+      "height": 1,
+      "hidden": false,
+      "level": "defaultLevel0000",
+      "light": {
+        "alpha": 0.5,
+        "angle": 360,
+        "animation": {
+          "intensity": 5,
+          "reverse": false,
+          "speed": 5,
+          "type": null
+        },
+        "attenuation": 0.5,
+        "bright": 0,
+        "color": null,
+        "coloration": 1,
+        "contrast": 0,
+        "darkness": {
+          "max": 1,
+          "min": 0
+        },
+        "dim": 0,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "saturation": 0,
+        "shadows": 0
+      },
+      "lockRotation": false,
+      "locked": false,
+      "movementAction": null,
+      "name": "Ethan",
+      "occludable": {
+        "radius": 0
+      },
+      "ring": {
+        "colors": {
+          "background": null,
+          "ring": null
+        },
+        "effects": 1,
+        "enabled": false,
+        "subject": {
+          "scale": 1,
+          "texture": null
+        }
+      },
+      "rotation": 0,
+      "shape": 4,
+      "sight": {
+        "angle": 360,
+        "attenuation": 0.1,
+        "brightness": 0,
+        "color": null,
+        "contrast": 0,
+        "enabled": false,
+        "range": 0,
+        "saturation": 0,
+        "visionMode": "basic"
+      },
+      "sort": 1,
+      "texture": {
+        "alphaThreshold": 0.75,
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "src": "sortilege/blood-and-other-drugs/portraits/hewhocutsdown_httpss.mj.run0pWmHMbaYok_a_bailbondsman_that_lo_1170d300-3a4e-4e58-bb75-c6d3a76cfb1b_2.png",
+        "tint": "#ffffff"
+      },
+      "turnMarker": {
+        "animation": null,
+        "disposition": false,
+        "mode": 1,
+        "src": null
+      },
+      "width": 1,
+      "x": 1760,
+      "y": 4290
+    },
+    {
+      "_id": "8GD8Y2Hw2uq7JwZE",
+      "_movementHistory": [],
+      "_regions": [],
+      "actorId": "Iw9SpbRcS5T9IvXG",
+      "actorLink": true,
+      "alpha": 1,
+      "bar1": {
+        "attribute": "health"
+      },
+      "bar2": {
+        "attribute": "willpower"
+      },
+      "delta": {
+        "_id": "8GD8Y2Hw2uq7JwZE",
+        "effects": [],
+        "flags": {},
+        "img": null,
+        "items": [],
+        "name": null,
+        "ownership": null,
+        "system": {},
+        "type": null
+      },
+      "depth": 1,
+      "detectionModes": {},
+      "displayBars": 0,
+      "displayName": 0,
+      "disposition": -1,
+      "elevation": 0,
+      "flags": {},
+      "height": 1,
+      "hidden": false,
+      "level": "defaultLevel0000",
+      "light": {
+        "alpha": 0.5,
+        "angle": 360,
+        "animation": {
+          "intensity": 5,
+          "reverse": false,
+          "speed": 5,
+          "type": null
+        },
+        "attenuation": 0.5,
+        "bright": 0,
+        "color": null,
+        "coloration": 1,
+        "contrast": 0,
+        "darkness": {
+          "max": 1,
+          "min": 0
+        },
+        "dim": 0,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "saturation": 0,
+        "shadows": 0
+      },
+      "lockRotation": false,
+      "locked": false,
+      "movementAction": null,
+      "name": "Olly",
+      "occludable": {
+        "radius": 0
+      },
+      "ring": {
+        "colors": {
+          "background": null,
+          "ring": null
+        },
+        "effects": 1,
+        "enabled": false,
+        "subject": {
+          "scale": 1,
+          "texture": null
+        }
+      },
+      "rotation": 0,
+      "shape": 4,
+      "sight": {
+        "angle": 360,
+        "attenuation": 0.1,
+        "brightness": 0,
+        "color": null,
+        "contrast": 0,
+        "enabled": false,
+        "range": 0,
+        "saturation": 0,
+        "visionMode": "basic"
+      },
+      "sort": 2,
+      "texture": {
+        "alphaThreshold": 0.75,
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "src": "sortilege/blood-and-other-drugs/portraits/olly.webp",
+        "tint": "#ffffff"
+      },
+      "turnMarker": {
+        "animation": null,
+        "disposition": false,
+        "mode": 1,
+        "src": null
+      },
+      "width": 1,
+      "x": 1760,
+      "y": 4180
+    },
+    {
+      "_id": "UxSCVK9pLYAJpff7",
+      "_movementHistory": [],
+      "_regions": [],
+      "actorId": "RNuGzLlPkpfeKE0N",
+      "actorLink": true,
+      "alpha": 1,
+      "bar1": {
+        "attribute": "health"
+      },
+      "bar2": {
+        "attribute": "willpower"
+      },
+      "delta": {
+        "_id": "UxSCVK9pLYAJpff7",
+        "effects": [],
+        "flags": {},
+        "img": null,
+        "items": [],
+        "name": null,
+        "ownership": null,
+        "system": {},
+        "type": null
+      },
+      "depth": 1,
+      "detectionModes": {},
+      "displayBars": 0,
+      "displayName": 0,
+      "disposition": -1,
+      "elevation": 0,
+      "flags": {},
+      "height": 1,
+      "hidden": false,
+      "level": "defaultLevel0000",
+      "light": {
+        "alpha": 0.5,
+        "angle": 360,
+        "animation": {
+          "intensity": 5,
+          "reverse": false,
+          "speed": 5,
+          "type": null
+        },
+        "attenuation": 0.5,
+        "bright": 0,
+        "color": null,
+        "coloration": 1,
+        "contrast": 0,
+        "darkness": {
+          "max": 1,
+          "min": 0
+        },
+        "dim": 0,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "saturation": 0,
+        "shadows": 0
+      },
+      "lockRotation": false,
+      "locked": false,
+      "movementAction": null,
+      "name": "Ralph",
+      "occludable": {
+        "radius": 0
+      },
+      "ring": {
+        "colors": {
+          "background": null,
+          "ring": null
+        },
+        "effects": 1,
+        "enabled": false,
+        "subject": {
+          "scale": 1,
+          "texture": null
+        }
+      },
+      "rotation": 0,
+      "shape": 4,
+      "sight": {
+        "angle": 360,
+        "attenuation": 0.1,
+        "brightness": 0,
+        "color": null,
+        "contrast": 0,
+        "enabled": false,
+        "range": 0,
+        "saturation": 0,
+        "visionMode": "basic"
+      },
+      "sort": 3,
+      "texture": {
+        "alphaThreshold": 0.75,
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "src": "sortilege/blood-and-other-drugs/portraits/ralph.png",
+        "tint": "#ffffff"
+      },
+      "turnMarker": {
+        "animation": null,
+        "disposition": false,
+        "mode": 1,
+        "src": null
+      },
+      "width": 1,
+      "x": 3080,
+      "y": 4730
+    },
+    {
+      "_id": "1WTwb7LmZCrBSNqU",
+      "_movementHistory": [],
+      "_regions": [],
+      "actorId": "XKDohMrvBVKoioXq",
+      "actorLink": true,
+      "alpha": 1,
+      "bar1": {
+        "attribute": "health"
+      },
+      "bar2": {
+        "attribute": "willpower"
+      },
+      "delta": {
+        "_id": "1WTwb7LmZCrBSNqU",
+        "effects": [],
+        "flags": {},
+        "img": null,
+        "items": [],
+        "name": null,
+        "ownership": null,
+        "system": {},
+        "type": null
+      },
+      "depth": 1,
+      "detectionModes": {},
+      "displayBars": 0,
+      "displayName": 0,
+      "disposition": -1,
+      "elevation": 0,
+      "flags": {},
+      "height": 1,
+      "hidden": false,
+      "level": "defaultLevel0000",
+      "light": {
+        "alpha": 0.5,
+        "angle": 360,
+        "animation": {
+          "intensity": 5,
+          "reverse": false,
+          "speed": 5,
+          "type": null
+        },
+        "attenuation": 0.5,
+        "bright": 0,
+        "color": null,
+        "coloration": 1,
+        "contrast": 0,
+        "darkness": {
+          "max": 1,
+          "min": 0
+        },
+        "dim": 0,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "saturation": 0,
+        "shadows": 0
+      },
+      "lockRotation": false,
+      "locked": false,
+      "movementAction": null,
+      "name": "Cop 1",
+      "occludable": {
+        "radius": 0
+      },
+      "ring": {
+        "colors": {
+          "background": null,
+          "ring": null
+        },
+        "effects": 1,
+        "enabled": false,
+        "subject": {
+          "scale": 1,
+          "texture": null
+        }
+      },
+      "rotation": 0,
+      "shape": 4,
+      "sight": {
+        "angle": 360,
+        "attenuation": 0.1,
+        "brightness": 0,
+        "color": null,
+        "contrast": 0,
+        "enabled": false,
+        "range": 0,
+        "saturation": 0,
+        "visionMode": "basic"
+      },
+      "sort": 4,
+      "texture": {
+        "alphaThreshold": 0.75,
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "src": "icons/svg/mystery-man.svg",
+        "tint": "#ffffff"
+      },
+      "turnMarker": {
+        "animation": null,
+        "disposition": false,
+        "mode": 1,
+        "src": null
+      },
+      "width": 1,
+      "x": 3740,
+      "y": 3740
+    },
+    {
+      "_id": "V7KWNU9CLkTihyrx",
+      "_movementHistory": [],
+      "_regions": [],
+      "actorId": "0pdXDhUHc651R5ZH",
+      "actorLink": true,
+      "alpha": 1,
+      "bar1": {
+        "attribute": "health"
+      },
+      "bar2": {
+        "attribute": "willpower"
+      },
+      "delta": {
+        "_id": "V7KWNU9CLkTihyrx",
+        "effects": [],
+        "flags": {},
+        "img": null,
+        "items": [],
+        "name": null,
+        "ownership": null,
+        "system": {},
+        "type": null
+      },
+      "depth": 1,
+      "detectionModes": {},
+      "displayBars": 0,
+      "displayName": 0,
+      "disposition": -1,
+      "elevation": 0,
+      "flags": {},
+      "height": 1,
+      "hidden": false,
+      "level": "defaultLevel0000",
+      "light": {
+        "alpha": 0.5,
+        "angle": 360,
+        "animation": {
+          "intensity": 5,
+          "reverse": false,
+          "speed": 5,
+          "type": null
+        },
+        "attenuation": 0.5,
+        "bright": 0,
+        "color": null,
+        "coloration": 1,
+        "contrast": 0,
+        "darkness": {
+          "max": 1,
+          "min": 0
+        },
+        "dim": 0,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "saturation": 0,
+        "shadows": 0
+      },
+      "lockRotation": false,
+      "locked": false,
+      "movementAction": null,
+      "name": "Cop 1",
+      "occludable": {
+        "radius": 0
+      },
+      "ring": {
+        "colors": {
+          "background": null,
+          "ring": null
+        },
+        "effects": 1,
+        "enabled": false,
+        "subject": {
+          "scale": 1,
+          "texture": null
+        }
+      },
+      "rotation": 0,
+      "shape": 4,
+      "sight": {
+        "angle": 360,
+        "attenuation": 0.1,
+        "brightness": 0,
+        "color": null,
+        "contrast": 0,
+        "enabled": false,
+        "range": 0,
+        "saturation": 0,
+        "visionMode": "basic"
+      },
+      "sort": 5,
+      "texture": {
+        "alphaThreshold": 0.75,
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "src": "icons/svg/mystery-man.svg",
+        "tint": "#ffffff"
+      },
+      "turnMarker": {
+        "animation": null,
+        "disposition": false,
+        "mode": 1,
+        "src": null
+      },
+      "width": 1,
+      "x": 3410,
+      "y": 2970
+    },
+    {
+      "_id": "4AjfLtXzdiPQSwjI",
+      "_movementHistory": [],
+      "_regions": [],
+      "actorId": "RE5YFhmaXMqAFnMH",
+      "actorLink": true,
+      "alpha": 1,
+      "bar1": {
+        "attribute": "health"
+      },
+      "bar2": {
+        "attribute": "willpower"
+      },
+      "delta": {
+        "_id": "4AjfLtXzdiPQSwjI",
+        "effects": [],
+        "flags": {},
+        "img": null,
+        "items": [],
+        "name": null,
+        "ownership": null,
+        "system": {},
+        "type": null
+      },
+      "depth": 1,
+      "detectionModes": {},
+      "displayBars": 0,
+      "displayName": 0,
+      "disposition": -1,
+      "elevation": 0,
+      "flags": {},
+      "height": 1,
+      "hidden": false,
+      "level": "defaultLevel0000",
+      "light": {
+        "alpha": 0.5,
+        "angle": 360,
+        "animation": {
+          "intensity": 5,
+          "reverse": false,
+          "speed": 5,
+          "type": null
+        },
+        "attenuation": 0.5,
+        "bright": 0,
+        "color": null,
+        "coloration": 1,
+        "contrast": 0,
+        "darkness": {
+          "max": 1,
+          "min": 0
+        },
+        "dim": 0,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "saturation": 0,
+        "shadows": 0
+      },
+      "lockRotation": false,
+      "locked": false,
+      "movementAction": null,
+      "name": "Cop 1",
+      "occludable": {
+        "radius": 0
+      },
+      "ring": {
+        "colors": {
+          "background": null,
+          "ring": null
+        },
+        "effects": 1,
+        "enabled": false,
+        "subject": {
+          "scale": 1,
+          "texture": null
+        }
+      },
+      "rotation": 0,
+      "shape": 4,
+      "sight": {
+        "angle": 360,
+        "attenuation": 0.1,
+        "brightness": 0,
+        "color": null,
+        "contrast": 0,
+        "enabled": false,
+        "range": 0,
+        "saturation": 0,
+        "visionMode": "basic"
+      },
+      "sort": 6,
+      "texture": {
+        "alphaThreshold": 0.75,
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "src": "icons/svg/mystery-man.svg",
+        "tint": "#ffffff"
+      },
+      "turnMarker": {
+        "animation": null,
+        "disposition": false,
+        "mode": 1,
+        "src": null
+      },
+      "width": 1,
+      "x": 4730,
+      "y": 2090
+    },
+    {
+      "_id": "buLRJ95dMJDzxIQN",
+      "_movementHistory": [],
+      "_regions": [],
+      "actorId": "MWvHA2gN2ec1l7G4",
+      "actorLink": true,
+      "alpha": 1,
+      "bar1": {
+        "attribute": "health"
+      },
+      "bar2": {
+        "attribute": "willpower"
+      },
+      "delta": {
+        "_id": "buLRJ95dMJDzxIQN",
+        "effects": [],
+        "flags": {},
+        "img": null,
+        "items": [],
+        "name": null,
+        "ownership": null,
+        "system": {},
+        "type": null
+      },
+      "depth": 1,
+      "detectionModes": {},
+      "displayBars": 0,
+      "displayName": 0,
+      "disposition": -1,
+      "elevation": 0,
+      "flags": {},
+      "height": 1,
+      "hidden": false,
+      "level": "defaultLevel0000",
+      "light": {
+        "alpha": 0.5,
+        "angle": 360,
+        "animation": {
+          "intensity": 5,
+          "reverse": false,
+          "speed": 5,
+          "type": null
+        },
+        "attenuation": 0.5,
+        "bright": 0,
+        "color": null,
+        "coloration": 1,
+        "contrast": 0,
+        "darkness": {
+          "max": 1,
+          "min": 0
+        },
+        "dim": 0,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "saturation": 0,
+        "shadows": 0
+      },
+      "lockRotation": false,
+      "locked": false,
+      "movementAction": null,
+      "name": "Cop 1",
+      "occludable": {
+        "radius": 0
+      },
+      "ring": {
+        "colors": {
+          "background": null,
+          "ring": null
+        },
+        "effects": 1,
+        "enabled": false,
+        "subject": {
+          "scale": 1,
+          "texture": null
+        }
+      },
+      "rotation": 0,
+      "shape": 4,
+      "sight": {
+        "angle": 360,
+        "attenuation": 0.1,
+        "brightness": 0,
+        "color": null,
+        "contrast": 0,
+        "enabled": false,
+        "range": 0,
+        "saturation": 0,
+        "visionMode": "basic"
+      },
+      "sort": 7,
+      "texture": {
+        "alphaThreshold": 0.75,
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "src": "icons/svg/mystery-man.svg",
+        "tint": "#ffffff"
+      },
+      "turnMarker": {
+        "animation": null,
+        "disposition": false,
+        "mode": 1,
+        "src": null
+      },
+      "width": 1,
+      "x": 2860,
+      "y": 1980
+    },
+    {
+      "_id": "6nKUvlQkHt7fZ2zC",
+      "_movementHistory": [],
+      "_regions": [],
+      "actorId": "xq3OUcH4s6YSR9AL",
+      "actorLink": true,
+      "alpha": 1,
+      "bar1": {
+        "attribute": "health"
+      },
+      "bar2": {
+        "attribute": "willpower"
+      },
+      "delta": {
+        "_id": "6nKUvlQkHt7fZ2zC",
+        "effects": [],
+        "flags": {},
+        "img": null,
+        "items": [],
+        "name": null,
+        "ownership": null,
+        "system": {},
+        "type": null
+      },
+      "depth": 1,
+      "detectionModes": {},
+      "displayBars": 0,
+      "displayName": 30,
+      "disposition": -1,
+      "elevation": 0,
+      "flags": {},
+      "height": 1,
+      "hidden": false,
+      "level": "defaultLevel0000",
+      "light": {
+        "alpha": 0.5,
+        "angle": 360,
+        "animation": {
+          "intensity": 5,
+          "reverse": false,
+          "speed": 5,
+          "type": null
+        },
+        "attenuation": 0.5,
+        "bright": 0,
+        "color": null,
+        "coloration": 1,
+        "contrast": 0,
+        "darkness": {
+          "max": 1,
+          "min": 0
+        },
+        "dim": 0,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "saturation": 0,
+        "shadows": 0
+      },
+      "lockRotation": false,
+      "locked": false,
+      "movementAction": null,
+      "name": "Raymond",
+      "occludable": {
+        "radius": 0
+      },
+      "ring": {
+        "colors": {
+          "background": null,
+          "ring": null
+        },
+        "effects": 0,
+        "enabled": false,
+        "subject": {
+          "scale": 1,
+          "texture": null
+        }
+      },
+      "rotation": 0,
+      "shape": 4,
+      "sight": {
+        "angle": 360,
+        "attenuation": 0.1,
+        "brightness": 0,
+        "color": null,
+        "contrast": 0,
+        "enabled": false,
+        "range": 0,
+        "saturation": 0,
+        "visionMode": "basic"
+      },
+      "sort": 8,
+      "texture": {
+        "alphaThreshold": 0.75,
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "src": "icons/svg/mystery-man.svg",
+        "tint": "#ffffff"
+      },
+      "turnMarker": {
+        "animation": null,
+        "disposition": false,
+        "mode": 1,
+        "src": null
+      },
+      "width": 1,
+      "x": 3300,
+      "y": 4070
+    }
+  ],
+  "transition": {
+    "activeOnly": false,
+    "duration": 1500,
+    "type": null
+  },
+  "walls": [],
+  "weather": "",
+  "width": 5000
+}

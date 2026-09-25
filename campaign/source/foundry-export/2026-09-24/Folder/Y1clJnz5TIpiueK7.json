@@ -1,0 +1,22 @@
+{
+  "_id": "Y1clJnz5TIpiueK7",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767551066329,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767551066329,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "color": "#930606",
+  "description": "",
+  "flags": {},
+  "folder": "aBHQrKu5cIWQhL4g",
+  "name": "Claude's Touchstones",
+  "sort": 0,
+  "sorting": "a",
+  "type": "Actor"
+}

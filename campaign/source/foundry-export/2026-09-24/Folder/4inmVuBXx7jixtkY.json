@@ -1,0 +1,22 @@
+{
+  "_id": "4inmVuBXx7jixtkY",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": null,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": null,
+    "modifiedTime": null,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "color": "#f29c07",
+  "description": "",
+  "flags": {},
+  "folder": "G3AoBmjApLJZEsHN",
+  "name": "Sunburners",
+  "sort": 0,
+  "sorting": "a",
+  "type": "Actor"
+}

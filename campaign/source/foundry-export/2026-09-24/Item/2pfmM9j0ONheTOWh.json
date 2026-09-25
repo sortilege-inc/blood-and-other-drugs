@@ -1,0 +1,42 @@
+{
+  "_id": "2pfmM9j0ONheTOWh",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767550195270,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767556691221,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "effects": [],
+  "flags": {},
+  "folder": "28gCLliFrPNgS3dM",
+  "img": "systems/wod5e/assets/icons/items/feature.svg",
+  "name": "The Pony Express: Station Agent",
+  "ownership": {
+    "58f3S3bDXY6A0mwq": 3,
+    "default": 0
+  },
+  "sort": 103125,
+  "system": {
+    "bonuses": [],
+    "dataItemId": "",
+    "description": "<p>You collect the mail in your domain and facilitate the handoff to a driver. You have twodots in Mask and are Zeroed. You also have access to the local Express station, a two-dot Haven with a onedot Postern. It is owned by Paxton, but available to you while on official Express business. The obligation that comes with this Loresheet sees the vampire often chased or held accountable if expected deliveries do not make it to their recipients.</p>",
+    "featuretype": "merit",
+    "macroid": "",
+    "points": 2,
+    "source": {
+      "book": "",
+      "page": ""
+    },
+    "uses": {
+      "current": 0,
+      "enabled": false,
+      "max": 0
+    }
+  },
+  "type": "feature"
+}

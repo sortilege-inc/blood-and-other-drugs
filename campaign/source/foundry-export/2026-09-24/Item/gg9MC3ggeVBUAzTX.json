@@ -1,0 +1,49 @@
+{
+  "_id": "gg9MC3ggeVBUAzTX",
+  "_stats": {
+    "compendiumSource": "Compendium.vampire-the-masquerade-5e-compendium.blood-potency-predator-type.Item.VdOPCYrSqRjxHHNr",
+    "coreVersion": "13.351",
+    "createdTime": 1767548294306,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767556688849,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "effects": [],
+  "flags": {},
+  "folder": "28gCLliFrPNgS3dM",
+  "img": "systems/wod5e/assets/icons/items/discipline.png",
+  "name": "Montero",
+  "ownership": {
+    "58f3S3bDXY6A0mwq": 3,
+    "default": 0
+  },
+  "sort": 125000,
+  "system": {
+    "bonuses": [],
+    "dataItemId": "",
+    "description": "<p><span class=\"fontstyle0\">Since the Middle Ages, aristocratic Spaniards have mounted the </span><span class=\"fontstyle2\">montería: </span><span class=\"fontstyle0\">a deer hunt in which teams of beaters drive game onto the spears (and later the guns) of the </span><span class=\"fontstyle2\">montero, </span><span class=\"fontstyle0\">the huntsman. You carry on that tradition, using retainers to herd your victims to you for the kill. Your modern montería may take the form of a long con, a flash mob, a protest kettle, an endless bureaucratic shuffle, or a seemingly senseless gang pursuit.</span></p><p>■ <span class=\"fontstyle0\">Add a specialty: Leadership (Hunting Pack) or Stealth (Stakeout)</span></p><p>■ <span class=\"fontstyle0\">Gain one dot of Dominate or Obfuscate</span></p><p>■ <span class=\"fontstyle0\">Gain two dots of Retainers</span></p><p><span class=\"fontstyle3\">■ </span><span class=\"fontstyle0\">Lose one dot of Humanity</span></p><p><span class=\"fontstyle4\">Predator Pool: </span><span class=\"fontstyle0\">With an experienced team of retainers, the hunt comes down to planning: Intelligence + Stealth. With a well-practiced plan, the hunt comes down to patiently waiting for the game to arrive: Resolve + Stealth.</span> </p>",
+    "dicepool": {
+      "OYyESuMw": {
+        "path": "attributes.intelligence"
+      },
+      "YsdFEEtz": {
+        "path": "skills.stealth"
+      },
+      "bV8YGwEy": {
+        "path": "attributes.resolve"
+      },
+      "tBjzL0bm": {
+        "path": "skills.stealth"
+      }
+    },
+    "macroid": "",
+    "source": {
+      "book": "Player's Guide",
+      "page": "108"
+    }
+  },
+  "type": "predatorType"
+}

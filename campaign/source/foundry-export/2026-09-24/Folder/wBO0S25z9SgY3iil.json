@@ -1,0 +1,22 @@
+{
+  "_id": "wBO0S25z9SgY3iil",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767549600145,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767549600145,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "color": "#259098",
+  "description": "",
+  "flags": {},
+  "folder": "aBHQrKu5cIWQhL4g",
+  "name": "Olly's Retainers",
+  "sort": 0,
+  "sorting": "a",
+  "type": "Actor"
+}

@@ -1,0 +1,22 @@
+{
+  "_id": "B8Q1KOMB2dpuIo9b",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767552308359,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767552308359,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "color": "#aeb011",
+  "description": "",
+  "flags": {},
+  "folder": "aBHQrKu5cIWQhL4g",
+  "name": "Ethan's Contacts",
+  "sort": 0,
+  "sorting": "a",
+  "type": "Actor"
+}

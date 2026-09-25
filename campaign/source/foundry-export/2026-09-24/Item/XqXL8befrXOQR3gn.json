@@ -1,0 +1,42 @@
+{
+  "_id": "XqXL8befrXOQR3gn",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767742430270,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767742437201,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "effects": [],
+  "flags": {},
+  "folder": null,
+  "img": "systems/wod5e/assets/icons/items/feature.svg",
+  "name": "Research Equipment",
+  "ownership": {
+    "58f3S3bDXY6A0mwq": 3,
+    "default": 0
+  },
+  "sort": 0,
+  "system": {
+    "bonuses": [],
+    "dataItemId": "",
+    "description": "",
+    "featuretype": "background",
+    "macroid": "",
+    "points": 1,
+    "source": {
+      "book": "",
+      "page": ""
+    },
+    "uses": {
+      "current": 0,
+      "enabled": false,
+      "max": 0
+    }
+  },
+  "type": "feature"
+}

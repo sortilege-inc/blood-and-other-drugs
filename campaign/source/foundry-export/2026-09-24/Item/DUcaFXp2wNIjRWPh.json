@@ -1,0 +1,42 @@
+{
+  "_id": "DUcaFXp2wNIjRWPh",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767757855639,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767757882958,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "effects": [],
+  "flags": {},
+  "folder": null,
+  "img": "systems/wod5e/assets/icons/items/feature.svg",
+  "name": "Furcus",
+  "ownership": {
+    "58f3S3bDXY6A0mwq": 3,
+    "default": 0
+  },
+  "sort": 0,
+  "system": {
+    "bonuses": [],
+    "dataItemId": "",
+    "description": "<p>The haven is located on veins of the earth or a frayed spot in the Veil. Each dot in this merit adds one die to Rituals or Ceremony dice pools used at the furcus.</p>",
+    "featuretype": "merit",
+    "macroid": "",
+    "points": 1,
+    "source": {
+      "book": "",
+      "page": ""
+    },
+    "uses": {
+      "current": 0,
+      "enabled": false,
+      "max": 0
+    }
+  },
+  "type": "feature"
+}

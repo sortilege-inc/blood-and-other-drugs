@@ -1,0 +1,42 @@
+{
+  "_id": "5kYHXMnpQAP7gIFA",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767550054469,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767556687506,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "effects": [],
+  "flags": {},
+  "folder": "28gCLliFrPNgS3dM",
+  "img": "systems/wod5e/assets/icons/items/feature.svg",
+  "name": "False Love (Trieste)",
+  "ownership": {
+    "58f3S3bDXY6A0mwq": 3,
+    "default": 0
+  },
+  "sort": 200000,
+  "system": {
+    "bonuses": [],
+    "dataItemId": "",
+    "description": "<p>With a SPC as an obsession, when in their presence treat the character's treat Humanity as one higher (Max 10) for purposes of using Blush of Life, eating, drinking, or sexual intercourse. Gain three Stains if they die.</p>",
+    "featuretype": "flaw",
+    "macroid": "",
+    "points": 1,
+    "source": {
+      "book": "",
+      "page": ""
+    },
+    "uses": {
+      "current": 0,
+      "enabled": false,
+      "max": 0
+    }
+  },
+  "type": "feature"
+}

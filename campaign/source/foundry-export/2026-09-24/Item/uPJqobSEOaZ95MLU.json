@@ -1,0 +1,42 @@
+{
+  "_id": "uPJqobSEOaZ95MLU",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767757920801,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767757924793,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "effects": [],
+  "flags": {},
+  "folder": null,
+  "img": "systems/wod5e/assets/icons/items/feature.svg",
+  "name": "Postern",
+  "ownership": {
+    "58f3S3bDXY6A0mwq": 3,
+    "default": 0
+  },
+  "sort": 0,
+  "system": {
+    "bonuses": [],
+    "dataItemId": "",
+    "description": "<p>The haven has some kind of secret exit that allows them a safe passage out. For each dot of this merit add one die to pools of evasion or escaping surveillance near the haven.</p>",
+    "featuretype": "merit",
+    "macroid": "",
+    "points": 1,
+    "source": {
+      "book": "",
+      "page": ""
+    },
+    "uses": {
+      "current": 0,
+      "enabled": false,
+      "max": 0
+    }
+  },
+  "type": "feature"
+}

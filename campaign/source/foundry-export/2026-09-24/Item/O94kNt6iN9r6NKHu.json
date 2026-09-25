@@ -1,0 +1,35 @@
+{
+  "_id": "O94kNt6iN9r6NKHu",
+  "_stats": {
+    "compendiumSource": null,
+    "coreVersion": "13.351",
+    "createdTime": 1767758356987,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1767758356987,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.6"
+  },
+  "effects": [],
+  "flags": {},
+  "folder": null,
+  "img": "systems/wod5e/assets/icons/items/item-default.svg",
+  "name": "Sanguine",
+  "ownership": {
+    "58f3S3bDXY6A0mwq": 3,
+    "default": 0
+  },
+  "sort": 0,
+  "system": {
+    "bonuses": [],
+    "dataItemId": "",
+    "description": "",
+    "macroid": "",
+    "source": {
+      "book": "",
+      "page": ""
+    }
+  },
+  "type": "resonance"
+}

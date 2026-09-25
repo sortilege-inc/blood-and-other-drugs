@@ -1,0 +1,1276 @@
+{
+  "_id": "RNuGzLlPkpfeKE0N",
+  "_stats": {
+    "compendiumSource": "Compendium.sortilege-yyz-by-night.toronto-kindred.Actor.rrHtuCyHfffChI1J",
+    "coreVersion": "14.367",
+    "createdTime": 1767303041623,
+    "duplicateSource": null,
+    "exportSource": null,
+    "lastModifiedBy": "58f3S3bDXY6A0mwq",
+    "modifiedTime": 1790179034025,
+    "systemId": "wod5e",
+    "systemVersion": "5.3.27"
+  },
+  "effects": [],
+  "flags": {
+    "ginzzzu-portraits": {
+      "portraitShown": false
+    },
+    "wod5e": {
+      "manualDefaultOwnership": true
+    }
+  },
+  "folder": "aBHQrKu5cIWQhL4g",
+  "img": "sortilege/blood-and-other-drugs/portraits/ralph.png",
+  "items": [
+    {
+      "_id": "eNt6ztK7BjHhznsx",
+      "_stats": {
+        "compendiumSource": "Compendium.vampire-the-masquerade-5e-compendium.clans.Item.jOuYihytvLfirAMH",
+        "coreVersion": "14.367",
+        "createdTime": 1767550471300,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": "58f3S3bDXY6A0mwq",
+        "modifiedTime": 1767550471300,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": null,
+      "img": "modules/vampire-the-masquerade-5e-compendium/packs/assets/SymbolThinBloodsV5.webp",
+      "name": "Thin-Blooded",
+      "ownership": {
+        "58f3S3bDXY6A0mwq": 3,
+        "default": 0,
+        "zzaXLX6rQo9UZdTe": 3
+      },
+      "sort": 500000,
+      "system": {
+        "bane": "",
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "<h5>Disciplines: Thin-Blood Alchemy</h5><h5>Sires tell their childer of the 13th and 14th generation never to attempt the Embrace as their Blood is too far removed from Caine. They say it will bring nothing but death and sorrow. But, be it by mistake or design, this edict is not always followed. A 14th generation Kindred, who only by miracle avoided the flaw of thin blood themselves, drain a mortal in a fit of frenzy and guiltily feed them a mouthful of vitae, hoping against hope that it might reanimate the broken body. A Ventrue from a long line of liars thinks herself closer to her progenitor than she really is, and believes she is creating a worthy member for her clan. A prince’s great-grandchilde attempts to force their diluted vitae into the mouth of their ancestor’s executed, treacherous ghoul just to get back at the old tyrant. A Tremere, often overlooked by his clan for his weakness of Blood and spirit, experiments with the Embrace to prove himself as good as them. In all these cases, a dusk-born may awaken, if the Blood wills it. Kindred who intend to sire thin-bloods often target individuals they already have a pre-existing relationship with, such as a trusted ghoul or a human family member they cannot forget, or they seek out vessels who demonstrate specific traits or rare talents that make them better equipped to survive as the weakest of predators. Many Kindred view the thin-bloods as a threat to the Masquerade and will destroy them, if given the chance. The thin-blooded can be of any mortal origin and are not affected by their parent clan’s curse nor by their preferences in the same degree as their sire. If they are allowed to rise, they will likely be turned away, gaining the luxury of freedom and the danger of solitude. In 2009 the Inner Circle of the Camarilla issued an edict that all thin-blooded must be branded or tattooed with the “mark of the crescent moon”. Inked by a Tremere tattoo artist or scorched with a beam of sunlight, the brand is irreversible. Even Anarchs and unbound think twice before associating with a marked Mercurian.</h5>",
+        "macroid": "",
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "clan"
+    },
+    {
+      "_id": "vJoyJObog76w4ilO",
+      "_stats": {
+        "compendiumSource": "Compendium.vampire-the-masquerade-5e-compendium.disciplines.Item.zkfXHOs9jNBjeRGT",
+        "coreVersion": "14.367",
+        "createdTime": 1767550717800,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": "58f3S3bDXY6A0mwq",
+        "modifiedTime": 1767550717800,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": "qiKArCN2bXL4I9w9",
+      "img": "modules/vampire-the-masquerade-5e-compendium/packs/assets/330px-Obfuscate_symbol.png",
+      "name": "Silence of Death",
+      "ownership": {
+        "58f3S3bDXY6A0mwq": 3,
+        "default": 0,
+        "zzaXLX6rQo9UZdTe": 3
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "cost": null,
+        "dataItemId": "",
+        "description": "<p>Popular among the Banu Haqim, this power completely silences the user, nullifying all sound made by them. As with other Obfuscate powers, this only works on people within earshot and does not fool microphones or other electronic sound detectors. Unlike Obfuscate in general, this power works only on the sense of hearing, but in exchange operates more ro bustly. A vampire needs to make a whole lot of noise to break this silence. </p><p>■ Cost: Free </p><p>■ System: The user silences their footsteps, clothing, minor collisions, and other sounds of their person. This makes the vampire undetectable if an observer could only notice them by sound, such as when on a different floor of a house. This power does not eliminate sounds the user makes outside their personal space (throwing or dropping objects, or slamming doors, for exam ple). Failing that, only Sense of the Unseen (Auspex 1) can detect the user. </p><p>■ Duration: One scene</p>",
+        "dicepool": {},
+        "discipline": "obfuscate",
+        "level": 1,
+        "macroid": "",
+        "selected": false,
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "power"
+    },
+    {
+      "_id": "hVwIkjnzTpRnoXli",
+      "_stats": {
+        "compendiumSource": "Compendium.vampire-the-masquerade-5e-compendium.advantages-flaws.Item.zMjANi1Ob8EmWeeN",
+        "coreVersion": "14.367",
+        "createdTime": 1767550811853,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": "58f3S3bDXY6A0mwq",
+        "modifiedTime": 1767550811853,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {
+        "vtm5e": {
+          "dataItemId": "feature-••-beautiful:"
+        }
+      },
+      "folder": "QKuRWbIrsNvscPEl",
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "•• Beautiful:",
+      "ownership": {
+        "58f3S3bDXY6A0mwq": 3,
+        "default": 0,
+        "zzaXLX6rQo9UZdTe": 3
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "<p>You add one extra die to all appropriate Social dice pools.</p>",
+        "featuretype": "merit",
+        "macroid": "",
+        "points": 2,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "SFD6YKTV0ljPuJ8k",
+      "_stats": {
+        "compendiumSource": "Compendium.vampire-the-masquerade-5e-compendium.advantages-flaws.Item.y6OLbstJvloGcR3b",
+        "coreVersion": "14.367",
+        "createdTime": 1767550821228,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": "58f3S3bDXY6A0mwq",
+        "modifiedTime": 1767550823567,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": "vB6siaIDTHBZXglQ",
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Base Haven",
+      "ownership": {
+        "58f3S3bDXY6A0mwq": 3,
+        "default": 0,
+        "zzaXLX6rQo9UZdTe": 3
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "<p>• Small haven, but more secure and private than the default. Examples: basement apartment, crypt, locked storeroom in a warehouse.</p><p>•• Good size, security, or privacy. Examples: a single-family home or row house, wolf enclosure at the zoo, branch sewer tunnel.</p><p>••• Very large, secure, or private. Examples: a compound outside town, a bank building, a decommissioned subway station.</p>",
+        "featuretype": "background",
+        "macroid": "",
+        "points": 1,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "PMhfU0PnbTx67rSP",
+      "_stats": {
+        "compendiumSource": "Compendium.vampire-the-masquerade-5e-compendium.advantages-flaws.Item.kGbzHWqAVV16ATRW",
+        "coreVersion": "14.367",
+        "createdTime": 1767550832828,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": "58f3S3bDXY6A0mwq",
+        "modifiedTime": 1767550837417,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": "C8mZ006mbKxfWkKR",
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Resources",
+      "ownership": {
+        "58f3S3bDXY6A0mwq": 3,
+        "default": 0,
+        "zzaXLX6rQo9UZdTe": 3
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "<p>This Background describes your Resources. These benefits are not necessarily financial in nature and are rarely completely liquid, but you can often sell them to gain money. It could take weeks or even months to do so, depending on how much needs to be sold. Especially as the Second Inquisition closes down Kindred bank accounts, vampires increasingly return to holding their Resources in cash – or in gold, art, narcotics, guns, and slaves. </p><p>Dots of Resources provide an income for you to maintain your standard of unliving, but you must detail the source of your income and the form this Background takes. After all, it might dry up, get stolen, or otherwise vanish during the chronicle</p><p>• Paycheck to paycheck lifestyle</p><p>•• Middle-class lifestyle</p><p>••• Upper-class lifestyle</p><p>•••• Wealthy lifestyle</p><p>••••• Ultra-rich lifestyle</p>",
+        "featuretype": "background",
+        "macroid": "",
+        "points": 2,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "JVUA380ICazxudWR",
+      "_stats": {
+        "compendiumSource": "Compendium.vampire-the-masquerade-5e-compendium.advantages-flaws.Item.xn5QGRdnv6www4bO",
+        "coreVersion": "14.367",
+        "createdTime": 1767550846485,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": "58f3S3bDXY6A0mwq",
+        "modifiedTime": 1767550858449,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": "gNzlMBQnbSdlEeA8",
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Linguistics (Spanish, English, Russian)",
+      "ownership": {
+        "58f3S3bDXY6A0mwq": 3,
+        "default": 0,
+        "zzaXLX6rQo9UZdTe": 3
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "<p>Every character has fluency in their birth language and (unless the player and Storyteller have a reason to declare otherwise) in the dominant language of the chronicle setting. For example, a Mexican werewolf in a chronicle set in the Utah Badlands can speak and read Spanish and English. Storytellers may opt to allow Garou whose birth tongue matches that of the setting to take a second language anyway.</p><p>Each dot in Linguistics allows the character to fluently speak, write, and read one additional language apart from those two default languages.</p><p>Note that reading certain old documents or chanting in a strange dialect may impose additional Difficulty to Academics or Occult tests.</p>",
+        "featuretype": "merit",
+        "macroid": "",
+        "points": 1,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "nX5onbNaNAzqppO7",
+      "_stats": {
+        "compendiumSource": "Compendium.vampire-the-masquerade-5e-compendium.advantages-flaws.Item.Zg8x0Snq7bU4gZzi",
+        "coreVersion": "14.367",
+        "createdTime": 1767550870768,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": "58f3S3bDXY6A0mwq",
+        "modifiedTime": 1767550872908,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": "ssc0xboCLq8X00rA",
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Mask",
+      "ownership": {
+        "58f3S3bDXY6A0mwq": 3,
+        "default": 0,
+        "zzaXLX6rQo9UZdTe": 3
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "<p>• You have a good fake identity, including a credit card, bank account, credit history, birth certificate, etc., all in your Mask’s name. You can pass a state or provincial-level background check.</p><p>•• Your Mask can pass a background check with the national police: FBI, Scotland Yard, or the equivalent. If you have a military or intelligence record, it has been classified.</p>",
+        "featuretype": "background",
+        "macroid": "",
+        "points": 2,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "8zmIiQsH2cwriXp3",
+      "_stats": {
+        "compendiumSource": "Compendium.vampire-the-masquerade-5e-compendium.advantages-flaws.Item.eo1gHIUxcYoNml3e",
+        "coreVersion": "14.367",
+        "createdTime": 1767550879963,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": "58f3S3bDXY6A0mwq",
+        "modifiedTime": 1767550881841,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": "jCXLup54jpPLnL7E",
+      "img": "modules/vampire-the-masquerade-5e-compendium/packs/assets/SymbolThinBloodsV5.webp",
+      "name": "Vampiric Resilience",
+      "ownership": {
+        "58f3S3bDXY6A0mwq": 3,
+        "default": 0,
+        "zzaXLX6rQo9UZdTe": 3
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "<p>These Merits and Flaws only apply to thin-blood characters. They have no dot value; each Flaw balances a Merit, and vice versa. They thus do not count against the maximum dots in Advantages and Flaws allowed to be selected during character creation or purchased through experience</p><p>You suffer damage as a regular vampire, treating regular puncture and slashing wounds as Superficial damage.</p>",
+        "featuretype": "merit",
+        "macroid": "",
+        "points": 1,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "Qdfmo5M2VPfEv1bZ",
+      "_stats": {
+        "compendiumSource": "Compendium.vampire-the-masquerade-5e-compendium.advantages-flaws.Item.jEjcyUln8Wz3JMwJ",
+        "coreVersion": "14.367",
+        "createdTime": 1767550888066,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": "58f3S3bDXY6A0mwq",
+        "modifiedTime": 1767550889389,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": "UFusW5PeI6LdrHT1",
+      "img": "modules/vampire-the-masquerade-5e-compendium/packs/assets/SymbolThinBloodsV5.webp",
+      "name": "Bestial Temper",
+      "ownership": {
+        "58f3S3bDXY6A0mwq": 3,
+        "default": 0,
+        "zzaXLX6rQo9UZdTe": 3
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "<p>These Merits and Flaws only apply to thin-blood characters. They have no dot value; each Flaw balances a Merit, and vice versa. They thus do not count against the maximum dots in Advantages and Flaws allowed to be selected during character creation or purchased through experience</p><p></p><p>You are afflicted with the Beast equal to a full vampire. You need to test for frenzy as per the normal vampire rules</p>",
+        "featuretype": "flaw",
+        "macroid": "",
+        "points": 1,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "J92eNEyUu0bDR2fR",
+      "_stats": {
+        "compendiumSource": "Compendium.vampire-the-masquerade-5e-compendium.advantages-flaws.Item.2DSkpd7wqzAPpVEq",
+        "coreVersion": "14.367",
+        "createdTime": 1767550893854,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": "58f3S3bDXY6A0mwq",
+        "modifiedTime": 1767550912612,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": "DCRmwL9yjifodIBD",
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Shunned by Sire",
+      "ownership": {
+        "58f3S3bDXY6A0mwq": 3,
+        "default": 0,
+        "zzaXLX6rQo9UZdTe": 3
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "<p>You’re completely loathed by this sect. You betrayed them, crossed a local leader, or fought them in the past. Members of this group will actively work against you if they can.</p>",
+        "featuretype": "flaw",
+        "macroid": "",
+        "points": 2,
+        "source": {
+          "book": "",
+          "page": ""
+        },
+        "uses": {
+          "current": 0,
+          "enabled": false,
+          "max": 0
+        }
+      },
+      "type": "feature"
+    },
+    {
+      "_id": "XwKacXd7zqhDScH9",
+      "_stats": {
+        "compendiumSource": "Compendium.vampire-the-masquerade-5e-compendium.blood-potency-predator-type.Item.Kihkcn3qaxJlE3tT",
+        "coreVersion": "14.367",
+        "createdTime": 1767551261762,
+        "duplicateSource": null,
+        "exportSource": null,
+        "lastModifiedBy": "58f3S3bDXY6A0mwq",
+        "modifiedTime": 1767551261762,
+        "systemId": "wod5e",
+        "systemVersion": "5.3.6"
+      },
+      "effects": [],
+      "flags": {},
+      "folder": "r1wjwrIVzALpkFpo",
+      "img": "systems/wod5e/assets/icons/items/discipline.png",
+      "name": "Sandman",
+      "ownership": {
+        "58f3S3bDXY6A0mwq": 3,
+        "default": 0,
+        "zzaXLX6rQo9UZdTe": 3
+      },
+      "sort": 0,
+      "system": {
+        "bonuses": [],
+        "dataItemId": "",
+        "description": "<p>You rely on your stealth or Disciplines to feed from sleeping victims. If they never wake during the feeding, they won’t know you exist. Perhaps you were very anti-social in life; you don’t feel cut out for the intense interpersonal nightlife or physical violence of more extroverted hunters.</p><p>■ Add a specialty: Medicine (Anesthetics) or Stealth (Break-in)</p><p>■ Gain one dot of Auspex or Obfuscate</p><p>■ Gain one dot of Resources</p>",
+        "dicepool": {},
+        "macroid": "",
+        "source": {
+          "book": "",
+          "page": ""
+        }
+      },
+      "type": "predatorType"
+    }
+  ],
+  "name": "Ralph Begg",
+  "ownership": {
+    "58f3S3bDXY6A0mwq": 3,
+    "OsgVwuhG5D4P22uI": 3,
+    "default": 0
+  },
+  "prototypeToken": {
+    "actorLink": true,
+    "alpha": 1,
+    "appendNumber": false,
+    "bar1": {
+      "attribute": "health"
+    },
+    "bar2": {
+      "attribute": "willpower"
+    },
+    "depth": 1,
+    "detectionModes": {},
+    "displayBars": 0,
+    "displayName": 0,
+    "disposition": -1,
+    "flags": {},
+    "height": 1,
+    "light": {
+      "alpha": 0.5,
+      "angle": 360,
+      "animation": {
+        "intensity": 5,
+        "reverse": false,
+        "speed": 5,
+        "type": null
+      },
+      "attenuation": 0.5,
+      "bright": 0,
+      "color": null,
+      "coloration": 1,
+      "contrast": 0,
+      "darkness": {
+        "max": 1,
+        "min": 0
+      },
+      "dim": 0,
+      "luminosity": 0.5,
+      "negative": false,
+      "priority": 0,
+      "saturation": 0,
+      "shadows": 0
+    },
+    "lockRotation": false,
+    "movementAction": null,
+    "name": "Ralph",
+    "occludable": {
+      "radius": 0
+    },
+    "prependAdjective": false,
+    "randomImg": false,
+    "ring": {
+      "colors": {
+        "background": null,
+        "ring": null
+      },
+      "effects": 1,
+      "enabled": false,
+      "subject": {
+        "scale": 1,
+        "texture": null
+      }
+    },
+    "rotation": 0,
+    "sight": {
+      "angle": 360,
+      "attenuation": 0.1,
+      "brightness": 0,
+      "color": null,
+      "contrast": 0,
+      "enabled": false,
+      "range": 0,
+      "saturation": 0,
+      "visionMode": "basic"
+    },
+    "texture": {
+      "alphaThreshold": 0.75,
+      "anchorX": 0.5,
+      "anchorY": 0.5,
+      "fit": "contain",
+      "scaleX": 1,
+      "scaleY": 1,
+      "src": "sortilege/blood-and-other-drugs/portraits/ralph.png",
+      "tint": "#ffffff"
+    },
+    "turnMarker": {
+      "animation": null,
+      "disposition": false,
+      "mode": 1,
+      "src": null
+    },
+    "width": 1
+  },
+  "sort": 0,
+  "system": {
+    "activeForm": "homid",
+    "appearance": "",
+    "attributes": {
+      "charisma": {
+        "active": false,
+        "value": 2
+      },
+      "composure": {
+        "active": false,
+        "value": 2
+      },
+      "dexterity": {
+        "active": false,
+        "value": 2
+      },
+      "intelligence": {
+        "active": false,
+        "value": 3
+      },
+      "manipulation": {
+        "active": false,
+        "value": 4
+      },
+      "resolve": {
+        "active": false,
+        "value": 1
+      },
+      "stamina": {
+        "active": false,
+        "value": 3
+      },
+      "strength": {
+        "active": false,
+        "value": 3
+      },
+      "wits": {
+        "active": false,
+        "value": 2
+      }
+    },
+    "balance": {
+      "harano": {
+        "value": 0
+      },
+      "hauglosk": {
+        "value": 0
+      }
+    },
+    "bio": {
+      "age": {
+        "apparent": "29",
+        "trueage": "29"
+      },
+      "dateof": {
+        "birth": "1996",
+        "death": "2025"
+      },
+      "history": ""
+    },
+    "biography": "<p>Ralph was a \"peaked in high school\" jock with a sharp mind and bad grades, has spent the last 10 years moving from scam to job to scam to job, with surprisingly good computer skills and easy charm he has always found a way to get away and get ahead, his most recent con was too successful stealing paychecks from a new gig economy app, that app was a tool created by a Camarilla Nosferatu who tracked him down and seeing a pretty boy with computer skills, saw an opportunity to both punish something beautiful and make a useful tool, after seeing Ralph not \"Turn Ugly\" he became enraged, snaped his neck thinking the embrace was a failure and left him for dead.</p>",
+    "blood": {
+      "generation": "",
+      "potency": 0
+    },
+    "bonuses": {},
+    "crinosHealth": {
+      "aggravated": 0,
+      "max": 4,
+      "superficial": 0,
+      "value": 4
+    },
+    "danger": {
+      "max": 5,
+      "value": 0
+    },
+    "derivedXP": {
+      "remainingXP": 0,
+      "totalXP": 0
+    },
+    "description": "",
+    "despair": {
+      "value": 0
+    },
+    "desperation": {
+      "value": 0
+    },
+    "disciplines": {
+      "alchemy": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "animalism": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "auspex": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "celerity": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "ceremonies": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "dominate": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "fortitude": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "obfuscate": {
+        "description": "",
+        "powers": [],
+        "selected": true,
+        "value": 1,
+        "visible": false
+      },
+      "oblivion": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "potence": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "presence": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "protean": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "rituals": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      },
+      "sorcery": {
+        "description": "",
+        "powers": [],
+        "value": 0,
+        "visible": false
+      }
+    },
+    "edges": {
+      "arsenal": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "artifact": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "beastwhisperer": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "dronejockey": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "fleet": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "globalaccess": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "improvisedgear": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "library": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "ordnance": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "repeltheunnatural": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "sensetheunnatural": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      },
+      "thwarttheunnatural": {
+        "description": "",
+        "perks": [],
+        "pools": [],
+        "value": 0,
+        "visible": false
+      }
+    },
+    "equipment": "",
+    "exp": {
+      "max": 0,
+      "value": 0
+    },
+    "experiences": [
+      {
+        "id": "AtAsHgpp",
+        "name": "XP Spent",
+        "timestamp": 1769564607474,
+        "value": -6
+      },
+      {
+        "id": "wdFzBfQ3",
+        "name": "XP Gained",
+        "timestamp": 1767551009483,
+        "value": 12
+      },
+      {
+        "id": "vhewqC3V",
+        "name": "XP Spent",
+        "timestamp": 1769564650697,
+        "value": -6
+      }
+    ],
+    "forms": {
+      "crinos": {
+        "description": "",
+        "token": {
+          "img": ""
+        }
+      },
+      "glabro": {
+        "description": "",
+        "token": {
+          "img": ""
+        }
+      },
+      "hispo": {
+        "description": "",
+        "token": {
+          "img": ""
+        }
+      },
+      "homid": {
+        "description": "",
+        "token": {
+          "img": ""
+        }
+      },
+      "lupus": {
+        "description": "",
+        "token": {
+          "img": ""
+        }
+      }
+    },
+    "frenzyActive": false,
+    "gifts": {
+      "ahroun": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "blackfury": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "bonegnawer": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "childrenofgaia": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "galestalker": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "galliard": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "ghostcouncil": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "glasswalker": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "hartwarden": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "native": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "philodox": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "ragabash": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "redtalon": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "rites": {
+        "description": "",
+        "powers": []
+      },
+      "shadowlord": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "silentstrider": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "silverfang": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      },
+      "theurge": {
+        "description": "",
+        "powers": [],
+        "value": 0
+      }
+    },
+    "group": "cTns8VDwWHrdIqEf",
+    "hasSkillAttributeData": true,
+    "headers": {
+      "ambition": "'Enough' wealth",
+      "cellname": "",
+      "chronicle": "Blood & Other Drugs",
+      "concept": "Scammer",
+      "creedfields": "",
+      "desire": "Learn what I have become",
+      "domitor": "",
+      "generation": "14th",
+      "sire": "Ugly Nosferatu (Vincent)",
+      "tenets": "",
+      "touchstones": "<p>Michele (Sister): She made it out, has a nice life and a nice family, nothing from my shitty life should fall on her.</p><p>'Bill': Roommate. Stand-up guy, would never rat me out, dumb enough to not know I'm dead.</p><p>None may control me.</p><p>All is fair in the pursuit of money.</p>"
+    },
+    "health": {
+      "aggravated": 0,
+      "max": 6,
+      "superficial": 0,
+      "value": 6
+    },
+    "humanity": {
+      "stains": 0,
+      "value": 7
+    },
+    "hunger": {
+      "max": 5,
+      "value": 1
+    },
+    "locked": true,
+    "lostTheWolf": false,
+    "notes": "",
+    "privatenotes": "",
+    "rage": {
+      "max": 5,
+      "value": 1
+    },
+    "renown": {
+      "glory": {
+        "value": 0
+      },
+      "honor": {
+        "value": 0
+      },
+      "wisdom": {
+        "value": 0
+      }
+    },
+    "selectedDiscipline": "obfuscate",
+    "selectedDisciplinePower": "dFx0ZQHO7HqNiNUn",
+    "selectedEdge": "",
+    "selectedEdgePerk": "",
+    "selectedGift": "",
+    "selectedGiftPower": "",
+    "settings": {
+      "background": "",
+      "enableDisciplines": false,
+      "enableEdges": false,
+      "enableGifts": false,
+      "generalDifficultyEnabled": true,
+      "headerbg": "",
+      "limited": {
+        "appearance": true,
+        "biography": true,
+        "tenets": false,
+        "touchstones": false
+      },
+      "skillAttributeInputs": false
+    },
+    "skills": {
+      "academics": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "animalken": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "athletics": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      },
+      "awareness": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 2
+      },
+      "brawl": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 2
+      },
+      "craft": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "drive": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      },
+      "etiquette": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "finance": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "firearms": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 2
+      },
+      "insight": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      },
+      "intimidation": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "investigation": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 2
+      },
+      "larceny": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 2
+      },
+      "leadership": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "medicine": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      },
+      "melee": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 2
+      },
+      "occult": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      },
+      "performance": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "persuasion": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 2
+      },
+      "politics": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      },
+      "science": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "stealth": {
+        "active": false,
+        "bonuses": [
+          {
+            "displayWhenInactive": true,
+            "paths": [
+              "skills.stealth"
+            ],
+            "source": "Breaking & Entering",
+            "value": 1
+          }
+        ],
+        "description": "",
+        "macroid": "",
+        "value": 3
+      },
+      "streetwise": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 1
+      },
+      "subterfuge": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 3
+      },
+      "survival": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 0
+      },
+      "technology": {
+        "active": false,
+        "bonuses": [],
+        "description": "",
+        "macroid": "",
+        "value": 3
+      }
+    },
+    "talismans": [],
+    "willpower": {
+      "aggravated": 0,
+      "max": 3,
+      "superficial": 2,
+      "value": 2
+    }
+  },
+  "type": "vampire"
+}
