@@ -423,27 +423,11 @@ window.VtmCreator = (function () {
     box.appendChild(el('label', { class: 'tp-row' }, [el('input', { type: 'checkbox', checked: cur.on || null, onchange: (ev) => apply({ on: ev.target.checked }) }), ' Use loresheets',
       el('span', { class: 'muted small' }, [' — ' + all.length + ' in the books; the core: “The Storyteller always has the final word on which Loresheets are available for player characters.”'])]));
     if (!cur.on) return box;
-    const on = new Set(cur.ids);
-    box.appendChild(el('div', { class: 'chiprow tight tp-source' }, [
-      button('Select all', () => apply({ ids: all.map((r) => r.id) }), 'ghost tiny'),
-      button('None', () => apply({ ids: [] }), 'ghost tiny'),
-      el('span', { class: 'muted small' }, [on.size + ' of ' + all.length + ' chosen']),
-    ]));
-    const byBook = {};
-    all.forEach((r) => (byBook[r.book] = byBook[r.book] || []).push(r));
-    const list = el('div', { class: 'lore-pick' });
-    D.books().forEach((b) => {
-      const rs = byBook[b.id];
-      if (!rs) return;
-      list.appendChild(el('div', { class: 'power-level' }, [b.label]));
-      rs.forEach((r) => list.appendChild(el('div', { class: 'power-row' }, [
-        el('input', { type: 'checkbox', checked: on.has(r.id) || null, onchange: (ev) => apply({ ids: ev.target.checked ? cur.ids.concat([r.id]) : cur.ids.filter((x) => x !== r.id) }) }),
-        G() ? G().detailsOf([r.name, el('span', { class: 'muted small' }, [' · ' + (r.levels || []).length + ' levels'])], r.id, r.book) : el('span', {}, [r.name]),
-      ])));
-    });
-    box.appendChild(list);
+    // which loresheets: found and taken level by level in the Advantages step's finder (owner:
+    // "loresheets should show as a filter in the same interface as the rest")
     box.appendChild(el('label', { class: 'tp-row tp-ack' }, [el('input', { type: 'checkbox', checked: cur.ack || null, onchange: (ev) => apply({ ack: ev.target.checked }) }),
-      ' I understand these loresheets can be played only where my Storyteller allows them.']));
+      ' I understand a loresheet can be played only where my Storyteller allows it.']));
+    if (cur.ack) box.appendChild(el('p', { class: 'muted small tp-source' }, ['Loresheets are now a filter in the Advantages step’s finder.']));
     return box;
   }
   function thirdParty(v, meta, change) {
@@ -553,11 +537,14 @@ window.VtmCreator = (function () {
     }
     const pv = G() ? G().fromPredator(ctx.meta) : { humanity: 0, potency: 0, advantages: [] };
     if (s.key === 'CONVICTIONS AND TOUCHSTONES' && convictions(s.text).humanity != null) {
-      const h = convictions(s.text).humanity + pv.humanity;
+      const h = convictions(s.text).humanity + pv.humanity + bandOf(meta).humanity;
       if (+v.Humanity !== h) box.appendChild(el('div', { class: 'chiprow tight' }, [button('Set Humanity to ' + h, () => set({ Humanity: h }), 'tiny'),
-        pv.humanity ? el('span', { class: 'muted small' }, [convictions(s.text).humanity + ', ' + (pv.humanity > 0 ? 'plus ' : 'less ') + Math.abs(pv.humanity) + ' from your Predator type']) : null]));
+        pv.humanity || bandOf(meta).humanity ? el('span', { class: 'muted small' }, [convictions(s.text).humanity + [pv.humanity ? (pv.humanity > 0 ? ', plus ' : ', less ') + Math.abs(pv.humanity) + ' from your Predator type' : '', bandOf(meta).humanity ? ', less ' + Math.abs(bandOf(meta).humanity) + ' from the Sea of Time' : ''].join('')]) : null]));
     }
-    if (s.key === 'SEA OF TIME' && pv.potency) box.appendChild(el('p', { class: 'small' }, ['Your Predator type adds ' + pv.potency + ' to the Blood Potency the Sea of Time gives.']));
+    if (s.key === 'SEA OF TIME' && G()) {
+      box.appendChild(G().seaOfTime(ctx, s, { thin: isThin(v), potency: pv.potency }));
+      hidden.push('Generation', 'Blood Potency', 'Total Experience', 'Spent Experience');
+    }
     // the step's own picks from the book
     if (s.key === 'CLAN AND SIRE') {
       const cl = clans();
@@ -602,6 +589,11 @@ window.VtmCreator = (function () {
     return box;
   }
   const pick = (o, keys) => keys.reduce((a, k) => { a[k] = o[k]; return a; }, {});
+  // the Sea of Time band chosen (its Advantages, Flaws, Humanity and experience), or nothing
+  function bandOf(meta) {
+    const sea = steps().find((x) => x.key === 'SEA OF TIME');
+    return (sea && G() ? G().seaBands(sea.paras) : []).find((b) => b.name === (meta || {}).band) || { name: '', adv: 0, flaws: 0, humanity: 0, xp: 0 };
+  }
 
   // values a step fills in from the book when its fields change
   function derivedFor(s, v) {
@@ -621,6 +613,7 @@ window.VtmCreator = (function () {
     // step's check counts only its own placements
     const later = G() ? G().predatorDots(meta || {}) : { traits: {}, disciplines: {} };
     const pv = G() ? G().fromPredator(meta || {}) : { humanity: 0, potency: 0, advantages: [] };
+    const band = bandOf(meta);
     const count = (fields, min) => {
       const c = {};
       fields.forEach((f) => { const n = (+v[f] || 0) - (later.traits[f] || 0); if (n > min) c[n] = (c[n] || 0) + 1; });
@@ -633,7 +626,7 @@ window.VtmCreator = (function () {
       const ack = (meta || {}).ack != null ? meta.ack : Sheet.isSabbat(v);
       const src = ((meta || {}).sources || (Sheet.isSabbat(v) ? [BH_BOOK] : []));
       const lore = (meta || {}).lore || {};
-      if (lore.on) out.push({ ok: !!(lore.ack && (lore.ids || []).length), text: !(lore.ids || []).length ? 'Choose the loresheets to use, or untick loresheets.' : lore.ack ? (lore.ids.length + ' loresheet' + (lore.ids.length === 1 ? '' : 's') + ' to draw on; playable where the Storyteller allows them.') : 'Tick the loresheets acknowledgment for them to take effect.' });
+      if (lore.on) out.push({ ok: !!lore.ack, text: lore.ack ? 'Loresheets in the Advantages finder; playable where the Storyteller allows them.' : 'Tick the loresheets acknowledgment for them to take effect.' });
       if (!tp) out.push({ ok: true, text: 'Core Rulebook only.' });
       else if (!src.length) out.push({ ok: false, text: 'Choose the third-party books to use, or untick third-party options.' });
       else out.push({ ok: !!ack, text: ack ? 'Third-party options in effect; playable where the Storyteller allows them.' : 'Tick the acknowledgment for the options to take effect.' });
@@ -690,7 +683,9 @@ window.VtmCreator = (function () {
       const rows = (v['Advantages & Flaws'] || []).filter((r) => { const k = theirs.indexOf(JSON.stringify(r)); if (k === -1) return true; theirs.splice(k, 1); return false; });
       const adv = rows.filter((r) => !r.Flaw).reduce((a, r) => a + (+r.Dots || 0), 0);
       const fl = rows.filter((r) => r.Flaw).reduce((a, r) => a + (+r.Dots || 0), 0);
-      if (want) out.push({ ok: adv === want.advantages && fl >= want.flaws, text: 'The book: ' + want.advantages + ' points of Advantages, ' + want.flaws + ' points of Flaws (besides the Predator’s). This sheet: ' + adv + ' and ' + fl + '.' });
+      // experience spent on an Advantage's dots is not creation's points
+      const xpDots = ((meta || {}).xpBuys || []).filter((b) => b.kind === 'advantage').length;
+      if (want) out.push({ ok: adv - xpDots === want.advantages + band.adv && fl >= want.flaws + band.flaws, text: 'The book: ' + want.advantages + ' points of Advantages, ' + want.flaws + ' points of Flaws (besides the Predator’s)' + (band.adv || band.flaws ? '; ' + titleCase(band.name) + ' add ' + band.adv + ' and ' + band.flaws : '') + '. This sheet: ' + (adv - xpDots) + ' and ' + fl + '.' });
       const tm = /Thin-blood characters must take between (\w+) and (\w+) Thin-Blood Merits and the same number of Thin-Blood Flaws\./i.exec(s.text);
       if (isThin(v) && tm) {
         const tb = D.thinBloodTraits();
@@ -705,6 +700,10 @@ window.VtmCreator = (function () {
         const bad = rows.filter((r) => !r.Flaw && names.some((n) => new RegExp('^' + n + '\\b', 'i').test(r.Name || ''))).map((r) => r.Name);
         out.push({ ok: !bad.length, text: fb + (bad.length ? ' This sheet: ' + bad.join(', ') + '.' : '') });
       }
+    }
+    if (s.key === 'SEA OF TIME') {
+      out.push({ ok: !!(meta || {}).band, text: (meta || {}).band ? 'The coterie are ' + titleCase(meta.band) + '.' : 'Decide with the Storyteller how old the coterie are.' });
+      if (band.xp) { const sp = ((meta || {}).xpBuys || []).reduce((a, b) => a + b.cost, 0); out.push({ ok: sp === band.xp, text: 'Spend ' + band.xp + ' experience points. Spent: ' + sp + '.' }); }
     }
     if (s.key === 'SEA OF TIME' && isThin(v)) {
       const g = /((?:\d+th,?\s*(?:or\s+)?)+)Generation \(thin-bloods\): Blood Potency (\d+)/.exec(s.text);
@@ -728,7 +727,8 @@ window.VtmCreator = (function () {
       const c = convictions(s.text);
       const n = (v['Touchstones & Convictions'] || []).filter(Boolean).length;
       if (c.min != null) out.push({ ok: n >= c.min && n <= c.max, text: c.min + ' to ' + c.max + ' Convictions, each with a ' + (v['Path of Enlightenment'] ? 'Touchstone Ritae or a Touchstone' : 'Touchstone') + '. This sheet: ' + n + '.' });
-      if (c.humanity != null) out.push({ ok: +v.Humanity === c.humanity + pv.humanity, text: 'Humanity ' + c.humanity + ' (the book)' + (pv.humanity ? ', ' + (c.humanity + pv.humanity) + ' with your Predator type' : '') + '. This sheet: ' + (v.Humanity || 0) + '.' });
+      const hum = (c.humanity || 0) + pv.humanity + band.humanity;
+      if (c.humanity != null) out.push({ ok: +v.Humanity === hum, text: 'Humanity ' + c.humanity + ' (the book)' + (pv.humanity || band.humanity ? ', ' + hum + ' with ' + [pv.humanity ? 'your Predator type' : '', band.humanity ? 'the Sea of Time (' + titleCase(band.name) + ')' : ''].filter(Boolean).join(' and ') : '') + '. This sheet: ' + (v.Humanity || 0) + '.' });
     }
     return out;
   }

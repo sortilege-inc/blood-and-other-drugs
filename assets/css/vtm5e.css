@@ -424,3 +424,8 @@ dl.power-head { color: var(--ink); }   /* its panel is paper: its values read in
 .adv-hit .book-details { flex: 1; min-width: 0; }
 .lore-pick { max-height: 360px; overflow: auto; margin: 6px 0 6px 1.4em; }
 .curse { margin: 12px 0; padding: 10px 12px; border: 1px solid #3a2f35; }
+.xp-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline; margin: 12px 0 6px; padding: 8px 10px; border: 1px solid var(--blood); }
+.xp-sec { margin: 6px 0; }
+.xp-sec > summary { cursor: pointer; font-family: var(--font-ui); font-size: 12px; letter-spacing: .08em; color: var(--bone-2); }
+.lore-levels { margin: 0 0 8px 1.2em; }
+table.plain td { padding: 2px 10px 2px 0; }

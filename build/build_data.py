@@ -554,8 +554,8 @@ def records_of(entities, orders, disciplines):
             opens = next((d for d in disciplines if e["name"] == d or e["name"].startswith(d + " ")), None)
             if opens:                    # "Oblivion", "Oblivion Ceremonies", "Thin-Blood Alchemy Formulae"
                 discipline, level = opens, None
-            if e.get("typeHash") in typed:
-                kind = typed[e["typeHash"]]
+            if e.get("typeHash") in typed and not (typed[e["typeHash"]] == "advantage" and e.get("book") == "base"):
+                kind = typed[e["typeHash"]]      # (BASE's own Merit, Flaw and Background are the types, not picks)
                 rec = {"id": h, "name": e["name"], "book": e["book"], "kind": kind,
                        "under": entities[e["parent"]]["name"] if e["parent"] else None}
                 if kind == "loresheet level":
