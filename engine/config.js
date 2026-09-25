@@ -59,7 +59,7 @@ window.VttConfig = {
   // `wrangler dev`; deployed, to the URL below. Empty = sessions disabled until the owner
   // deploys (PLAN.md D3).
   worker: {
-    deployed: '',
+    deployed: 'https://blood-and-other-drugs.sortilege.workers.dev',
     local: 'http://localhost:8795',
   },
 };
