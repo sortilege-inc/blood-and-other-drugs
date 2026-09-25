@@ -28,6 +28,11 @@ Deliberate choices, recorded in campaign/PLAN.md:
   sheet. The books do not name them (see FEATURE_FIELDS), so there is no published spelling to
   prefer and O7 does not reach them: they are written as the world spells them, with the dots
   the world gives them.
+* **The chronicle's own rules are written; the publisher's are not.** A Foundry item's
+  description is usually the books' text pasted into the world, so writing it into the layer
+  would republish the publisher's rules as this table's homebrew. Only the items
+  `cast_aliases.HOMEBREW` names — the owner's own enumeration, PLAN.md O4 — become DEFs, and
+  the characters that carry them reference them by hash.
 * **Live state is not a record.** Current Hunger, damage taken, stains and the Werewolf/Hunter
   scaffolding the shared wod5e system carries for every actor are all dropped.
 """
@@ -41,7 +46,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from cast_aliases import ALIASES  # noqa: E402
+from cast_aliases import ALIASES, HOMEBREW  # noqa: E402
 ROOT = os.path.dirname(os.path.dirname(HERE))
 
 ATTRS = [("Strength", "strength"), ("Dexterity", "dexterity"), ("Stamina", "stamina"),
@@ -355,7 +360,36 @@ def items_named(actor, itype):
                      if i.get("type") == itype and (i.get("name") or "").strip())
 
 
-def render_actor(actor, indent, warn, idx, clans, preds):
+def homebrew_defs(src, warn):
+    """{name: (hash, text)} for the chronicle's own rules — the world items cast_aliases.
+    HOMEBREW names, with the world's own text. Anything named there and not in the export is
+    reported, so the list cannot rot quietly."""
+    out = {}
+    d = os.path.join(src, "Item")
+    for fn in sorted(os.listdir(d)) if os.path.isdir(d) else []:
+        if not fn.endswith(".json"):
+            continue
+        it = json.load(open(os.path.join(d, fn), encoding="utf-8"))
+        nm = (it.get("name") or "").strip()
+        if nm in HOMEBREW:
+            out[nm] = ("#bodi" + it["_id"], text_of((it.get("system") or {}).get("description")))
+    for nm in HOMEBREW:
+        if nm not in out:
+            warn.append("homebrew %r is named in cast_aliases but is in no world item" % nm)
+    return out
+
+
+def homebrew_of(actor, home):
+    """The chronicle's own rules this character carries, by the names on their items."""
+    seen = []
+    for i in (actor.get("items") or []):
+        nm = (i.get("name") or "").strip()
+        if nm in home and nm not in [x[0] for x in seen]:
+            seen.append((nm, home[nm][0]))
+    return seen
+
+
+def render_actor(actor, indent, warn, idx, clans, preds, home=None):
     pad = " " * indent
     lines = ["%s%s ^\"%s\" DEF {" % (pad, def_id(actor["_id"]), esc(actor["name"]))]
     notes = text_of((actor.get("system") or {}).get("description")) or \
@@ -365,10 +399,13 @@ def render_actor(actor, indent, warn, idx, clans, preds):
     for label, value in fields_of(actor, warn, clans, preds):
         lines.append("%s    ^\"%s\" STRING \"%s\"" % (pad, esc(label), esc(value)))
     powers = powers_of(actor, idx, warn)
-    if powers:
+    mine = homebrew_of(actor, home or {})
+    if powers or mine:
         lines.append("%s    REFERENCES {" % pad)
         for nm, h in powers:
             lines.append("%s        \"Discipline power\" -> %s ^\"%s\"" % (pad, h, esc(nm)))
+        for nm, h in mine:
+            lines.append("%s        \"The chronicle's own rule\" -> %s ^\"%s\"" % (pad, h, esc(nm)))
         lines.append("%s    }" % pad)
     lines.append("%s}" % pad)
     return lines
@@ -407,19 +444,33 @@ def main():
     body = []
     idx = corpus_powers()
     clans, preds = corpus_names()
+    home = homebrew_defs(src, warn)
+    if home:
+        body.append("    #bodfHomebrew00000001 ^\"The chronicle's own rules\" DEF {")
+        body.append("        DESCRIPTION \"Written for this chronicle and printed in no book. "
+                    "Every other rule a character carries is the publisher's and is read from "
+                    "the corpus; these are the table's own, carried here with the world's own "
+                    "wording.\"")
+        for nm in sorted(home):
+            h, txt = home[nm]
+            body.append("        %s ^\"%s\" DEF {" % (h, esc(nm)))
+            if txt:
+                body.append("            DESCRIPTION \"%s\"" % esc(txt))
+            body.append("        }")
+        body.append("    }")
 
     def emit(fid, indent):
         f = folders[fid]
         body.append("%s%s ^\"%s\" DEF {" % (" " * indent, "#bodf" + fid, esc(f["name"])))
         for aid in sorted(in_folder.get(fid, []), key=lambda i: actors[i]["name"]):
-            body.extend(render_actor(actors[aid], indent + 4, warn, idx, clans, preds))
+            body.extend(render_actor(actors[aid], indent + 4, warn, idx, clans, preds, home))
         for k in sorted(kids.get(fid, []), key=lambda i: folders[i]["name"]):
             emit(k, indent + 4)
         body.append("%s}" % (" " * indent))
 
     if a.only:
         for aid in sorted(actors, key=lambda i: actors[i]["name"]):
-            body.extend(render_actor(actors[aid], 4, warn, idx, clans, preds))
+            body.extend(render_actor(actors[aid], 4, warn, idx, clans, preds, home))
     else:
         for fid in sorted([f for f in kids.get(None, []) if f in folders],
                           key=lambda i: folders[i]["name"]):
@@ -429,7 +480,7 @@ def main():
         if loose:
             body.append("    #bodfUnfiled000000001 ^\"Unfiled\" DEF {")
             for aid in loose:
-                body.extend(render_actor(actors[aid], 8, warn, idx, clans, preds))
+                body.extend(render_actor(actors[aid], 8, warn, idx, clans, preds, home))
             body.append("    }")
 
     head = [

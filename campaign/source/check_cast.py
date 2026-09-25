@@ -30,7 +30,7 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(ROOT, "build"))
 from parse_dsl import parse_files  # noqa: E402
-from cast_aliases import ALIASES  # noqa: E402
+from cast_aliases import ALIASES, HOMEBREW  # noqa: E402
 
 DATA_BLOB = re.compile(r"var d=(\{.*?\});var T=window\.VTM5E", re.S)
 
@@ -69,11 +69,15 @@ def props(ent):
     return out
 
 
-def refnames(ent):
+def refnames(ent, label=None):
+    """The names a §5c REFERENCES block points at, optionally only under one label — the
+    block carries the Discipline powers and the chronicle's own rules side by side."""
     out = []
     for b in ent.get("body") or []:
         if b.get("n") == "kw" and b.get("kw") == "REFERENCES":
             for item in b.get("body") or []:
+                if label is not None and item.get("v") != label:
+                    continue
                 for arg in item.get("args", []):
                     if arg.get("k") in ("ref", "caret"):
                         out.append(arg["v"])
@@ -260,7 +264,7 @@ def main():
 
         want_powers = sorted({norm(i["name"]) for i in (d.get("items") or [])
                               if i.get("type") == "power" and i.get("name")})
-        got_powers = sorted({norm(x) for x in refnames(ent)})
+        got_powers = sorted({norm(x) for x in refnames(ent, "Discipline power")})
         checked += 1
         if want_powers != got_powers:
             miss = [x for x in want_powers if x not in got_powers]
@@ -305,6 +309,15 @@ def main():
                 miss = [x for x in want if x not in got]
                 extra = [x for x in got if x not in want]
                 bad("%s differ — missing %s, extra %s" % (label, miss or "none", extra or "none"))
+        # the chronicle's own rules: referenced exactly by the items whose names
+        # cast_aliases.HOMEBREW claims, and by no others
+        want_home = sorted({(i.get("name") or "").strip() for i in (d.get("items") or [])
+                            if (i.get("name") or "").strip() in HOMEBREW})
+        got_home = sorted(set(refnames(ent, "The chronicle's own rule")))
+        checked += 1
+        if got_home != want_home:
+            bad("the chronicle's own rules differ — expected %s, referenced %s" % (want_home or "none", got_home or "none"))
+
         for label, itype in (("Equipment", "gear"), ("Resonance", "resonance")):
             want = ", ".join((i.get("name") or "").strip() for i in (d.get("items") or [])
                              if i.get("type") == itype and (i.get("name") or "").strip())

@@ -8,6 +8,12 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
     # Every value is the world's own; the shape is the corpus's (Chicago by Night's
     # Storyteller characters). Regenerate rather than edit by hand.
 
+    #bodfHomebrew00000001 ^"The chronicle's own rules" DEF {
+        DESCRIPTION "Written for this chronicle and printed in no book. Every other rule a character carries is the publisher's and is read from the corpus; these are the table's own, carried here with the world's own wording."
+        #bodi5kYHXMnpQAP7gIFA ^"False Love (Trieste)" DEF {
+            DESCRIPTION "With a SPC as an obsession, when in their presence treat the character's treat Humanity as one higher (Max 10) for purposes of using Blush of Life, eating, drinking, or sexual intercourse. Gain three Stains if they die."
+        }
+    }
     #bodfaBHQrKu5cIWQhL4g ^"Coterie" DEF {
         #bodcTns8VDwWHrdIqEf ^"Barbara Hall Park" DEF {
             ^"Chronicle" STRING "Blood & Other Drugs"
@@ -80,6 +86,7 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Appearance" STRING "Olly has straight black hair, overgrown bangs, green eyes. Wears mostly black, usually sporting the camo colored backpack that carries his camera. 5' 8\", appears to be around 26 or 27. Walks/stands at the slightest odd angle due to a bone on his right leg that healed wrong. Fidgety unless he's on something that levels him out. Is used to commanding a certain level of respect (in the underground), less from charisma than because of his reputation for running his mouth and then backing it up. If you can't tell if he's joking, you kind of have to default to assuming he's serious. In retrospect, he'd say that the shocking part is that he lived long enough to become undead."
             REFERENCES {
                 "Discipline power" -> #v0fpCnY383zItnG96inmHVi ^"Silence of Death"
+                "The chronicle's own rule" -> #bodi5kYHXMnpQAP7gIFA ^"False Love (Trieste)"
             }
         }
         #bodRNuGzLlPkpfeKE0N ^"Ralph Begg" DEF {
