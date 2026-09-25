@@ -276,7 +276,7 @@ Evelyn Skye, the Baron of Kensington, who was Rose's own sire. Father Vivek, out
 Scarborough. Someone named Raya, who claimed great powers without anyone having seen her demonstrate them: a Noddist priestess.
 Ethan had heard the phrase in passing and paid it no mind. There was apparently a church of Caine, a vampire church, and she was
 the local chapter's priestess. Elijah Kane, the Sheriff, who had shrugged off a car and a bullet in the space of a minute; he'd
-qualify. And the Seneschal, Maeva, who was known to be powerful and rumoured to be much more powerful than she let on.
+qualify. And the Seneschal, Maeve, who was known to be powerful and rumoured to be much more powerful than she let on.
 
 It was a longer list than Ethan would have guessed. And not one of them fit the description of what had been seen.
 

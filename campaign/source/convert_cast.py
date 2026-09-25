@@ -43,7 +43,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from cast_aliases import ALIASES, ANNOTATED  # noqa: E402
+from cast_aliases import ACTOR_NAMES, ALIASES, ANNOTATED  # noqa: E402
 ROOT = os.path.dirname(os.path.dirname(HERE))
 
 ATTRS = [("Strength", "strength"), ("Dexterity", "dexterity"), ("Stamina", "stamina"),
@@ -504,6 +504,10 @@ def main():
     actors = {}
     for r in rows:
         actors[r["id"]] = json.load(open(os.path.join(src, "Actor", r["id"] + ".json"), encoding="utf-8"))
+        if actors[r["id"]]["name"] in ACTOR_NAMES:  # the owner's spelling (cast_aliases.ACTOR_NAMES)
+            was = actors[r["id"]]["name"]
+            actors[r["id"]]["name"] = ACTOR_NAMES[was]
+            print("  renamed: %r → %r" % (was, ACTOR_NAMES[was]), file=sys.stderr)
 
     # the folder tree, so a character sits under its barony as the world files it
     kids = {}

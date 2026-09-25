@@ -95,7 +95,7 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 6, Willpower 4"
             ^"Skills" STRING "Athletics 1, Craft (TBD) 3, Drive 2, Firearms 3, Larceny 1, Stealth (Stakeout) 2, Survival 1; Insight 1, Persuasion 1, Streetwise (TBD) 2, Subterfuge 1; Investigation 2, Occult 3, Politics 1, Technology 2"
             ^"Disciplines" STRING "Obfuscate 1"
-            ^"Advantages" STRING "Retainers (Dimitri) 2, Thin-blood Alchemist 1, Lifelike 1, The Pony Express: Station Agent 2"
+            ^"Advantages" STRING "Retainers (Dimitri) 2, Thin-blood Alchemist 1, Lifelike 1, Station Agent (The Pony Express) 2"
             ^"Flaws" STRING "Clan Curse 1, Bestial Temper 1, False Love (Trieste) 1"
             ^"Equipment" STRING "Strength of Sadness"
             ^"Resonance" STRING "Sanguine"
@@ -104,6 +104,7 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Discipline power" -> #v0fpCnY383zItnG96inmHVi ^"Silence of Death"
                 "Advantage" -> #v8qIOULRw0EmoUcRgTx5des ^"Retainers"
                 "Advantage" -> #vPZI9rup6bcVulTU49WSNTx ^"Thin-blood Merits"
+                "Advantage" -> #vNtwcd38uKNCKB8ZWaoaYwW ^"Station Agent"
                 "Flaw" -> #vZyzwKMxQywW3TeJaFlX2Xt ^"Thin-blood Flaws"
                 "Flaw" -> #vQ3oxkrvSUrSSC78SUAziyo ^"False Love"
             }
@@ -314,7 +315,7 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Flaw" -> #vSRDTDy6Lo8RVoeRuWigTai ^"Weak-willed"
             }
         }
-        #bodlV9I1hAsYVF2NdJU ^"Maeva Rousseau (Seneschal, Ventrue Primogen)" DEF {
+        #bodlV9I1hAsYVF2NdJU ^"Maeve Rousseau (Seneschal, Ventrue Primogen)" DEF {
             ^"Concept" STRING "Haitian-Canadian power broker, Seneschal and true architect of Toronto Camarilla survival"
             ^"Chronicle" STRING "YYZ By Night"
             ^"Clan" STRING "Ventrue"

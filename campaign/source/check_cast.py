@@ -30,7 +30,7 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(ROOT, "build"))
 from parse_dsl import parse_files  # noqa: E402
-from cast_aliases import ALIASES, ANNOTATED  # noqa: E402
+from cast_aliases import ACTOR_NAMES, ALIASES, ANNOTATED  # noqa: E402
 
 DATA_BLOB = re.compile(r"var d=(\{.*?\});var T=window\.VTM5E", re.S)
 
@@ -227,6 +227,7 @@ def main():
 
     for r in rows:
         d = json.load(open(os.path.join(src, "Actor", r["id"] + ".json"), encoding="utf-8"))
+        d["name"] = ACTOR_NAMES.get(d["name"], d["name"])  # the owner's spelling, as the converter writes it
         hits = by_name.get(d["name"])
         if not hits:
             fails.append("%s: not in the DSL" % d["name"]); continue

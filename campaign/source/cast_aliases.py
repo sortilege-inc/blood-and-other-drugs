@@ -71,3 +71,9 @@ ANNOTATED = {
 # convert_cast.corpus_names() registers the bare form as a second key and resolve() reports
 # each one. Upstream V10 loads the shelf (sortilege-vtt-vtm5e f154fdb).
 
+# A character the world misnames. The owner's spelling wins over Foundry's, and the record is
+# written under it; check_cast reads the same table, so the rename is checked, not buried.
+ACTOR_NAMES = {
+    # the world's name                                  the owner's name                                   ruled
+    "Maeva Rousseau (Seneschal, Ventrue Primogen)":    "Maeve Rousseau (Seneschal, Ventrue Primogen)",    # owner, 2026-09-25 ("It's Maeve")
+}
