@@ -5,6 +5,7 @@ var I=T.index=T.index||{books:[],counts:{}};I.counts=I.counts||{};
 var had=(I.books||[]).some(function(b){return b.id===d.book.id;});
 I.books=(I.books||[]).filter(function(b){return b.id!==d.book.id;});I.books.unshift(d.book);
 if(!had){I.counts.books=(I.counts.books||0)+1;I.counts.entities=(I.counts.entities||0)+d.book.counts.entities;
-I.counts.files=(I.counts.files||0)+d.book.counts.chapters;}
+I.counts.files=(I.counts.files||0)+d.book.counts.chapters;
+var R=I.counts.records=I.counts.records||{};d.records.forEach(function(r){R[r.kind]=(R[r.kind]||0)+1;});}
 I.corrections=d.corrections.concat((I.corrections||[]).filter(function(c){return c.book!==d.book.id;}));
 T.records=d.records.concat((T.records||[]).filter(function(r){return r.book!==d.book.id;}));})();
