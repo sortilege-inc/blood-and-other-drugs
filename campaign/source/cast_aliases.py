@@ -25,6 +25,19 @@ ALIASES = {
     # Advantages: the world writes a Background in the singular where the books head it plural
     "Contact":                 ("Contacts",              "the core heads the Background in the plural"),
     "Retainer":                ("Retainers",             "the core heads the Background in the plural"),
+    # Advantages the world names wrongly — in no book, on neither the wiki's Advantages and
+    # Flaws page nor its Loresheets page — mapped to the nearest published one. The owner's
+    # ruling, 2026-09-25. The world's dots are kept as the world gives them.
+    "Enemy":                   ("Enemies",               "owner: the core's Flaw, printed in its Allies entry; the Players Guide heads it Enemies"),
+    "Language":                ("Linguistics",           "owner: the core's Merit, one language per dot"),
+    "Rival":                   ("Adversary",             "owner: nearest fit — a Kindred who opposes you"),
+    "Infamous Deed":           ("Infamy",                "owner: nearest fit — the Flaw for what you are known to have done"),
+    "Iron Will":               ("Tempered Will",         "owner: nearest fit — V5's resistance to Dominate and Presence"),
+    "Disallowed Feeding":      ("Prey Exclusion",        "owner: nearest fit — a Flaw restricting whom you feed from"),
+    "Disallowed Influence":    ("Despised",              "owner: nearest fit — a group or region of the city shuts you out"),
+    "Efficient Digestion":     ("Iron Gullet",           "owner: nearest fit — a Merit widening what you can feed on"),
+    "Obsession Target":        ("Stalkers",              "owner: nearest fit — hangers-on fixated on you"),
+    "Status Symbol":           ("Fame",                  "owner: nearest fit"),
 }
 
 # Advantages the world writes with its annotation run on, with no bracket or colon to split
@@ -33,6 +46,11 @@ ALIASES = {
 ANNOTATED = {
     "Weak-Willed Regarding Art": ("Weak-willed", "Regarding Art",
                                   "owner: the Players Guide's Flaw; 'Regarding Art' is what it concerns"),
+    # the owner's nearest fits (2026-09-25) where the world's name says what the published
+    # Advantage is ABOUT, so it is kept as the annotation, as with False Love (Trieste)
+    "Shunned by Sire":         ("Shunned", "by Sire",   "owner: the Players Guide's Flaw; the world's text is the book's"),
+    "Cult":                    ("Herd", "Cult",         "owner: nearest fit — the cult is the Herd"),
+    "Prestigious Sire":        ("Mawla", "Sire",        "owner: nearest fit — the sire is the Mawla"),
 }
 
 # Absolver, Ripper, Domina and Hedonist stood here while the third-party shelf was unbuilt.
