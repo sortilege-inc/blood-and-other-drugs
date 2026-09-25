@@ -265,11 +265,25 @@ window.VtmData = (function () {
     if (tb) out.push({ name: 'Thin-blood', entity: tb, book: tb.book, bane: null, about: [under('Clan'), under('Disciplines')].filter(Boolean) });
     return out;
   }
-  // the core's Thin-Blood Merits and Flaws, each { name, text } ("They have no dot value")
+  // Every Thin-Blood Merit and Flaw the loaded books print, each { name, text, id } ("They have no
+  // dot value"). The core prints them as fields of its "Thin-blood Merits" / "Thin-blood Flaws";
+  // the Players Guide as headings of their own, under "New Thin-Blood Merits and Flaws" (p. 135)
+  // and again in its summary appendix. A name printed twice keeps its fullest text.
   function thinBloodTraits() {
     const e = all(['core']).find((x) => x.name === 'Thin-Blood Merits and Flaws');
-    const list = (n) => { const k = e && children(e.id).find((x) => x.name === n); return k ? (k.props || []).map((q) => ({ name: q.name, text: q.value })) : []; };
-    return { entity: e || null, merits: list('Thin-blood Merits'), flaws: list('Thin-blood Flaws') };
+    const out = { entity: e || null, merits: [], flaws: [] };
+    const add = (list, t) => {
+      const i = list.findIndex((x) => x.name.toLowerCase() === t.name.toLowerCase());
+      if (i === -1) list.push(t); else if ((t.text || '').length > (list[i].text || '').length) list[i] = Object.assign({}, t, { name: list[i].name });
+    };
+    all(loadedBooks()).forEach((x) => {
+      const m = /^Thin-Blood (Merits|Flaws)$/i.exec(x.name);
+      if (!m) return;
+      const list = m[1].toLowerCase() === 'merits' ? out.merits : out.flaws;
+      (x.props || []).filter((q) => q.vk === 'scalar' && q.value).forEach((q) => add(list, { name: q.name, text: q.value, id: x.id }));
+      children(x.id).forEach((k) => add(list, { name: k.name, text: k.desc || '', id: k.id }));
+    });
+    return out;
   }
 
   return {
