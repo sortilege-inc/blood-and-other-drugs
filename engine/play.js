@@ -72,9 +72,19 @@
         else msg.textContent = `${m.name} is at the table.`;
       }).catch((e) => (msg.textContent = e.message)).finally(() => (file.value = ''));
     });
+    // a system with a creator also makes one here (Sys.makeCharacter): the same walk the site's
+    // creator runs, with what the campaign allows, taken to the table like a loaded file
+    const maker = el('div', { class: 'play-maker' });
+    const seat = (m) => {
+      setPending(m);
+      maker.innerHTML = '';
+      msg.textContent = seatPending() ? `${m.name} is at the table.` : `${m.name} is ready — they take their seat when you join.`;
+    };
+    const make = Sys.makeCharacter ? button('Make a character…', () => { if (maker.firstChild) maker.innerHTML = ''; else Sys.makeCharacter(maker, seat); }, 'ghost') : null;
     return el('div', {}, [
-      el('div', { class: 'chiprow' }, [button(pending ? 'Load a different character file…' : 'Load my character file…', () => file.click(), 'ghost'), el('span', { class: 'muted' }, [note]), file]),
+      el('div', { class: 'chiprow' }, [button(pending ? 'Load a different character file…' : 'Load my character file…', () => file.click(), 'ghost'), make, el('span', { class: 'muted' }, [note]), file]),
       msg,
+      maker,
     ]);
   }
 

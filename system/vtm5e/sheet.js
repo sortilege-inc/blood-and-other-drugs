@@ -48,7 +48,16 @@ window.VtmSheet = (function () {
   // ── the declaration, read at runtime ──
   const decl = (name) => D.declaration(name);
   const actor = () => decl(ACTOR);
-  const templateId = () => (actor() || {}).id || '#vtm5Kindred000000001';
+  // A Sabbat character (owner, 2026-09-25) is The Black Hand's ACTOR "Sabbat Kindred": the core's
+  // Kindred and the one field it adds, the Path of Enlightenment walked. A character is one when its
+  // values hold that field; its sheet then needs The Black Hand in memory (booksFor).
+  const SABBAT = 'Sabbat Kindred';
+  const SABBAT_BOOK = 'black-hand';
+  const sabbatDecl = () => (D.loaded(SABBAT_BOOK) ? D.all([SABBAT_BOOK]).find((e) => e.form === 'ACTOR' && e.key === SABBAT && e.type === ACTOR) || null : null);
+  const sabbatFields = () => ((sabbatDecl() || {}).props || []).map((p) => p.name);
+  const isSabbat = (v) => !!v && Object.prototype.hasOwnProperty.call(v, 'Path of Enlightenment');
+  const booksFor = (v) => (isSabbat(v) ? BOOKS.concat([SABBAT_BOOK]) : BOOKS);
+  const templateId = (v) => (isSabbat(v) && sabbatDecl() ? sabbatDecl().id : (actor() || {}).id || '#vtm5Kindred000000001');
 
   // Where the core's Characters chapter prints a field: the heading its entity sits under.
   let parentOf = null;
@@ -83,17 +92,23 @@ window.VtmSheet = (function () {
     return s;
   }
   const spec = () => ((actor() || {}).props || []).map(fieldSpec);
+  // a character's own fields: the Kindred's, and a Sabbat character's one more, after them
+  const specFor = (v) => (isSabbat(v) && sabbatDecl() ? spec().concat(sabbatDecl().props.map(fieldSpec)) : spec());
   const field = (name) => spec().find((s) => s.name === name) || null;
 
-  function blank() {
+  // kind: SABBAT for a Sabbat character (The Black Hand must be in memory)
+  function blank(kind) {
     const v = {};
-    spec().forEach((s) => {
+    const specs = kind === SABBAT && sabbatDecl() ? spec().concat(sabbatDecl().props.map(fieldSpec)) : spec();
+    specs.forEach((s) => {
       v[s.name] = s.kind === 'rows' || s.kind === 'lines' ? [] : s.kind === 'dots' ? (s.min || 0) : s.kind === 'number' ? null : s.kind === 'flag' ? s.default : '';
     });
     return v;
   }
   function complete(v) {
-    const out = blank();
+    const out = blank(isSabbat(v) ? SABBAT : null);
+    // a Sabbat character stays one even before The Black Hand is in memory
+    if (isSabbat(v) && !isSabbat(out)) out['Path of Enlightenment'] = '';
     Object.keys(v || {}).forEach((k) => { if (v[k] != null) out[k] = Array.isArray(v[k]) ? v[k].slice() : v[k]; });
     return out;
   }
@@ -327,7 +342,7 @@ window.VtmSheet = (function () {
     const v = complete(values);
     const set = (k, val) => { v[k] = val; if (o.edit) o.edit(Object.assign({}, v)); };
     const box = el('div', { class: 'vsheet' });
-    const specs = o.only ? spec().filter((x) => o.only.indexOf(x.name) !== -1) : spec();
+    const specs = o.only ? specFor(v).filter((x) => o.only.indexOf(x.name) !== -1) : specFor(v);
     let i = 0;
     while (i < specs.length) {
       const s = specs[i];
@@ -381,7 +396,7 @@ window.VtmSheet = (function () {
   // extra: { versions, log } — a character's archived versions and its log travel in its file
   function fileOf(values, live, extra) {
     const x = extra || {};
-    return { kind: FILE_KIND, v: 2, system: 'vtm5e', templateId: templateId(), name: values.Name || 'Unnamed', values: complete(values), live: live || {},
+    return { kind: FILE_KIND, v: 2, system: 'vtm5e', templateId: templateId(values), name: values.Name || 'Unnamed', values: complete(values), live: live || {},
       versions: x.versions && x.versions.length ? x.versions : undefined, log: x.log && x.log.length ? x.log : undefined };
   }
   function download(obj, name) {
@@ -410,7 +425,7 @@ window.VtmSheet = (function () {
     const name = String(values.Name || obj.name || '').trim();
     if (!name) throw new Error((fileName || 'That file') + ' has no character name.');
     values.Name = name;
-    const m = { id: genId(), templateId: templateId(), name, source: { kind: 'file', name: fileName || null }, character: values, live: Object.assign({ hunger: +values.Hunger || 0 }, obj.live || {}), notes: '' };
+    const m = { id: genId(), templateId: (isSabbat(values) && obj.templateId) || templateId(values), name, source: { kind: 'file', name: fileName || null }, character: values, live: Object.assign({ hunger: +values.Hunger || 0 }, obj.live || {}), notes: '' };
     if (Array.isArray(obj.versions) && obj.versions.length) m.versions = obj.versions;
     // what the file's log held (earlier sessions): kept with the member, shown before this table's
     if (Array.isArray(obj.log) && obj.log.length) m.history = obj.log.map((e) => Object.assign({}, e, { memberId: undefined }));
@@ -828,7 +843,7 @@ window.VtmSheet = (function () {
   }
 
   return {
-    ACTOR, BOOKS, FILE_KIND, OLD_TEMPLATE_ID, HEALTH_FROM, WILLPOWER_FROM, RULES,
+    ACTOR, BOOKS, FILE_KIND, OLD_TEMPLATE_ID, HEALTH_FROM, WILLPOWER_FROM, RULES, SABBAT, SABBAT_BOOK, isSabbat, booksFor, sabbatDecl,
     spec, field, blank, complete, attributes, skills, derived, potencyRow, groupOf, sentence, render,
     fileOf, download, readMember, newMember, downloadMember, values, hunger, setHunger, change, damage, spendWillpower, trackLine,
     xp, logOf, isViewingArchive, versionsOf, surgeFor, potencyRow,

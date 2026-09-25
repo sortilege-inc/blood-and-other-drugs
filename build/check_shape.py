@@ -196,6 +196,15 @@ def main():
     check("every clan names three in-clan Disciplines as headings (%d clans)" % len({e["name"] for e in clans}), short, [])
     oblivion = sum(1 for r in records if r.get("discipline") == "Oblivion" and r["kind"] == "power")
     check("Oblivion powers found (Chicago by Night, Cults, Players Guide…) > 0", oblivion > 0, True)
+    # a Sabbat character (system/vtm5e/sheet.js SABBAT): The Black Hand's ACTOR extends the core's
+    # Kindred and adds exactly the Path of Enlightenment; the creator's Black Hand walk has its steps
+    sab = [e for e in ents.values() if e.get("form") == "ACTOR" and e["name"] == "Sabbat Kindred"]
+    check("The Black Hand's ACTOR \"Sabbat Kindred\" extends Kindred, adding the Path of Enlightenment",
+          [(e["book"], e["type"], [p["name"] for p in e["props"]]) for e in sab], [("black-hand", "Kindred", ["Path of Enlightenment"])])
+    qcc = [e for e in ents.values() if e["book"] == "black-hand" and e["name"] == "Quick Character Creation"]
+    check("The Black Hand's Quick Character Creation has the creator's nine steps",
+          sorted(ents[k]["name"] for q in qcc for k in q["children"]),
+          sorted(["Core Concept", "Clan", "Attributes", "Skills", "Disciplines", "Path of Enlightenment", "Predator Type", "Advantages", "Years Dead"]))
 
     # ── the book's die glyphs, carried as the conversion wrote them ──
     tokens = re.compile(r"\[(Regular|Hunger) Die: [A-Za-z ]+\]")

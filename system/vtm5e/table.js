@@ -66,13 +66,26 @@ window.VttSystem = (function () {
   const downloadCharacter = (m) => Sheet.downloadMember(m);
   // the sheet reads the BASE, the core (its groupings) and the Errata (the Blood Potency
   // chart); until they are in memory the panel says so and fills in when they arrive
+  // (a Sabbat character's also reads The Black Hand, which declares it — Sheet.booksFor)
   function liveSheet(m, opts) {
-    if (Sheet.BOOKS.every((b) => D.loaded(b))) return Sheet.live(m, opts);
+    const books = Sheet.booksFor(Sheet.values(m));
+    if (books.every((b) => D.loaded(b))) return Sheet.live(m, opts);
     const box = window.VttRender.el('div', { class: 'muted' }, ['Opening the sheet…']);
-    D.ready(Sheet.BOOKS).then(() => { if (box.parentNode) box.replaceWith(Sheet.live(m, opts)); });
+    D.ready(books).then(() => { if (box.parentNode) box.replaceWith(Sheet.live(m, opts)); });
     return box;
   }
   const memberSubtitle = (m) => Sheet.memberSentence(m);
+  // Making a character on a player's page (the creator, system/vtm5e/creator.js): The Black
+  // Hand's walk is offered where the Storyteller turned it on (creation.blackHand); done(member)
+  // takes the character to the table as a loaded file would.
+  function makeCharacter(container, done) {
+    if (!window.VtmCreator) return false;
+    window.VtmCreator.render(container, [], null, {
+      blackHand: !!((S() || {}).creation || {}).blackHand,
+      done: (v) => { try { done(Sheet.readMember(Sheet.fileOf(v, { hunger: +v.Hunger || 0 }), null)); } catch (e) { window.alert(e.message); } },
+    });
+    return true;
+  }
 
   // an entity or record by id, for the Storyteller's notes (engine/gm-text.js "About")
   const byId = (id) => { const r = D.record(id); if (r) return { id: r.id, name: r.name }; const e = D.entity(id); return e ? { id: e.id, name: e.name } : null; };
@@ -81,6 +94,6 @@ window.VttSystem = (function () {
     byId,
     MODULE, scenes, scene, currentSceneId, cast, maps, mapDef, defaultMapId, legend, mapAssets,
     tokenSources, tokenColor, tokenStatus, selectToken, tokenMenu,
-    liveSheet, readCharacter, downloadCharacter, memberSubtitle,
+    liveSheet, readCharacter, downloadCharacter, memberSubtitle, makeCharacter,
   };
 })();
