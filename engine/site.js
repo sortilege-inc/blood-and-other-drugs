@@ -12,6 +12,11 @@
   let booksOn = !!CFG.siteBooks;
   try { const v = localStorage.getItem(BOOKS_KEY); if (v !== null) booksOn = v === '1'; } catch (e) { /* storage off: the deployment's default */ }
   const tabs = (window.VttSiteTabs || []).filter((t) => !t.books || booksOn);
+  // With the books off, a link to one entry in them (#book/<book>/#<id>, from a clan, a card, a stat
+  // block) still opens that entry: the books' tabs are the shelf, their chapters and search, and
+  // only those are closed — never what the other tabs show (owner, 2026-09-25).
+  const closedBooks = (window.VttSiteTabs || []).filter((t) => t.books && !booksOn);
+  const isEntry = (p) => /^#/.test(p || '');
   // with every tab closed, the site is a page that says so
   if (!tabs.length) tabs.push({ id: 'home', label: CFG.title || 'Home', render: (main) => main.appendChild(el('div', { class: 'site-closed' }, [
     el('h1', {}, [CFG.title || '']),
@@ -34,6 +39,7 @@
 
   function route() {
     const parts = location.hash.replace(/^#/, '').split('/').map((p) => decodeURIComponent(p));
+    if (closedBooks.some((t) => t.id === parts[0]) && parts.length > 1 && isEntry(parts[parts.length - 1])) return { id: parts[0], path: parts.slice(1), entry: true };
     const id = tabs.some((t) => t.id === parts[0]) ? parts[0] : (tabs[0] || {}).id;
     return { id, path: parts[0] === id ? parts.slice(1) : [] };
   }
@@ -46,7 +52,9 @@
     return '#' + [id].concat((path || []).map((p) => encodeURIComponent(p))).join('/');
   }
 
-  const ctx = { go, href, route };
+  // whether a tab is open here (a page links to a tab only when it is — the books may be closed)
+  const isOpen = (id) => tabs.some((t) => t.id === id);
+  const ctx = { go, href, route, isOpen };
 
   function render() {
     const r = route();
@@ -63,7 +71,7 @@
     if (head) head.classList.remove('menu-open');
     menuBtn.setAttribute('aria-expanded', 'false');
     main.innerHTML = '';
-    const t = tabs.find((x) => x.id === r.id);
+    const t = tabs.find((x) => x.id === r.id) || (r.entry && closedBooks.find((x) => x.id === r.id));
     if (t) t.render(main, r.path, ctx);
     window.scrollTo(0, 0);
   }
