@@ -44,6 +44,12 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from cast_aliases import ACTOR_NAMES, ALIASES, ANNOTATED  # noqa: E402
+
+# The generated file's content version. Patch-bump it here whenever a run changes what the file
+# says (a re-resolved reference, a renamed record) — never by hand in the .ttrpg, which the next
+# run overwrites. 0.1.1: Embraced to Rule re-idded by the corpus's Voerman fix; 0.1.2: five Flaws
+# resolve to the core's entries now the core types them (corpus 56a978e).
+CAST_VERSION = "0.1.2"
 ROOT = os.path.dirname(os.path.dirname(HERE))
 
 ATTRS = [("Strength", "strength"), ("Dexterity", "dexterity"), ("Stamina", "stamina"),
@@ -550,7 +556,7 @@ def main():
     head = [
         'EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {',
         '    NAME "Blood & Other Drugs - the cast"',
-        '    VERSION "0.1.0"',
+        '    VERSION "%s"' % CAST_VERSION,
         '    SPEC_VERSION "0.5"',
         '    RELEASE_DATE "%s"' % a.date,
         '',
