@@ -60,6 +60,8 @@
     return true;
   }
   function characterLoader(note) {
+    // a system may have something to tell the player about the character (Sys.memberNotice)
+    const noticeFor = (m) => { const t = Sys.memberNotice && Sys.memberNotice(m); if (t) msg.appendChild(el('div', { class: 'small' }, [t])); };
     const file = el('input', { type: 'file', accept: '.json,application/json', hidden: true });
     const msg = el('div', { class: 'muted' }, [pending ? `${pending.name} is ready — they take their seat when you join.` : '']);
     file.addEventListener('change', () => {
@@ -70,6 +72,7 @@
         setPending(m);
         if (!seatPending()) msg.textContent = `${m.name} is ready — they take their seat when you join.`;
         else msg.textContent = `${m.name} is at the table.`;
+        noticeFor(m);
       }).catch((e) => (msg.textContent = e.message)).finally(() => (file.value = ''));
     });
     // a system with a creator also makes one here (Sys.makeCharacter): the same walk the site's
@@ -79,6 +82,7 @@
       setPending(m);
       maker.innerHTML = '';
       msg.textContent = seatPending() ? `${m.name} is at the table.` : `${m.name} is ready — they take their seat when you join.`;
+      noticeFor(m);
     };
     const make = Sys.makeCharacter ? button('Make a character…', () => { if (maker.firstChild) maker.innerHTML = ''; else Sys.makeCharacter(maker, seat, { joined: !!(Session.current().active && Session.current().connected) }); }, 'ghost') : null;
     return el('div', {}, [
