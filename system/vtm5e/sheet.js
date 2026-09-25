@@ -115,7 +115,8 @@ window.VtmSheet = (function () {
 
   // the dotted fields the sheet sets from 1 (Attributes) and from 0 (Skills), by declaration
   const attributes = () => spec().filter((s) => s.kind === 'dots' && s.min === 1 && s.max === 5).map((s) => s.name);
-  const skills = () => spec().filter((s) => s.kind === 'dots' && s.min === 0 && s.max === 5).map((s) => s.name);
+  // (a Skill is one the core prints under a Skills heading: Hunger is dotted 0-5 too, and is not one)
+  const skills = () => spec().filter((s) => s.kind === 'dots' && s.min === 0 && s.max === 5 && /Skills$/i.test(groupOf(s.name) || '')).map((s) => s.name);
 
   // Health and Willpower from the summary's formulas
   function derived(v) {
