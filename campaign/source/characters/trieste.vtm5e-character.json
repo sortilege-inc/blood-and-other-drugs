@@ -1,0 +1,180 @@
+{
+  "kind": "sortilege-vtt-character",
+  "v": 2,
+  "system": "vtm5e",
+  "templateId": "#vbhSabbatKindred00001",
+  "name": "Trieste",
+  "values": {
+    "Name": "Trieste",
+    "Concept": "Bubblegum pop serial killer",
+    "Predator": "Hedonist (Sabbat Only)",
+    "Chronicle": "Blood & Other Drugs",
+    "Ambition": "",
+    "Clan": "Thin-blood",
+    "Sire": "",
+    "Sire Clan": "",
+    "Desire": "",
+    "Generation": 15,
+    "Strength": 2,
+    "Dexterity": 1,
+    "Stamina": 2,
+    "Charisma": 3,
+    "Manipulation": 4,
+    "Composure": 2,
+    "Intelligence": 2,
+    "Wits": 3,
+    "Resolve": 3,
+    "Health": 5,
+    "Willpower": 5,
+    "Athletics": 1,
+    "Brawl": 2,
+    "Craft": 0,
+    "Drive": 2,
+    "Firearms": 1,
+    "Melee": 0,
+    "Larceny": 1,
+    "Stealth": 0,
+    "Survival": 3,
+    "Animal Ken": 0,
+    "Etiquette": 0,
+    "Insight": 1,
+    "Intimidation": 3,
+    "Leadership": 3,
+    "Performance": 0,
+    "Persuasion": 2,
+    "Streetwise": 2,
+    "Subterfuge": 1,
+    "Academics": 0,
+    "Awareness": 1,
+    "Finance": 0,
+    "Investigation": 0,
+    "Medicine": 1,
+    "Occult": 1,
+    "Politics": 0,
+    "Science": 0,
+    "Technology": 2,
+    "Specialties": [
+      {
+        "Skill": "Subterfuge",
+        "Specialty": "Seduction"
+      }
+    ],
+    "Disciplines": [
+      {
+        "Discipline": "Presence",
+        "Dots": 1,
+        "Powers": [
+          "Awe"
+        ]
+      },
+      {
+        "Discipline": "Potence",
+        "Dots": 1,
+        "Powers": [
+          "Fluent Strength"
+        ]
+      }
+    ],
+    "Resonance": "",
+    "Hunger": 0,
+    "Humanity": 6,
+    "Chronicle Tenets": "",
+    "Touchstones & Convictions": [
+      "Stub Touchstone Ritae"
+    ],
+    "Clan Bane": "",
+    "Advantages & Flaws": [
+      {
+        "Name": "Beautiful",
+        "Dots": 2,
+        "Flaw": false
+      },
+      {
+        "Name": "High life",
+        "Dots": 1,
+        "Flaw": true
+      },
+      {
+        "Name": "Day Drinker",
+        "Dots": 0,
+        "Flaw": false
+      },
+      {
+        "Name": "Lifelike",
+        "Dots": 0,
+        "Flaw": false
+      },
+      {
+        "Name": "Thin-blood Alchemist",
+        "Dots": 0,
+        "Flaw": false
+      },
+      {
+        "Name": "Shunned by the Anarchs",
+        "Dots": 0,
+        "Flaw": true
+      },
+      {
+        "Name": "Unending Hunger",
+        "Dots": 0,
+        "Flaw": true
+      },
+      {
+        "Name": "Sloppy Drinker",
+        "Dots": 0,
+        "Flaw": true
+      },
+      {
+        "Name": "Hunters Hunted",
+        "Dots": 3,
+        "Flaw": false,
+        "Advantage": "#vae9Di8uOxBK2892gHiKLFD"
+      },
+      {
+        "Name": "Ingénue",
+        "Dots": 1,
+        "Flaw": false,
+        "Advantage": "#vJnZTixxpPf0CVv2A4531Eo"
+      },
+      {
+        "Name": "Memories of the Fallen (Thin-Bloods)",
+        "Dots": 2,
+        "Flaw": false,
+        "Advantage": "#v7zCWNfCOXZaLa7Stp96zYw"
+      },
+      {
+        "Name": "Contacts",
+        "Dots": 1,
+        "Flaw": false,
+        "Advantage": "#vJl5tkmIz5EnaeqCnOL9rv0"
+      },
+      {
+        "Name": "Stigmata",
+        "Dots": 1,
+        "Flaw": true,
+        "Advantage": "#vtwvge48gRlcXinLYKx56Ku"
+      },
+      {
+        "Name": "Disliked",
+        "Dots": 1,
+        "Flaw": true,
+        "Advantage": "#v3WmecS4ogqkcxpteWkNqWr"
+      }
+    ],
+    "Notes": "Treat your Humanity as two higher when using Blush of Life (see V5 Corebook, pg. 237)",
+    "Blood Potency": 0,
+    "Total Experience": null,
+    "Spent Experience": null,
+    "True age": "",
+    "Apparent age": "",
+    "Date of birth": "",
+    "Date of death": "",
+    "Appearance": "",
+    "Distinguishing features": "",
+    "History": "",
+    "Path of Enlightenment": "Path of the Sun"
+  },
+  "live": {
+    "hunger": 0
+  }
+}

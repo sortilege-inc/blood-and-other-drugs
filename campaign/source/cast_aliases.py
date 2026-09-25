@@ -22,6 +22,7 @@ ALIASES = {
     # until check_cast grew a gate for rewritten names and refused it, which is the point.
     "Thin-Blooded":            ("The Thin-Blooded",      "the core heads the chapter with the article"),
     "Thin-Blood":              ("The Thin-Blooded",      "the core heads the chapter with the article"),
+    "Thin-blood":              ("The Thin-Blooded",      "the VTT creator's spelling; the core heads the chapter with the article"),
     # Advantages: the world writes a Background in the singular where the books head it plural
     "Contact":                 ("Contacts",              "the core heads the Background in the plural"),
     "Retainer":                ("Retainers",             "the core heads the Background in the plural"),

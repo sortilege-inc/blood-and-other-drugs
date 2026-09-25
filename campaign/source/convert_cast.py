@@ -44,12 +44,14 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from cast_aliases import ACTOR_NAMES, ALIASES, ANNOTATED  # noqa: E402
+from owner_records import OWNER_RECORDS, owner_actor  # noqa: E402
 
 # The generated file's content version. Patch-bump it here whenever a run changes what the file
 # says (a re-resolved reference, a renamed record) — never by hand in the .ttrpg, which the next
 # run overwrites. 0.1.1: Embraced to Rule re-idded by the corpus's Voerman fix; 0.1.2: five Flaws
-# resolve to the core's entries now the core types them (corpus 56a978e).
-CAST_VERSION = "0.1.2"
+# resolve to the core's entries now the core types them (corpus 56a978e); 0.2.0: Trieste from the
+# owner's own character file (owner_records.py) — a Sabbat Kindred, with a Path of Enlightenment.
+CAST_VERSION = "0.2.0"
 ROOT = os.path.dirname(os.path.dirname(HERE))
 
 ATTRS = [("Strength", "strength"), ("Dexterity", "dexterity"), ("Stamina", "stamina"),
@@ -227,6 +229,9 @@ def resolve(raw, idx, kind, who, warn):
     if not raw:
         return "", ""
     bare, note = raw.strip(), ""
+    whole = idx.get(norm(bare))
+    if whole and whole[2] == bare:             # the book prints the parenthetical itself: "Hedonist (Sabbat Only)"
+        return bare, ""
     m = re.match(r"^([^(]+?)\s*\((.*)\)\s*$", bare)
     if m:
         bare, note = m.group(1).strip(), m.group(2).strip()
@@ -297,6 +302,9 @@ def fields_of(actor, warn, clans=None, preds=None, advs=None, refs=None):
         add("Embraced", text_of(bio.get("dateof", {}).get("death")))
         add("Predator Type", predator)
         add("Predator Type Note", pred_note)      # the GM's own annotation, not a printed name
+        add("Path of Enlightenment", sysd.get("path"))   # a Sabbat Kindred's one added field (The Black Hand)
+        if sysd.get("path_ref") and refs is not None:
+            refs.append(("Path of Enlightenment", sysd["path_ref"][0], sysd["path_ref"][1]))
     add("Ambition", text_of(h.get("ambition")))
     add("Desire", text_of(h.get("desire")))
     add("Convictions", text_of(h.get("tenets")))
@@ -448,7 +456,10 @@ def feature_lines(actor, advs, warn):
                 continue
             n = sysd.get("points")
             n = int(n) if isinstance(n, (int, float)) or (isinstance(n, str) and n.isdigit()) else 0
-            name, note, hit = resolve_advantage(i["name"], advs, actor.get("name", "?"), warn)
+            if i.get("_ref"):                  # the owner's file names the book's entry itself
+                name, note, hit = i["_ref"][2], "", (i["_ref"][0], i["_ref"][1], i["_ref"][2])
+            else:
+                name, note, hit = resolve_advantage(i["name"], advs, actor.get("name", "?"), warn)
             txt = "%s (%s)" % (name, note) if note else name
             got.append("%s %d" % (txt, n) if n > 0 else txt)
             if hit and (reflabel, hit[0]) not in [(x[0], x[1]) for x in refs]:
@@ -514,6 +525,9 @@ def main():
             was = actors[r["id"]]["name"]
             actors[r["id"]]["name"] = ACTOR_NAMES[was]
             print("  renamed: %r → %r" % (was, ACTOR_NAMES[was]), file=sys.stderr)
+        if r["id"] in OWNER_RECORDS:  # the owner's own character file stands in (owner_records.py)
+            actors[r["id"]] = owner_actor(actors[r["id"]], r["id"])
+            print("  owner's record: %s ← %s" % (actors[r["id"]]["name"], OWNER_RECORDS[r["id"]][0]), file=sys.stderr)
 
     # the folder tree, so a character sits under its barony as the world files it
     kids = {}

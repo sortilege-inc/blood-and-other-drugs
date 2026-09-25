@@ -1,6 +1,6 @@
 EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
     NAME "Blood & Other Drugs - the cast"
-    VERSION "0.1.2"
+    VERSION "0.2.0"
     SPEC_VERSION "0.5"
     RELEASE_DATE "2026-09-24"
 
@@ -623,11 +623,38 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 ^"Secondary Attributes" STRING "Health 6, Willpower 2"
             }
             #bodRAAKM69fm4iF2eXh ^"Trieste" DEF {
+                DESCRIPTION "Treat your Humanity as two higher when using Blush of Life (see V5 Corebook, pg. 237)"
+                ^"Concept" STRING "Bubblegum pop serial killer"
+                ^"Chronicle" STRING "Blood & Other Drugs"
                 ^"Clan" STRING "The Thin-Blooded"
-                ^"Humanity" STRING "7"
+                ^"Predator Type" STRING "Hedonist (Sabbat Only)"
+                ^"Path of Enlightenment" STRING "Path of the Sun"
+                ^"Touchstones" STRING "Stub Touchstone Ritae"
+                ^"Humanity" STRING "6"
+                ^"Generation" STRING "15th"
                 ^"Blood Potency" STRING "0"
-                ^"Attributes" STRING "Strength 1, Dexterity 1, Stamina 1; Charisma 1, Manipulation 1, Composure 1; Intelligence 1, Wits 1, Resolve 1"
+                ^"Attributes" STRING "Strength 2, Dexterity 1, Stamina 2; Charisma 3, Manipulation 4, Composure 2; Intelligence 2, Wits 3, Resolve 3"
                 ^"Secondary Attributes" STRING "Health 5, Willpower 5"
+                ^"Skills" STRING "Athletics 1, Brawl 2, Drive 2, Firearms 1, Larceny 1, Survival 3; Insight 1, Intimidation 3, Leadership 3, Persuasion 2, Streetwise 2, Subterfuge (Seduction) 1; Awareness 1, Medicine 1, Occult 1, Technology 2"
+                ^"Disciplines" STRING "Potence 1, Presence 1"
+                ^"Advantages" STRING "Beautiful 2, Day Drinker, Lifelike, Thin-blood Alchemist, Hunters Hunted 3, Ingénue 1, Memories of the Fallen (Thin-Bloods) 2, Contacts 1"
+                ^"Flaws" STRING "High life 1, Shunned by the Anarchs, Unending Hunger, Sloppy Drinker, Stigmata 1, Disliked 1"
+                REFERENCES {
+                    "Discipline power" -> #vZlcHUBgchPa0MYGRQZfoSL ^"Awe"
+                    "Discipline power" -> #vOPIXUZjtAtTBY2bSgwR1Zh ^"Fluent Strength"
+                    "Path of Enlightenment" -> #vfbOumVuVYyTGZWpjO8uPpK ^"Path of the Sun"
+                    "Advantage" -> #v5ehHyXJoGzocJtelizHdDu ^"Beautiful"
+                    "Advantage" -> #vPZI9rup6bcVulTU49WSNTx ^"Thin-blood Merits"
+                    "Advantage" -> #vae9Di8uOxBK2892gHiKLFD ^"Hunters Hunted"
+                    "Advantage" -> #vJnZTixxpPf0CVv2A4531Eo ^"Ingénue"
+                    "Advantage" -> #v7zCWNfCOXZaLa7Stp96zYw ^"Memories of the Fallen (Thin-Bloods)"
+                    "Advantage" -> #vJl5tkmIz5EnaeqCnOL9rv0 ^"Contacts"
+                    "Flaw" -> #vZyzwKMxQywW3TeJaFlX2Xt ^"Thin-blood Flaws"
+                    "Flaw" -> #vNMZesdaWrjxYZd1NJRPcZf ^"Unending Hunger"
+                    "Flaw" -> #v27j1xau8NUkoRQ7KvrTIF0 ^"Sloppy Drinker"
+                    "Flaw" -> #vtwvge48gRlcXinLYKx56Ku ^"Stigmata"
+                    "Flaw" -> #v3WmecS4ogqkcxpteWkNqWr ^"Disliked"
+                }
             }
             #bodfeBfqtyafqo37sXN ^"Zuzu" DEF {
                 ^"Concept" STRING "Methodical quartermaster desperate to prove combat worth"

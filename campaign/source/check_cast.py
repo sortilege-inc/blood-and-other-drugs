@@ -31,6 +31,7 @@ sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(ROOT, "build"))
 from parse_dsl import parse_files  # noqa: E402
 from cast_aliases import ACTOR_NAMES, ALIASES, ANNOTATED  # noqa: E402
+from owner_records import OWNER_RECORDS, owner_actor, load as owner_file  # noqa: E402
 
 DATA_BLOB = re.compile(r"var d=(\{.*?\});var T=window\.VTM5E", re.S)
 
@@ -201,6 +202,42 @@ def published_names():
     return {norm(n) for n in out} | {norm(undotted(n)) for n in out}
 
 
+def owner_file_checks(v, p, bad):
+    """The owner's character file read directly — not through owner_records' reshaping — against
+    the record: every Attribute and rated Skill, each Discipline's dots, Humanity, Health and
+    Willpower, the Path, and each Advantage and Flaw with its dots. Returns how many it checked."""
+    n = 0
+    attrs = dict((k, (x, sp)) for k, (x, sp) in (parse_pairs(p.get("Attributes", ""), set(A_ORDER))[0] or {}).items())
+    for k in A_ORDER:
+        n += 1
+        if attrs.get(k, (None,))[0] != int(v.get(k) or 0):
+            bad("owner file: %s is %s in the record, %s in the file" % (k, attrs.get(k, (None,))[0], v.get(k)))
+    skills = parse_pairs(p.get("Skills", ""), set(S_KEY))[0] or {}
+    for k in S_KEY:
+        n += 1
+        want = int(v.get(k) or 0)
+        if (skills.get(k, (0,))[0] or 0) != want:
+            bad("owner file: %s is %s in the record, %d in the file" % (k, skills.get(k, (0,))[0], want))
+    discs = parse_pairs(p.get("Disciplines", ""), set(D_KEY))[0] or {}
+    for d in v.get("Disciplines") or []:
+        n += 1
+        if discs.get(d["Discipline"], (None,))[0] != int(d.get("Dots") or 0):
+            bad("owner file: %s is %s in the record, %s in the file" % (d["Discipline"], discs.get(d["Discipline"], (None,))[0], d.get("Dots")))
+    for label, want in (("Humanity", str(v.get("Humanity"))), ("Path of Enlightenment", v.get("Path of Enlightenment") or ""),
+                        ("Secondary Attributes", "Health %s, Willpower %s" % (v.get("Health"), v.get("Willpower")))):
+        n += 1
+        if want and p.get(label, "") != want:
+            bad("owner file: %s is %r in the record, %r in the file" % (label, p.get(label), want))
+    for a in v.get("Advantages & Flaws") or []:
+        n += 1
+        line = p.get("Flaws" if a.get("Flaw") else "Advantages", "")
+        dots = int(a.get("Dots") or 0)
+        want = "%s %d" % (a["Name"], dots) if dots else a["Name"]
+        if want not in [x.strip() for x in line.split(",")]:
+            bad("owner file: %r is not in the record's %s (%r)" % (want, "Flaws" if a.get("Flaw") else "Advantages", line))
+    return n
+
+
 def main():
     ap = argparse.ArgumentParser()
     # the newest dated export on disk, not today's date: an export is taken when the world
@@ -228,6 +265,8 @@ def main():
     for r in rows:
         d = json.load(open(os.path.join(src, "Actor", r["id"] + ".json"), encoding="utf-8"))
         d["name"] = ACTOR_NAMES.get(d["name"], d["name"])  # the owner's spelling, as the converter writes it
+        if r["id"] in OWNER_RECORDS:  # the owner's own file stands in; checked through the same fields below,
+            d = owner_actor(d, r["id"])   # and again straight from the file's JSON (owner_file_checks)
         hits = by_name.get(d["name"])
         if not hits:
             fails.append("%s: not in the DSL" % d["name"]); continue
@@ -297,6 +336,8 @@ def main():
         checked += 1
         if p.get("Secondary Attributes", "") != want_sec:
             bad("Secondary Attributes %r, export says %r" % (p.get("Secondary Attributes"), want_sec))
+        if r["id"] in OWNER_RECORDS:
+            checked += owner_file_checks(owner_file(r["id"])["values"], p, bad)
 
         want_powers = sorted({norm(i["name"]) for i in (d.get("items") or [])
                               if i.get("type") == "power" and i.get("name")})
@@ -352,7 +393,8 @@ def main():
             for head, ann, _n in got:
                 checked += 1
                 own = any(not ann and norm(head) == norm(w) for w, _ in want)
-                if norm(head) not in printed and not own:
+                whole = "%s (%s)" % (head, ann) if ann else head     # a book may print the brackets itself
+                if norm(head) not in printed and norm(whole) not in printed and not own:
                     bad("%s %r is in no book, and is not the world's own spelling either" % (label, head))
 
         for label, itype in (("Equipment", "gear"), ("Resonance", "resonance")):
@@ -370,14 +412,14 @@ def main():
                 continue
             world, note_want = raw.strip(), ""
             mm = re.match(r"^([^(]+?)\s*\((.*)\)\s*$", world)
-            if mm:
+            if mm and norm(world) not in printed:   # "Hedonist (Sabbat Only)" is the book's own name, whole
                 world, note_want = mm.group(1).strip(), mm.group(2).strip()
             got, note_got = p.get(label, ""), p.get(label + " Note", "")
             checked += 2
             if not got:
                 bad("%s missing; the world carries %r" % (label, raw))
                 continue
-            if norm(bare_name(got)) != norm(world):
+            if norm(bare_name(got)) != norm(world) and norm(got) != norm(world):
                 bad("%s is %r, which is not the world's %r" % (label, got, world))
             if note_got != note_want:
                 bad("%s Note is %r, the world's parenthetical is %r" % (label, note_got, note_want))
