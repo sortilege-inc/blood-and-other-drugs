@@ -138,7 +138,7 @@
   }
 
   // ── The City and The Trade: pages grouped by region / kind ─────────
-  function groupedTab(tab, title, key, lede) {
+  function groupedTab(tab, title, key, lede, above) {
     return function (container, path, ctx) {
       const x = path[0] && bySlug(tab, path[0]);
       if (x) {
@@ -150,6 +150,7 @@
       const p = page(container);
       p.appendChild(el('h2', { class: 'chapter-h' }, [title]));
       p.appendChild(el('p', { class: 'muted small' }, [lede]));
+      if (above) above(p, ctx);
       if (!list(tab).length) return p.appendChild(empty('written'));
       groups(list(tab), key).forEach((g) => {
         if (g.name) p.appendChild(el('h4', { class: 'blood-group' }, [g.name]));
@@ -158,10 +159,121 @@
     };
   }
 
+
+  // ── The City's map: YYZ by Night, the chronicle's Google map (campaign/data/map.js, built by
+  // campaign/build/build_map.py). Who holds each neighbourhood, and the persons of interest on it.
+  // Drawn as SVG from the map's own shapes and colours; no tiles, nothing fetched.
+  const MAP = window.BloodMap || null;
+  const SVG = 'http://www.w3.org/2000/svg';
+  function svg(tag, attrs, kids) {
+    const n = document.createElementNS(SVG, tag);
+    Object.entries(attrs || {}).forEach(([k, v]) => v != null && n.setAttribute(k, v));
+    (kids || []).forEach((c) => n.appendChild(c));
+    return n;
+  }
+  function cityMap(p, ctx) {
+    if (!MAP || !MAP.hoods || !MAP.hoods.length) return;
+    const fcol = Object.fromEntries(MAP.legend.factions.map((f) => [f.name, f.colour]));
+    const pcol = Object.fromEntries(MAP.legend.people.map((f) => [f.key, f.colour]));
+    const info = el('div', { class: 'blood-map-info', 'aria-live': 'polite' });
+    const hint = () => { info.innerHTML = ''; info.appendChild(el('p', { class: 'muted small' }, ['Tap a neighbourhood to see who holds it, or a pin for a person of interest.'])); };
+    const row = (k, v) => (v ? el('div', { class: 'blood-map-row' }, [el('span', { class: 'blood-map-k' }, [k]), el('span', {}, [v])]) : null);
+    const hoodG = svg('g', { class: 'blood-map-hoods' });
+    const pinG = svg('g', { class: 'blood-map-pins' });
+    let picked = null;
+    const pick = (node, fill) => {
+      if (picked) picked.classList.remove('on');
+      picked = node; if (node) node.classList.add('on');
+      info.innerHTML = ''; fill();
+    };
+    MAP.hoods.forEach((h) => {
+      const path = svg('path', { d: h.d, fill: fcol[h.faction] || '#999', 'fill-rule': 'evenodd', class: 'blood-hood', 'data-faction': h.faction }, [svg('title', {}, [document.createTextNode(h.name + ' · ' + h.faction)])]);
+      path.addEventListener('click', () => pick(path, () => {
+        info.appendChild(el('h4', { class: 'blood-map-name' }, [h.name]));
+        info.appendChild(el('div', { class: 'blood-map-swatch-line' }, [el('span', { class: 'blood-swatch', style: 'background:' + (fcol[h.faction] || '#999') }), h.faction]));
+        if (h.desc) info.appendChild(el('p', {}, [h.desc]));
+        if (h.pop != null) info.appendChild(row('Kindred', String(h.pop)));
+      }));
+      hoodG.appendChild(path);
+    });
+    MAP.people.forEach((pp) => {
+      const dot = svg('circle', { cx: pp.x, cy: pp.y, r: 6, fill: pcol[pp.faction || ''] || '#bdbdbd', class: 'blood-pin', tabindex: 0, role: 'button', 'aria-label': pp.name }, [svg('title', {}, [document.createTextNode(pp.name)])]);
+      const show = () => pick(dot, () => {
+        info.appendChild(el('h4', { class: 'blood-map-name' }, [pp.name]));
+        [['', pp.description], ['Faction', pp.faction], ['Clan', pp.clan], ['Religion', pp.religion], ['Status', pp.status]].forEach(([k, v]) => {
+          if (!v) return;
+          info.appendChild(k ? row(k, v) : el('p', {}, [v]));
+        });
+        if (pp.page) info.appendChild(el('p', {}, [el('a', { class: 'doc-link', href: ctx.href('people', [pp.page]) }, ['In Dramatis Personae ›'])]));
+      });
+      dot.addEventListener('click', (e) => { e.stopPropagation(); show(); });
+      dot.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(); } });
+      pinG.appendChild(dot);
+    });
+    const map = svg('svg', { viewBox: '0 0 ' + MAP.width + ' ' + MAP.height, class: 'blood-map-svg', role: 'img', 'aria-label': 'Map of Toronto by faction' }, [hoodG, pinG]);
+    // zoom and pan: the buttons, the wheel, a drag. Pins shrink as it zooms, so a crowded
+    // downtown comes apart instead of just getting bigger.
+    const W = MAP.width, H = MAP.height;
+    let vb = { x: 0, y: 0, w: W, h: H };
+    const apply = () => {
+      vb.w = Math.min(W, Math.max(W / 12, vb.w)); vb.h = vb.w * H / W;
+      vb.x = Math.min(W - vb.w, Math.max(0, vb.x)); vb.y = Math.min(H - vb.h, Math.max(0, vb.y));
+      map.setAttribute('viewBox', [vb.x, vb.y, vb.w, vb.h].map((n) => n.toFixed(1)).join(' '));
+      const r = (6 * Math.sqrt(vb.w / W)).toFixed(2);
+      pinG.querySelectorAll('circle').forEach((c) => c.setAttribute('r', r));
+    };
+    const zoom = (f, cx, cy) => {
+      if (cx == null) { cx = vb.x + vb.w / 2; cy = vb.y + vb.h / 2; }
+      vb = { x: cx - (cx - vb.x) * f, y: cy - (cy - vb.y) * f, w: vb.w * f, h: vb.h * f };
+      apply();
+    };
+    const toMap = (e) => { const b = map.getBoundingClientRect(); return [vb.x + (e.clientX - b.left) / b.width * vb.w, vb.y + (e.clientY - b.top) / b.height * vb.h]; };
+    map.addEventListener('wheel', (e) => { e.preventDefault(); const [x, y] = toMap(e); zoom(e.deltaY > 0 ? 1.25 : 0.8, x, y); }, { passive: false });
+    let drag = null, moved = false;
+    map.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, y: e.clientY, vb: { ...vb } }; moved = false; });
+    window.addEventListener('pointermove', (e) => {
+      if (!drag) return;
+      const b = map.getBoundingClientRect(), dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+      if (!moved) return;
+      vb.x = drag.vb.x - dx / b.width * vb.w; vb.y = drag.vb.y - dy / b.height * vb.h; apply();
+    });
+    window.addEventListener('pointerup', () => { drag = null; });
+    window.addEventListener('pointercancel', () => { drag = null; moved = false; });
+    map.addEventListener('click', (e) => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
+    const zbtn = (label, title, fn) => { const b = el('button', { type: 'button', class: 'blood-zoom-btn', title, 'aria-label': title }, [label]); b.addEventListener('click', fn); return b; };
+    const zoomBar = el('div', { class: 'blood-zoom' }, [
+      zbtn('+', 'Zoom in', () => zoom(0.66)), zbtn('−', 'Zoom out', () => zoom(1.5)),
+      zbtn('⟲', 'Whole city', () => { vb = { x: 0, y: 0, w: W, h: H }; apply(); }),
+    ]);
+    // the legend: a faction dims the rest; the pins can be hidden
+    let only = null;
+    const facts = MAP.legend.factions.map((f) => {
+      const b = el('button', { type: 'button', class: 'blood-legend-item' }, [el('span', { class: 'blood-swatch', style: 'background:' + f.colour }), f.name + ' ', el('span', { class: 'muted' }, [String(f.count)])]);
+      b.addEventListener('click', () => {
+        only = only === f.name ? null : f.name;
+        map.classList.toggle('filtered', !!only);
+        hoodG.querySelectorAll('path').forEach((n) => n.classList.toggle('dim', !!only && n.getAttribute('data-faction') !== only));
+        facts.forEach((x) => x.classList.toggle('on', x === b && !!only));
+      });
+      return b;
+    });
+    const toggle = el('input', { type: 'checkbox', checked: 'checked' });
+    toggle.addEventListener('change', () => pinG.classList.toggle('hidden', !toggle.checked));
+    const peopleKey = MAP.legend.people.map((g) => el('span', { class: 'blood-legend-item static' }, [el('span', { class: 'blood-swatch round', style: 'background:' + g.colour }), g.name + ' ', el('span', { class: 'muted' }, [String(g.count)])]));
+    hint();
+    p.appendChild(el('figure', { class: 'blood-map' }, [
+      el('div', { class: 'blood-map-frame' }, [el('div', { class: 'blood-map-canvas' }, [map, zoomBar]), info]),
+      el('div', { class: 'blood-legend' }, [el('h4', { class: 'blood-group' }, ['Who holds what'])].concat(facts)),
+      el('div', { class: 'blood-legend' }, [el('h4', { class: 'blood-group' }, [el('label', {}, [toggle, ' Persons of interest'])])].concat(peopleKey)),
+      el('figcaption', { class: 'muted small' }, [MAP.source + '.']),
+    ]));
+  }
+
   const tabs = window.VttSiteTabs = window.VttSiteTabs || [];
   tabs.unshift(
     { id: 'home', label: CFG.title || 'Home', render: renderHome, group: 'campaign' },
-    { id: 'city', label: 'The City', render: groupedTab('city', 'The City', 'region', 'Toronto by night: who holds what, and where the coterie goes.'), group: 'campaign' },
+    { id: 'city', label: 'The City', render: groupedTab('city', 'The City', 'region', 'Toronto by night: who holds what, and where the coterie goes.', cityMap), group: 'campaign' },
     { id: 'coterie', label: 'The Coterie', render: renderCoterie, group: 'campaign' },
     { id: 'people', label: 'Dramatis Personae', render: renderPeople, group: 'campaign' },
     { id: 'chronicle', label: 'The Chronicle', render: renderChronicle, group: 'campaign' },

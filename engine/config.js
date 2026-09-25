@@ -40,7 +40,7 @@ window.VttConfig = {
     stages: {
       data: ['campaign/data/index.js'],
       // the chronicle's own tabs, ahead of the books (PLAN.md M3): its prose, then the tabs
-      site: ['campaign/data/docs.js', 'campaign/site/site.js'],
+      site: ['campaign/data/docs.js', 'campaign/data/map.js', 'campaign/site/site.js'],
       gm: [], table: [], play: [], maps: [],
     },
   },

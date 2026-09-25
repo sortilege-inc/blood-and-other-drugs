@@ -40,3 +40,38 @@ ol.blood-toc a:hover, ul.blood-toc a:hover { color: var(--blood-2); }
   .site-reader.solo { padding: 22px 18px 30px; }
   .blood-prose { font-size: 18px; }
 }
+
+/* The City's map (campaign/data/map.js) */
+.blood-map { margin: 8px 0 26px; }
+.blood-map-frame { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 16px; align-items: start; }
+.blood-map-canvas { background: var(--paper-2); border: 1px solid var(--rule); }
+.blood-map-svg { display: block; width: 100%; height: auto; }
+.blood-hood { fill-opacity: .5; stroke: var(--paper); stroke-width: 1; vector-effect: non-scaling-stroke; cursor: pointer; }
+.blood-hood:hover { fill-opacity: .75; }
+.blood-hood.on { fill-opacity: .85; stroke: var(--blood); stroke-width: 2.5; }
+.blood-hood.dim { fill-opacity: .08; }
+.blood-pin { stroke: var(--ink); stroke-width: 1.5; vector-effect: non-scaling-stroke; cursor: pointer; }
+.blood-pin:hover, .blood-pin:focus { stroke: var(--blood); stroke-width: 3; outline: none; }
+.blood-pin.on { stroke: var(--blood); stroke-width: 3.5; }
+.blood-map-pins.hidden { display: none; }
+.blood-map-info { font-size: 16px; line-height: 1.45; }
+.blood-map-name { font-family: var(--font-display); font-weight: 400; font-size: 22px; margin: 0 0 6px; }
+.blood-map-row { display: flex; gap: 10px; font-size: 15px; }
+.blood-map-k { font-family: var(--font-ui); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); min-width: 72px; padding-top: 2px; }
+.blood-map-swatch-line { display: flex; align-items: center; gap: 8px; font-family: var(--font-ui); font-size: 13px; margin-bottom: 6px; }
+.blood-swatch { display: inline-block; width: 14px; height: 14px; border: 1px solid rgba(0,0,0,.25); flex: none; }
+.blood-swatch.round { border-radius: 50%; }
+.blood-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin-top: 10px; }
+.blood-legend h4.blood-group { flex-basis: 100%; margin: 8px 0 0; }
+.blood-legend-item { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-ui); font-size: 13px; background: none; border: 1px solid transparent; padding: 2px 6px; cursor: pointer; color: inherit; }
+.blood-legend-item.on { border-color: var(--blood); }
+.blood-legend-item.static { cursor: default; }
+.blood-map figcaption { margin-top: 8px; }
+@media (max-width: 720px) {
+  .blood-map-frame { grid-template-columns: 1fr; }
+}
+.blood-map-canvas { position: relative; }
+.blood-map-svg { touch-action: pan-y; cursor: grab; } /* a vertical swipe still scrolls the page on a phone */
+.blood-zoom { position: absolute; top: 8px; right: 8px; display: flex; flex-direction: column; gap: 4px; }
+.blood-zoom-btn { width: 32px; height: 32px; font-size: 18px; line-height: 1; background: var(--paper); color: var(--ink); border: 1px solid var(--rule); cursor: pointer; }
+.blood-zoom-btn:hover { border-color: var(--blood); color: var(--blood); }
