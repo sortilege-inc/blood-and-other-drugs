@@ -36,7 +36,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from cast_aliases import ALIASES  # noqa: E402
+from cast_aliases import ALIASES, AWAITING_THIRD_PARTY  # noqa: E402
 ROOT = os.path.dirname(os.path.dirname(HERE))
 
 ATTRS = [("Strength", "strength"), ("Dexterity", "dexterity"), ("Stamina", "stamina"),
@@ -164,6 +164,66 @@ def corpus_powers():
     return idx
 
 
+def corpus_names():
+    """The published clans and Predator Types, by the VTT's own rules (system/vtm5e/data.js):
+    a clan is a heading in a clans / caitiff / thin-blooded file that prints a Bane; a Predator
+    Type is a heading under "Predator Types". The corpus is canon — where Foundry spells a
+    published name differently, the corpus's spelling is what gets written (owner, 2026-09-24)."""
+    data = os.path.join(ROOT, "data")
+    ents = {}
+    for fn in sorted(os.listdir(data)):
+        if not fn.endswith(".js"):
+            continue
+        m = BLOB.search(open(os.path.join(data, fn), encoding="utf-8").read())
+        if m:
+            ents.update(json.loads(m.group(1))["entities"])
+    clans, preds = {}, {}
+    for h, e in ents.items():
+        kids = [ents[c] for c in e.get("children") or [] if c in ents]
+        if re.search(r"clans|caitiff|thin-blooded", e.get("file") or ""):
+            if any(k["name"] == "Bane" for k in kids):
+                clans.setdefault(norm(e["name"]), (h, e["book"], e["name"]))
+        if e["name"] in ("Predator Types", "Predator Type"):
+            for k in kids:
+                nm = k["name"].strip()
+                if nm.endswith(":") or nm in ("Predator Discipline Notes",):
+                    continue
+                preds.setdefault(norm(nm), (k["id"], k["book"], nm))
+    # the thin-blooded are not a clan (no Bane), but Foundry files them as one
+    for h, e in ents.items():
+        if e["name"] == "The Thin-Blooded" and "thin-blooded" in (e.get("file") or ""):
+            for key in ("thin-blooded", "thin-blood", "the thin-blooded"):
+                clans.setdefault(key, (h, e["book"], e["name"]))
+    return clans, preds
+
+
+def resolve(raw, idx, kind, who, warn):
+    """A published name as the corpus spells it. A parenthetical the world adds is the GM's
+    own annotation, kept separately; it is never part of the printed name."""
+    if not raw:
+        return "", ""
+    bare, note = raw.strip(), ""
+    m = re.match(r"^([^(]+?)\s*\((.*)\)\s*$", bare)
+    if m:
+        bare, note = m.group(1).strip(), m.group(2).strip()
+    hit = idx.get(norm(bare))
+    if not hit and bare in ALIASES:
+        target, why = ALIASES[bare]
+        hit = idx.get(norm(target))
+        if hit:
+            warn.append("%s: %s %r read as %r (%s)" % (who, kind, bare, target, why))
+    if not hit and bare in AWAITING_THIRD_PARTY:
+        warn.append("%s: %s %r awaits the third-party shelf — %s (U2)"
+                    % (who, kind, bare, AWAITING_THIRD_PARTY[bare]))
+        return bare, note
+    if not hit:
+        warn.append("%s: %s %r is in no book — kept as the world spells it" % (who, kind, raw.strip()))
+        return bare, note
+    if hit[2] != bare:
+        warn.append("%s: %s %r written as the corpus spells it, %r" % (who, kind, bare, hit[2]))
+    return hit[2], note
+
+
 def powers_of(actor, idx, warn):
     """The powers the character has taken, as references by hash. A name the corpus does not
     print is reported and left out — it is never written as a paraphrase."""
@@ -190,14 +250,17 @@ def powers_of(actor, idx, warn):
     return sorted(set(out))
 
 
-def fields_of(actor, warn):
+def fields_of(actor, warn, clans=None, preds=None):
     """The record, in the corpus's own order and labels. Only non-empty fields are written."""
     sysd = actor.get("system") or {}
     h = sysd.get("headers") or {}
     bio = sysd.get("bio") or {}
     kindred = actor.get("type") == "vampire"
+    who = actor.get("name", "?")
     clan = next((i["name"] for i in actor.get("items") or [] if i.get("type") == "clan"), "")
     predator = next((i["name"] for i in actor.get("items") or [] if i.get("type") == "predatorType"), "")
+    clan, clan_note = resolve(clan, clans or {}, "clan", who, warn)
+    predator, pred_note = resolve(predator, preds or {}, "Predator Type", who, warn)
     out = []
 
     def add(label, value):
@@ -209,9 +272,11 @@ def fields_of(actor, warn):
     add("Chronicle", text_of(h.get("chronicle")))
     if kindred:
         add("Clan", clan)
+        add("Clan Note", clan_note)               # the GM's own annotation, not a printed name
         add("Sire", text_of(h.get("sire")))
         add("Embraced", text_of(bio.get("dateof", {}).get("death")))
         add("Predator Type", predator)
+        add("Predator Type Note", pred_note)      # the GM's own annotation, not a printed name
     add("Ambition", text_of(h.get("ambition")))
     add("Desire", text_of(h.get("desire")))
     add("Convictions", text_of(h.get("tenets")))
@@ -236,14 +301,14 @@ def def_id(fid):
     return "#bod" + fid                        # deterministic, and traceable to the Foundry id
 
 
-def render_actor(actor, indent, warn, idx):
+def render_actor(actor, indent, warn, idx, clans, preds):
     pad = " " * indent
     lines = ["%s%s ^\"%s\" DEF {" % (pad, def_id(actor["_id"]), esc(actor["name"]))]
     notes = text_of((actor.get("system") or {}).get("description")) or \
         text_of((actor.get("system") or {}).get("biography"))
     if notes:
         lines.append("%s    DESCRIPTION \"%s\"" % (pad, esc(notes)))
-    for label, value in fields_of(actor, warn):
+    for label, value in fields_of(actor, warn, clans, preds):
         lines.append("%s    ^\"%s\" STRING \"%s\"" % (pad, esc(label), esc(value)))
     powers = powers_of(actor, idx, warn)
     if powers:
@@ -287,19 +352,20 @@ def main():
     warn = []
     body = []
     idx = corpus_powers()
+    clans, preds = corpus_names()
 
     def emit(fid, indent):
         f = folders[fid]
         body.append("%s%s ^\"%s\" DEF {" % (" " * indent, "#bodf" + fid, esc(f["name"])))
         for aid in sorted(in_folder.get(fid, []), key=lambda i: actors[i]["name"]):
-            body.extend(render_actor(actors[aid], indent + 4, warn, idx))
+            body.extend(render_actor(actors[aid], indent + 4, warn, idx, clans, preds))
         for k in sorted(kids.get(fid, []), key=lambda i: folders[i]["name"]):
             emit(k, indent + 4)
         body.append("%s}" % (" " * indent))
 
     if a.only:
         for aid in sorted(actors, key=lambda i: actors[i]["name"]):
-            body.extend(render_actor(actors[aid], 4, warn, idx))
+            body.extend(render_actor(actors[aid], 4, warn, idx, clans, preds))
     else:
         for fid in sorted([f for f in kids.get(None, []) if f in folders],
                           key=lambda i: folders[i]["name"]):
@@ -309,7 +375,7 @@ def main():
         if loose:
             body.append("    #bodfUnfiled000000001 ^\"Unfiled\" DEF {")
             for aid in loose:
-                body.extend(render_actor(actors[aid], 8, warn, idx))
+                body.extend(render_actor(actors[aid], 8, warn, idx, clans, preds))
             body.append("    }")
 
     head = [

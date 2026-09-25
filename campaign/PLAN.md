@@ -84,6 +84,14 @@ are offered as modules in the Chronicle panel. *Summoned Stories* is **excluded*
 Storyteller's chronicle documentation (a Road system replacing Humanity) and contradicts this
 chronicle's rules. Flag if it should come in.
 
+**O7 — In any disagreement, the corpus is canon and Foundry is wrong (owner, 2026-09-24).**
+A name or rules text the books print is written as the DSL prints it; the Foundry world is a
+working copy, not a source of record. It still supplies the campaign's *own* facts — who exists,
+their ratings, their prose — but never the spelling of a published thing. Applied in M2b to
+clans, Predator Types and Discipline powers. Where the world adds a parenthetical of its own
+("Osiris (Family Dynasty)"), that is the GM's annotation: it is kept in the campaign's own
+`Clan Note` / `Predator Type Note`, never inside the printed name.
+
 **O6 — PROPOSED: the campaign site's five sections**, borrowing *War of Princes*' shape
 (Setting · Coterie · Dramatis Personae · Chronicle · Household) and adapting the fifth to this
 chronicle's spine:
@@ -140,5 +148,9 @@ the fork.
 | 2026-09-24 | autonomous, rules | **A power a character has taken is a reference by hash to the corpus's own power**; the Foundry one-line shorthand ("Command attention and admiration") is never written as rules text | The book carries paragraphs where the world carries a GM's note. Rules text is verbatim or it is a reference — never a paraphrase |
 | 2026-09-24 | **content, surfaced** | Two aliases assert the world's name **is** a published power: *Forgetful Mind* → **The Forgetful Mind** (Dominate 3, the article dropped) and *Bond Familiars* → **Bond Famulus** (Animalism 1, pluralised and anglicised). Declared in `campaign/source/cast_aliases.py` with reasons, reported on every run | Each target is printed in the corpus and its Discipline level holds exactly one power, so the mapping is unambiguous — but it is an assertion, not typography, so it is declared once and shown, not buried. *Plug-In* / *Plug-in* and *A Taste For Blood* / *A Taste for Blood* needed no entry: matching normalises case and typography |
 | 2026-09-24 | finding | **No corpus defect found.** All four initially-unresolved power names were world-side naming variance | Checked each against `data/records.js` before concluding; nothing to report to the corpus TODO |
+| 2026-09-24 | owner | **O7 — the corpus is canon; Foundry is wrong** | Re-ran the cast under the ruling: clans and Predator Types are now resolved against the corpus by the VTT's own rules and written as the books spell them |
+| 2026-09-24 | finding, under O7 | Foundry's **Malkavian** is the core's **Malkavians**; its *Thin-Blooded* / *Thin-Blood* / *Thin-Blood (15th Generation)* are all the core's **The Thin-Blooded**, the generation already carried in its own field | The clans chapter heads the clan in the plural; the parenthetical was duplicate data, not a name |
+| 2026-09-24 | finding, under O7 | **Extortionist and Montero are published** (Players Guide), not homebrew — Foundry merely files them under *Custom* | Checked the corpus's own Predator Types headings before assuming; the world's folder is not evidence |
+| 2026-09-24 | finding, **blocks U2** | **Absolver, Ripper, Domina and Hedonist are published too** — in *The Black Hand*, as "… (Sabbat Only)" Predator Types. Absent from all 19 official books, present in the third-party corpus | Father Vivek is the Sabbat Baron and four Sunburners carry them. They are **not** homebrew and are not written as though they were: the converter keeps the world's spelling and names the book on every run (`AWAITING_THIRD_PARTY`), until U2 loads the shelf and they resolve like any other |
 | 2026-09-23 | coordination | **U2 held** until the VtM5e VTT session finishes regenerating the corpus and rebuilding `data/` | It edits `build_data.py` and `BOOKS`, which its rebuild also touches; a peer session asked for the hold and it costs nothing. It confirmed it **is** re-extracting `titterpig-dsl-vtm5e-3rdparty` right after the official pass, at the owner's direction — *The Black Hand* and its two `.arc`s, whose **loresheets gain dot ratings** (110 + 10 + 10 levels, currently none) and whose merged `Cost (2)` powers get their names back. The Sunburners are hand-authored and *Summoned Stories* has its own extractor, so both are untouched. **U2 therefore starts only after both of its pushes**: building the shelf first would be building against text about to change |
 | 2026-09-23 | correction | The peer attributed corpus commit `a31138f` (the buyer watermark) to this session; it is **not** this session's work | Every commit in `titterpig-dsl-vtm5e` is authored *Jordan Peacock*, the shared per-repo identity, so author does not distinguish sessions. This session has touched neither that repo nor `sortilege-vtt-vtm5e/data/`: I1 left `data/`'s 21 files byte-identical |
