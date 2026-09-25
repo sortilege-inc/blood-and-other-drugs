@@ -42,6 +42,17 @@ window.VttConfig = {
       site: [], gm: [], table: [], play: [], maps: [],
     },
   },
+  // The family standards (PLAYBOOK §4b; upstream V11), carried by hand because this file is the
+  // instance's own (merge=ours): the public site shows the chronicle's tabs and the dice, the
+  // books' tabs are the Storyteller's to turn on per browser in the GM page's Settings; a veil
+  // stands in front of /gm/ for a player who wanders in.
+  siteBooks: false,
+  gmGate: {
+    title: 'The Storyteller\u2019s table',
+    text: 'Beyond is the Storyteller\u2019s material for Blood & Other Drugs \u2014 the prep, the threads, what the coterie has not yet found. If you are playing, turn back.',
+    enter: 'Enter',
+    leave: 'Turn back',
+  },
   // The Worker that holds player sessions. Served from localhost the app talks to
   // `wrangler dev`; deployed, to the URL below. Empty = sessions disabled until the owner
   // deploys (PLAN.md D3).
