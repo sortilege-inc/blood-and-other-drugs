@@ -47,6 +47,8 @@ ALIASES = {
     "Impostor Syndrome":       ("Dark Secret",           "owner: replaced — the fear of being found out"),
     "Inoffensive to Animals":  ("Library",               "owner: replaced — her occult scholarship"),
     "Nightmares":              ("Knowledge Hungry",      "owner: replaced — her hunger to study Blood Sorcery"),
+    # Dominik Levesque's: his Subterfuge (Convincing lies) specialty already carries the name
+    "Convincing Lies":         ("City Secrets",          "owner: replaced — a manipulator's leverage; the specialty keeps the lies"),
 }
 
 # Advantages the world writes with its annotation run on, with no bracket or colon to split

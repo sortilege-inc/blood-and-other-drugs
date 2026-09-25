@@ -223,7 +223,7 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 7, Willpower 7"
             ^"Skills" STRING "Athletics 1, Brawl 2, Craft 2, Drive 2, Firearms 1, Larceny 2, Stealth 2; Etiquette 4, Insight (Detecting weakness) 4, Intimidation 3, Leadership 3, Performance (Playing roles) 4, Persuasion 4, Streetwise 2, Subterfuge (Convincing lies) 5; Academics 3, Awareness 3, Finance 3, Investigation 2, Medicine 2, Occult 3, Politics (Camarilla intrigue) 5, Science 1, Technology 2"
             ^"Disciplines" STRING "Auspex 2, Blood Sorcery 2, Dominate 3"
-            ^"Advantages" STRING "Resources 4, Haven 3, Herd 4, Status (Camarilla) 2, Contacts 3, Retainers 2, Convincing Lies 3, Fame 2, Luxury (Haven) 2, Linguistics 1"
+            ^"Advantages" STRING "Resources 4, Haven 3, Herd 4, Status (Camarilla) 2, Contacts 3, Retainers 2, City Secrets 3, Fame 2, Luxury (Haven) 2, Linguistics 1"
             ^"Flaws" STRING "Dark Secret 2, Enemies 1, Infamy 3, Adversary 3"
             ^"Appearance" STRING "Dominik is handsome in a predatory way - sharp features, calculating eyes, immaculate grooming. He dresses in expensive tailored suits (Armani, Hugo Boss), always perfectly pressed. Dark hair touched with silver at temples. Thin-framed designer glasses (affectation, not needed). Every detail curated to project authority and sophistication."
             REFERENCES {
@@ -239,6 +239,7 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Advantage" -> #vyh4u32gJOIZ4DRUXeMZA7y ^"Status"
                 "Advantage" -> #vJl5tkmIz5EnaeqCnOL9rv0 ^"Contacts"
                 "Advantage" -> #v8qIOULRw0EmoUcRgTx5des ^"Retainers"
+                "Advantage" -> #vONMhEZaQvi8RmrE0DbQBkx ^"City Secrets"
                 "Advantage" -> #vxuohKrqV1gGHciasfRd4GF ^"Fame"
                 "Advantage" -> #vPh5EoQXNQ3xlZr8UAVtmak ^"Luxury"
                 "Advantage" -> #vldbHgsYdnv5ZG86YvyI26U ^"Linguistics"
