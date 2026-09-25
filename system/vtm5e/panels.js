@@ -128,6 +128,8 @@
           el('div', { class: 'card-meta' }, [Sheet.memberSentence(m)]),
           el('div', { class: 'hunger-mini' }, Array.from({ length: Dice.HUNGER_MAX }, (_, i) => el('span', { class: 'pip' + (i < Sheet.hunger(m) ? ' on' : '') }))),
         ]),
+        // the Storyteller's notes on this character (the People pane's "Behind the Coterie" sections about them)
+        window.VttGmText ? window.VttGmText.aboutSections('pc', m.name, draw) : null,
         el('div', { class: 'member-ops' }, [
           button('file', () => Sheet.downloadMember(m), 'ghost tiny'),
           button('remove', () => { if (confirm('Remove ' + m.name + ' from the coterie?')) State.commit('removePartyMember', [m.id]); }, 'ghost tiny'),
@@ -172,9 +174,14 @@
           cur && r && r.kind === 'character' && (cur.cast || []).indexOf(r.id) === -1 ? button('Put in ' + cur.name, () => State.commit('setSceneCast', [cur.id, (cur.cast || []).concat([r.id])]), 'tiny') : null,
           el('a', { class: 'btn ghost tiny', href: './#books/' + encodeURIComponent(e.book) + '/' + encodeURIComponent(e.id), target: '_blank' }, ['In the reader']),
         ]));
+        // the Storyteller's notes on this one (the People pane's sections "about" it)
+        const about = window.VttGmText && window.VttGmText.aboutSections('people', r ? r.id : e.id, draw);
+        if (about) container.appendChild(about);
         container.appendChild(el('div', { class: 'paper' }, [E.render(e, { onPool: pool, noKids: D.children(e.id).length > 12 })]));
       } else if (sel.kind === 'party') {
         const m = (S().party || []).find((x) => x.id === sel.id);
+        const about = m && window.VttGmText && window.VttGmText.aboutSections('pc', m.name, draw);
+        if (about) container.appendChild(about);
         container.appendChild(m ? Sys().liveSheet(m, { onRule: window.VtmOpenEntity }) : el('div', { class: 'empty' }, ['That character is no longer in the coterie.']));
       } else container.appendChild(el('div', { class: 'empty' }, ['Nothing to show for ' + sel.kind + '.']));
     };

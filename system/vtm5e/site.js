@@ -446,12 +446,12 @@ window.VttSiteTabs = (function () {
   }
 
   return [
-    { id: 'books', label: 'The books', render: renderBooks },
-    { id: 'clans', label: 'Clans', render: renderClans },
-    { id: 'disciplines', label: 'Disciplines', render: renderDisciplines },
-    { id: 'create', label: 'Making a character', render: (c, path, ctx) => window.VtmCreator.render(c, path, ctx) },
-    { id: 'characters', label: 'Storyteller characters', render: renderCharacters },
+    { id: 'books', label: 'The books', render: renderBooks, books: true },
+    { id: 'clans', label: 'Clans', render: renderClans, books: true },
+    { id: 'disciplines', label: 'Disciplines', render: renderDisciplines, books: true },
+    { id: 'create', label: 'Making a character', render: (c, path, ctx) => window.VtmCreator.render(c, path, ctx), books: true },
+    { id: 'characters', label: 'Storyteller characters', render: renderCharacters, books: true },
     { id: 'dice', label: 'Dice', render: renderDice },
-    { id: 'search', label: 'Search', render: renderSearch },
+    { id: 'search', label: 'Search', render: renderSearch, books: true },
   ];
 })();
