@@ -19,6 +19,10 @@ She has spent five years since then learning to do things with blood out of a ba
 a worse Persian book, and she is getting somewhere. The book describes *gates*. The first is the Gate of
 Flesh, and she needed an athanor to open it, and she found [[04-olly|Olly]].
 
+She is nearly six foot three, tattooed everywhere but her face, all of it flowers, and she wears shirts with pockets so there is
+always somewhere to keep a pen. She does not scare easily. She works nights in hospitals still, and she does nothing to anyone without
+their consent; that is the line, and she has crossed it once.
+
 She keeps the rules that are written down. Mostly.
 
-*In the chronicle:* [[01-the-gate-of-flesh]].
+*In the chronicle:* [[01-the-gate-of-flesh]], [[02-tall-women]].
