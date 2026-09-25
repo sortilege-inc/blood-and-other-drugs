@@ -36,7 +36,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from cast_aliases import ALIASES, AWAITING_THIRD_PARTY  # noqa: E402
+from cast_aliases import ALIASES  # noqa: E402
 ROOT = os.path.dirname(os.path.dirname(HERE))
 
 ATTRS = [("Strength", "strength"), ("Dexterity", "dexterity"), ("Stamina", "stamina"),
@@ -189,11 +189,22 @@ def corpus_names():
                 if nm.endswith(":") or nm in ("Predator Discipline Notes",):
                     continue
                 preds.setdefault(norm(nm), (k["id"], k["book"], nm))
-    # the thin-blooded are not a clan (no Bane), but Foundry files them as one
+    # The thin-blooded print no Bane, so the rule above does not reach them; Foundry files
+    # them as a clan. Registered here under the corpus's OWN name only — the world's two
+    # spellings for it are declared in cast_aliases, where a name decision is reported.
     for h, e in ents.items():
         if e["name"] == "The Thin-Blooded" and "thin-blooded" in (e.get("file") or ""):
-            for key in ("thin-blooded", "thin-blood", "the thin-blooded"):
-                clans.setdefault(key, (h, e["book"], e["name"]))
+            clans.setdefault(norm(e["name"]), (h, e["book"], e["name"]))
+    # A published heading may carry a qualifier the world leaves off: The Black Hand prints
+    # its Predator Types as "Absolver (Sabbat Only)", Foundry records "Absolver". Registered
+    # in a SECOND pass, and only where the bare key is still free, so a qualified heading can
+    # never shadow a book that prints that name plainly. The corpus's full spelling is still
+    # what gets written — resolve() reports the difference.
+    for table in (clans, preds):
+        for key, hit in list(table.items()):
+            m = re.match(r"^(.*?)\s*\([^()]*\)$", hit[2])
+            if m and m.group(1).strip():
+                table.setdefault(norm(m.group(1)), hit)
     return clans, preds
 
 
@@ -212,10 +223,6 @@ def resolve(raw, idx, kind, who, warn):
         hit = idx.get(norm(target))
         if hit:
             warn.append("%s: %s %r read as %r (%s)" % (who, kind, bare, target, why))
-    if not hit and bare in AWAITING_THIRD_PARTY:
-        warn.append("%s: %s %r awaits the third-party shelf — %s (U2)"
-                    % (who, kind, bare, AWAITING_THIRD_PARTY[bare]))
-        return bare, note
     if not hit:
         warn.append("%s: %s %r is in no book — kept as the world spells it" % (who, kind, raw.strip()))
         return bare, note

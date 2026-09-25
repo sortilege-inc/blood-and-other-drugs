@@ -10,8 +10,12 @@ field. It shares no code with the converter, so a converter bug cannot hide behi
 
 Checks, per actor: the nine Attributes; every rated Skill with its rating and its specialty AND
 that no unrated skill is printed; every Discipline rating; Humanity, Generation, Blood Potency,
-Health and Willpower; and that every `power` item the actor carries is referenced by name.
-Exits non-zero on the first mismatch it reports.
+Health and Willpower; that every `power` item the actor carries is referenced by name; the
+world's own prose fields, each against the export's own HTML; and the two PUBLISHED names the
+converter rewrites — Clan and Predator Type — which are checked twice over: that the written
+name still points at the world's (aliases, a trailing qualifier and typography aside), that
+the world's parenthetical went to the Note field instead of into the name, and that the name
+written is one a book actually prints. Exits non-zero on the first mismatch it reports.
 """
 import argparse
 import datetime
@@ -27,6 +31,8 @@ sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(ROOT, "build"))
 from parse_dsl import parse_files  # noqa: E402
 from cast_aliases import ALIASES  # noqa: E402
+
+DATA_BLOB = re.compile(r"var d=(\{.*?\});var T=window\.VTM5E", re.S)
 
 A_ORDER = ["Strength", "Dexterity", "Stamina", "Charisma", "Manipulation", "Composure",
            "Intelligence", "Wits", "Resolve"]
@@ -128,6 +134,24 @@ def norm(s):
              .replace("\u2014", "-").strip().lower())
 
 
+def bare_name(s):
+    """A published heading without a trailing qualifier: The Black Hand prints its Predator
+    Types "Absolver (Sabbat Only)", the world records "Absolver"."""
+    m = re.match(r"^(.*?)\s*\([^()]*\)$", (s or "").strip())
+    return (m.group(1).strip() if m and m.group(1).strip() else (s or "").strip())
+
+
+def published_names():
+    """Every name the books print, read straight out of data/ — this checker's own reading,
+    so a name the converter invented has nowhere to hide."""
+    out, data = set(), os.path.join(ROOT, "data")
+    for fn in sorted(os.listdir(data)):
+        m = DATA_BLOB.search(open(os.path.join(data, fn), encoding="utf-8").read()) if fn.endswith(".js") else None
+        if m:
+            out.update(e["name"] for e in json.loads(m.group(1))["entities"].values())
+    return {norm(n) for n in out}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", default=datetime.date.today().isoformat())
@@ -146,6 +170,7 @@ def main():
     if a.only:
         rows = [r for r in rows if a.only.lower() in r["name"].lower()]
     fails, checked, people = [], 0, 0
+    printed = published_names()
 
     for r in rows:
         d = json.load(open(os.path.join(src, "Actor", r["id"] + ".json"), encoding="utf-8"))
@@ -228,13 +253,45 @@ def main():
             extra = [x for x in got_powers if x not in want_powers]
             bad("powers differ — missing %s, extra %s" % (miss or "none", extra or "none"))
 
+        h = sysd.get("headers") or {}
+        bio = sysd.get("bio") or {}
         for label, raw in (("Appearance", sysd.get("appearance")),
-                           ("Concept", (sysd.get("headers") or {}).get("concept")),
-                           ("Touchstones", (sysd.get("headers") or {}).get("touchstones"))):
+                           ("Concept", h.get("concept")),
+                           ("Touchstones", h.get("touchstones")),
+                           ("Chronicle", h.get("chronicle")),
+                           ("Sire", h.get("sire")),
+                           ("Embraced", (bio.get("dateof") or {}).get("death")),
+                           ("Ambition", h.get("ambition")),
+                           ("Desire", h.get("desire")),
+                           ("Convictions", h.get("tenets")),
+                           ("History", bio.get("history"))):
             want = plain(raw)
             checked += 1
             if want and p.get(label, "") != want:
                 bad("%s differs from the export" % label)
+
+        # the two published names the converter rewrites, and the world's own annotation it
+        # splits off them (the corpus is canon — owner, 2026-09-24)
+        for label, itype in (("Clan", "clan"), ("Predator Type", "predatorType")):
+            raw = next((i["name"] for i in (d.get("items") or []) if i.get("type") == itype), "")
+            if not raw:
+                continue
+            world, note_want = raw.strip(), ""
+            mm = re.match(r"^([^(]+?)\s*\((.*)\)\s*$", world)
+            if mm:
+                world, note_want = mm.group(1).strip(), mm.group(2).strip()
+            got, note_got = p.get(label, ""), p.get(label + " Note", "")
+            checked += 2
+            if not got:
+                bad("%s missing; the world carries %r" % (label, raw))
+                continue
+            if norm(bare_name(got)) != norm(world):
+                bad("%s is %r, which is not the world's %r" % (label, got, world))
+            if note_got != note_want:
+                bad("%s Note is %r, the world's parenthetical is %r" % (label, note_got, note_want))
+            checked += 1
+            if norm(got) not in printed and norm(got) != norm(world):
+                bad("%s %r is in no book, and is not the world's own spelling either" % (label, got))
 
     for f in fails:
         print("  MISMATCH %s" % f)
