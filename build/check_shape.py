@@ -159,6 +159,9 @@ def main():
     for kind, word in (("loresheet", "Loresheet"), ("loresheet level", "Loresheet Level")):
         check("%s records = DEFs that EXTEND ^\"%s\"" % (kind, word), sum(1 for r in records if r["kind"] == kind),
               grep_count(ttrpg, r'^\s*EXTENDS #\S+ \^"%s"$' % word))
+    check("advantage records = DEFs that EXTEND ^\"Advantage\", ^\"Merit\", ^\"Flaw\" or ^\"Background\"", sum(1 for r in records if r["kind"] == "advantage"),
+          grep_count(ttrpg, r'^\s*EXTENDS #\S+ \^"(Advantage|Merit|Flaw|Background)"$'))
+    check("every advantage record carries its type", all(r.get("type") in ("Advantage", "Merit", "Flaw", "Background") for r in records if r["kind"] == "advantage"), True)
     levels = [r for r in records if r["kind"] == "loresheet level"]
     check("every loresheet level names its loresheet, and is one of its levels",
           all(r["loresheet"] in ents and r["id"] in next((x.get("levels", []) for x in records if x["id"] == r["loresheet"]), []) for r in levels), True)
