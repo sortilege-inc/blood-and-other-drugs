@@ -161,7 +161,11 @@ window.VttSiteTabs = (function () {
     if (!bid) return renderShelf(page, ctx);
     const meta = D.indexBook(bid);
     withBooks(page, bid, meta.label, () => {
-      page.appendChild(el('div', { class: 'crumbs' }, [el('a', { href: ctx.href('books', []) }, ['The books']), ' › ', meta.label]));
+      // the shelf this book stands on is named in the crumb: a third-party title must not sit
+      // under "The books" as though the publisher had printed it
+      const g = ((D.index().shelves || []).concat([{ id: CAMPAIGN, label: 'This campaign' }])).find((x) => x.id === shelfOf(meta));
+      page.appendChild(el('div', { class: 'crumbs' }, [el('a', { href: ctx.href('books', []) }, ['The books']),
+        g && g.id !== 'official' ? [' › ', g.label] : null, ' › ', meta.label]));
       const openId = path[1] && D.node(bid, path[1]) ? path[1] : null;
       const results = el('div', { class: 'results' });
       const q = el('input', { type: 'search', class: 'search', placeholder: 'Search ' + meta.label + '…' });
