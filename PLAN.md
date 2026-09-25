@@ -267,7 +267,7 @@ The first instance of *this* VTT is **Blood & Other Drugs**
   into `index.corrections`, so a house rule shows beside the rule it changes.
 - `engine/config.js` gains `instance: null` and the shape of the key, commented.
 
-**The four gates, each proven by making it fail** (`build/fixtures/layer/fixture-layer.ttrpg`,
+**The gates — four at I1, a fifth added 2026-09-25 — each proven by making it fail** (`build/fixtures/layer/fixture-layer.ttrpg`,
 built to a scratch folder; the planted variants are not kept):
 
 | Gate | Green | Planted fault | Result |
@@ -276,6 +276,7 @@ built to a scratch folder; the planted variants are not kept):
 | ids | `5, none of them the corpus's (9758)` | the fixture takes `#vtm5Table000000000001` | `IDS — the layer reuses 1 corpus ids`, exit 1 |
 | references | every id the layer points at resolves | `EXTENDS #vtm5NoSuchHash00001` | `REFERENCES — 1 ids … in neither`, exit 1 |
 | names | `1 references by name, every one names an entity` | `MODIFY ^"No Such Rule At All"` | `NAMES — 1 references name nothing`, exit 1 |
+| **pairs** (2026-09-25) | `1 references by id and name, every name the one its id carries` | `EXTENDS #vtm5Table000000000001 ^"Tabel"` | `STALE — 1 references name an id by a name it does not carry: #vtm5Table000000000001 'Tabel' is 'Table'`, exit 1. **Why it exists:** when the corpus took the dots out of 893 names (3d0cf93), the Blood & Other Drugs cast still passed with 19 references written `^"Furcus • to •••"` — the hash resolved, so nothing looked at the name beside it. The regenerated cast passes |
 
 Two faults of the first draft were caught by the gates themselves and fixed: coverage was read
 from the book file alone (a layer's corrections ride in `index.js`, so it must be read over

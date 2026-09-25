@@ -117,6 +117,25 @@ def pointed_at(node, out):
     return out
 
 
+def hashed_pairs(node, out, where="?"):
+    """Every place the layer names an id AND a name side by side — `#hash ^"Name"` in a
+    REFERENCES line, an EXTENDS, a REF property, a LIST OF item, a MODIFY target: (where,
+    hash, name). The pair is two claims about one entity, and both have to hold."""
+    if isinstance(node, dict):
+        here = node.get("id") if isinstance(node.get("id"), str) and node.get("name") else where
+        if isinstance(node.get("hash"), str) and node["hash"] and isinstance(node.get("name"), str) and node["name"]:
+            out.append((where, node["hash"], node["name"]))
+        if isinstance(node.get("typeHash"), str) and node["typeHash"] and isinstance(node.get("type"), str) and node["type"]:
+            out.append((here, node["typeHash"], node["type"]))
+        for k, v in node.items():
+            if k not in ("hash", "typeHash"):
+                hashed_pairs(v, out, here)
+    elif isinstance(node, list):
+        for x in node:
+            hashed_pairs(x, out, where)
+    return out
+
+
 def named_refs(entities, corrections, layer_id):
     """Every reference the layer makes by name alone: (where, name). Only the places a name
     can BE a reference are read — a DEF's EXTENDS, a LIST OF's element type, a REF property,
@@ -262,6 +281,21 @@ def main():
               % (len(dangling), ", ".join(dangling[:10])))
     else:
         print("  references: every id the layer points at resolves (layer or corpus)")
+
+    # a reference written with both an id and a name: the name must be the one the entity at
+    # that id carries NOW. Without this a corpus rename (the dots taken out of 893 names,
+    # 2026-09-25) leaves every stale name standing, because the hash alone still resolves.
+    name_at = {h: nm for h, (nm, _bk) in corpus_all.items()}
+    name_at.update({h: e["name"] for h, e in entities.items()})
+    pairs = hashed_pairs(book_blob.get("entities"), []) + hashed_pairs(index_blob.get("corrections"), [])
+    stale = sorted({(w, h, nm, name_at[h]) for w, h, nm in pairs if h in name_at and name_at[h] != nm})
+    if stale:
+        fail = 1
+        print("  STALE — %d references name an id by a name it does not carry:" % len(stale))
+        for w, h, nm, now in stale[:25]:
+            print("    %s %r is %r (in %s)" % (h, nm, now, w))
+    else:
+        print("  pairs: %d references by id and name, every name the one its id carries" % len(pairs))
 
     by_name = {}
     for h, (nm, bk) in corpus_all.items():
