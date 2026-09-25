@@ -67,8 +67,11 @@ window.VtmSheet = (function () {
     const s = { name: p.name, required: !!p.required, min: p.min, max: p.max };
     if (p.vk === 'ref') {
       const t = p.ref && decl(p.ref.name);
-      s.kind = t && t.enum ? 'enum' : 'text';
+      // a vocabulary (an ENUM type) is picked from its names; a reference to a printed entity
+      // (the Advantage Line's Advantage: a Loresheet Level) is an id, set by its own picker
+      s.kind = t && t.enum ? 'enum' : t ? 'entity' : 'text';
       s.options = t && t.enum ? t.enum.slice() : null;
+      s.refType = p.ref ? p.ref.name : null;
     } else if (p.vk === 'list' && p.of && p.of !== 'STRING') {
       s.kind = 'rows';
       s.of = p.of;
@@ -119,6 +122,87 @@ window.VtmSheet = (function () {
     return row ? { columns: table.columns, row } : null;
   }
 
+  // A Blood Surge's dice for this character: the chart's Blood Surge cell for their Blood Potency
+  // ("Add 2 dice"), read, never restated. null when the chart has no such row.
+  function surgeFor(m) {
+    const v = values(memberNow(m));
+    const pr = potencyRow(v['Blood Potency'] || 0);
+    if (!pr) return null;
+    const k = pr.columns.findIndex((c) => /blood surge/i.test(c));
+    const cell = k >= 0 ? String(pr.row[k] || '') : '';
+    const n = /Add\s+(\d+)\s+di(?:e|ce)/i.exec(cell);
+    return n ? { dice: +n[1], text: cell } : null;
+  }
+
+  // ── Discipline powers in play ──
+  // The chart's figures for this Blood Potency, by head: "Add 1 die" → 1, "Level 2 and below" → 2.
+  function potencyFigure(v, head) {
+    const pr = potencyRow(v['Blood Potency'] || 0);
+    if (!pr) return 0;
+    const k = pr.columns.findIndex((c) => c.toLowerCase() === head);
+    const m = /(\d+)/.exec(k >= 0 ? String(pr.row[k] || '') : '');
+    return m ? +m[1] : 0;
+  }
+  // A power's printed Cost as a count of Rouse Checks, where it states one plainly ("One Rouse
+  // Check", "Two Rouse Checks", "1 Rouse Check"); anything else ("One or more…", a paragraph) is
+  // shown as printed and rolled by hand.
+  const COUNT = { one: 1, two: 2, three: 3, 1: 1, 2: 2, 3: 3 };
+  function rouseCount(cost) {
+    const m = /^(one|two|three|[123]) rouse checks?\.?$/i.exec(String(cost || '').trim());
+    return m ? COUNT[m[1].toLowerCase()] : 0;
+  }
+  // A power's printed Dice Pools as the pools it can roll: the acting side (before "vs"), each
+  // alternative ("A + B, C + D", "… or …") that names only traits this sheet carries.
+  function poolsOf(text, v) {
+    const acting = String(text || '').split(/\s+vs\.?\s+/i)[0];
+    const disc = {};
+    (v.Disciplines || []).forEach((d) => { if (d.Discipline) disc[d.Discipline] = +d.Dots || 0; });
+    const known = (t) => attributes().indexOf(t) !== -1 || skills().indexOf(t) !== -1 || t in disc;
+    return acting.split(/,\s*(?:or\s+)?|\s+or\s+/i).map((alt) => alt.replace(/\s*\([^)]*\)\s*/g, ' ').trim())
+      .filter((alt) => /^[A-Z][\w ]*(\s\+\s[A-Z][\w ]*)+$/.test(alt))
+      .map((alt) => alt.split(/\s\+\s/).map((t) => t.trim()))
+      .filter((terms) => terms.every(known))
+      .map((terms) => ({ label: terms.join(' + '), terms, dice: terms.reduce((a, t) => a + (t in disc ? disc[t] : +v[t] || 0), 0) }));
+  }
+  function powersBlock(m, v, roller, o) {
+    const rows = (v.Disciplines || []).filter((d) => d.Discipline && (d.Powers || []).length);
+    if (!rows.length) return null;
+    // "Add one die to your dice pools when using or resisting discipline powers." and "Roll two
+    // dice and pick the highest when rolling a Rouse Check for discipline powers of level 2 and
+    // below." — Blood Potency; the figures are the chart's row
+    const bonus = potencyFigure(v, 'discipline power bonus');
+    const reroll = potencyFigure(v, 'discipline rouse check re-roll');
+    const open = (id) => (o.onRule || window.VtmOpenEntity)(id);
+    return el('div', { class: 'powers' }, [
+      el('div', { class: 'prop-k' }, ['Disciplines', el('span', { class: 'muted' }, [' · Blood Potency ' + (v['Blood Potency'] || 0) + ': +' + bonus + ' to power pools, Rouse re-roll ' + (reroll ? 'at level ' + reroll + ' and below' : 'none')])]),
+      ...rows.map((d) => el('div', { class: 'power-disc' }, [
+        el('div', { class: 'power-disc-h' }, [d.Discipline + ' ', el('span', { class: 'muted small' }, ['●'.repeat(+d.Dots || 0)])]),
+        ...(d.Powers || []).map((name) => {
+          const r = D.powers().find((x) => x.discipline === d.Discipline && x.name === name);
+          if (!r) return el('div', { class: 'power-card muted' }, [name + ' (not found in the books)']);
+          const f = r.fields || {};
+          const lvl = D.levelNumber(r);
+          const n = rouseCount(f.Cost);
+          const twoDice = !!(reroll && lvl != null && lvl <= reroll);
+          const pools = poolsOf(f['Dice Pools'], v);
+          return el('div', { class: 'power-card' }, [
+            el('div', { class: 'chiprow tight' }, [
+              el('button', { class: 'ref', type: 'button', title: 'Its printed text', onclick: () => open(r.id) }, [name]),
+              el('span', { class: 'muted small' }, [r.level || '']),
+            ]),
+            el('div', { class: 'small' }, [el('b', {}, ['Cost: ']), f.Cost || '—',
+              n ? button('Rouse' + (n > 1 ? ' ×' + n : '') + (twoDice ? ' (two dice, keep the highest)' : ''), () => { for (let i = 0; i < n; i++) roller.rouse({ twoDice, for: name }); }, 'ghost tiny') : null]),
+            f['Dice Pools'] ? el('div', { class: 'small' }, [el('b', {}, ['Dice Pools: ']), f['Dice Pools'],
+              ...pools.map((pl) => button('Roll ' + pl.label + ' ' + (pl.dice + bonus), () => {
+                roller.setPool(pl.dice + bonus, name + ': ' + pl.label + (bonus ? ' + ' + bonus + ' (Blood Potency)' : ''));
+                roller.scrollIntoView({ block: 'nearest' });
+              }, 'ghost tiny'))]) : null,
+          ]);
+        }),
+      ])),
+    ]);
+  }
+
   // ── a sentence for who this is ──
   const traits = (v) => [v.Clan, v.Predator ? v.Predator : null, v.Generation ? v.Generation + 'th Generation' : null].filter(Boolean);
   function sentence(v) {
@@ -148,13 +232,39 @@ window.VtmSheet = (function () {
     return D.powers().filter((r) => r.discipline === discipline && (D.levelNumber(r) == null || D.levelNumber(r) <= (dotsN || 0)));
   }
 
+  // ── Loresheet levels on the sheet: each an Advantage of its own (corpus BASE 0.5.3) ──
+  // Offered only from the loresheets the Storyteller has made available (campaign state
+  // `loresheets`; none by default, and none where there is no campaign — the public creator).
+  const available = () => new Set(((window.VttState && window.VttState.state) || {}).loresheets || []);
+  const loresheetLevels = () => { const on = available(); return D.records().filter((r) => r.kind === 'loresheet level' && on.has(r.loresheet)); };
+  // [Name] [Dots] [Loresheet] [Text] — the text from the level's own entity, its book loaded on demand
+  function levelLine(row, onremove) {
+    const r = D.records().find((x) => x.id === row.Advantage) || {};
+    const text = el('div', { class: 'lore-text small' }, [el('span', { class: 'muted' }, ['…'])]);
+    D.fetch(row.Advantage).then((e) => { text.innerHTML = ''; text.appendChild(e && e.desc ? window.VtmEntity.prose(e.desc) : el('span', { class: 'muted' }, ['(its text is not in the books loaded)'])); });
+    return el('div', { class: 'lore-level' }, [
+      el('div', { class: 'chiprow tight' }, [
+        el('b', {}, [row.Name || r.name || '']),
+        el('span', { class: 'lore-dots' }, ['●'.repeat(+row.Dots || r.rating || 0)]),
+        el('button', { class: 'ref small', type: 'button', onclick: () => (window.VtmOpenEntity || (() => {}))(r.loresheet) }, [r.under || 'Loresheet']),
+        onremove ? button('remove', onremove, 'ghost tiny') : null,
+      ]),
+      text,
+    ]);
+  }
+
   function rowsEditor(s, rows, onchange) {
     const box = el('div', { class: 'rows' });
     const draw = () => {
       box.innerHTML = '';
       rows.forEach((row, i) => {
+        if (s.of === 'Advantage Line' && row.Advantage) {
+          box.appendChild(levelLine(row, () => { rows.splice(i, 1); onchange(rows.slice()); draw(); }));
+          return;
+        }
         const line = el('div', { class: 'row-line' });
         s.fields.forEach((f) => {
+          if (f.kind === 'entity') return;           // set by its own picker, below
           const set = (val) => { rows[i] = Object.assign({}, rows[i], { [f.name]: val }); onchange(rows.slice()); if (f.kind === 'enum' || f.kind === 'dots') draw(); };
           if (f.kind === 'lines' && s.of === 'Discipline Rating') {
             const have = row[f.name] || [];
@@ -177,6 +287,20 @@ window.VtmSheet = (function () {
         box.appendChild(line);
       });
       box.appendChild(button('+ ' + s.of, () => { const r = {}; s.fields.forEach((f) => { r[f.name] = f.kind === 'lines' ? [] : f.kind === 'dots' ? (f.min || 0) : f.kind === 'flag' ? f.default : null; }); rows.push(r); onchange(rows.slice()); draw(); }, 'ghost tiny'));
+      if (s.of === 'Advantage Line') {
+        const taken = new Set(rows.map((r) => r.Advantage).filter(Boolean));
+        const levels = loresheetLevels().filter((r) => !taken.has(r.id));
+        if (levels.length) {
+          const pick = el('select', { class: 'scope lore-pick' }, [el('option', { value: '' }, ['+ a loresheet level…'])].concat(levels.map((r) => el('option', { value: r.id }, [r.under + ' · ' + '●'.repeat(r.rating || 0) + ' ' + r.name]))));
+          pick.addEventListener('change', () => {
+            const r = levels.find((x) => x.id === pick.value);
+            if (!r) return;
+            rows.push({ Name: r.name, Dots: r.rating, Flaw: false, Advantage: r.id });
+            onchange(rows.slice()); draw();
+          });
+          box.appendChild(pick);
+        } else box.appendChild(el('div', { class: 'muted small' }, [available().size ? 'Every level of the available loresheets is taken.' : 'No loresheets are available — the Storyteller makes them available.']));
+      }
     };
     draw();
     return box;
@@ -243,18 +367,22 @@ window.VtmSheet = (function () {
   }
 
   function readRows(s, rows) {
-    return el('ul', { class: 'items' }, (rows || []).map((r) => el('li', {}, [s.fields.map((f) => {
+    return el('ul', { class: 'items' }, (rows || []).map((r) => (s.of === 'Advantage Line' && r.Advantage ? el('li', {}, [levelLine(r, null)]) : el('li', {}, [s.fields.map((f) => {
+      if (f.kind === 'entity') return null;
       const x = r[f.name];
       if (x == null || x === '' || (Array.isArray(x) && !x.length)) return null;
       if (f.kind === 'dots') return ' ' + '●'.repeat(x) + '○'.repeat(Math.max(0, (f.max || 5) - x));
       if (f.kind === 'flag') return x ? ' (' + f.name + ')' : null;
       return (Array.isArray(x) ? ' — ' + x.join(', ') : ' ' + x);
-    }).filter(Boolean).join('').trim()])));
+    }).filter(Boolean).join('').trim()]))));
   }
 
   // ── a character file ──
-  function fileOf(values, live) {
-    return { kind: FILE_KIND, v: 2, system: 'vtm5e', templateId: templateId(), name: values.Name || 'Unnamed', values: complete(values), live: live || {} };
+  // extra: { versions, log } — a character's archived versions and its log travel in its file
+  function fileOf(values, live, extra) {
+    const x = extra || {};
+    return { kind: FILE_KIND, v: 2, system: 'vtm5e', templateId: templateId(), name: values.Name || 'Unnamed', values: complete(values), live: live || {},
+      versions: x.versions && x.versions.length ? x.versions : undefined, log: x.log && x.log.length ? x.log : undefined };
   }
   function download(obj, name) {
     const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
@@ -282,7 +410,11 @@ window.VtmSheet = (function () {
     const name = String(values.Name || obj.name || '').trim();
     if (!name) throw new Error((fileName || 'That file') + ' has no character name.');
     values.Name = name;
-    return { id: genId(), templateId: templateId(), name, source: { kind: 'file', name: fileName || null }, character: values, live: Object.assign({ hunger: +values.Hunger || 0 }, obj.live || {}), notes: '' };
+    const m = { id: genId(), templateId: templateId(), name, source: { kind: 'file', name: fileName || null }, character: values, live: Object.assign({ hunger: +values.Hunger || 0 }, obj.live || {}), notes: '' };
+    if (Array.isArray(obj.versions) && obj.versions.length) m.versions = obj.versions;
+    // what the file's log held (earlier sessions): kept with the member, shown before this table's
+    if (Array.isArray(obj.log) && obj.log.length) m.history = obj.log.map((e) => Object.assign({}, e, { memberId: undefined }));
+    return m;
   }
   function newMember(name, player) {
     const n = String(name || '').trim();
@@ -292,7 +424,17 @@ window.VtmSheet = (function () {
     if (player) values.player = String(player).trim();
     return { id: genId(), templateId: templateId(), name: n, source: { kind: 'table' }, character: values, live: { hunger: 0 }, notes: '' };
   }
-  const downloadMember = (m) => download(fileOf(m.character || {}, m.live), m.name);
+  // an archived version on screen withholds the file: the file is always the live character
+  const downloadMember = (m) => {
+    if (isViewingArchive(m)) return window.alert('“' + m.name + '” is showing an archived version. Return to Current to download the character file.');
+    download(fileOf(m.character || {}, m.live, { versions: m.versions || [], log: logOf(m) }), m.name);
+  };
+  // a character's log: what its file brought, then this table's entries for it
+  function logOf(m) {
+    const here = ((State().state || {}).log || []).filter((x) => (x.kind === 'roll' || x.kind === 'track') && x.memberId === m.id);
+    const seen = new Set(here.map((x) => x.at + '|' + x.kind));
+    return (m.history || []).filter((x) => !seen.has(x.at + '|' + x.kind)).concat(here);
+  }
 
   // a member's sheet now: its file's values, overlaid by any edit made in play (live.sheet)
   // (a member held before the ACTOR — v1, decision 12 — carries only {name, player})
@@ -305,8 +447,46 @@ window.VtmSheet = (function () {
   // under the member's name (the heading), so it says what they are, not who
   const memberSentence = (m) => (traits(values(m)).join(' · ') || 'Kindred') + ' · Hunger ' + hunger(m) + ((values(m).player) ? ' · played by ' + values(m).player : '');
 
-  function setHunger(m, n) { State().commit('setPartyLive', [m.id, { hunger: Math.max(0, Math.min(Dice.HUNGER_MAX, n)) }]); }
-  function setLive(m, patch) { State().commit('setPartyLive', [m.id, patch]); }
+  // Every change to a character's trackers is one event in the log, with its cause: the live
+  // patch and a { kind: 'track' } entry naming each track's before and after. A player may send
+  // both for their own character (setPartyLive, appendLog with their memberId).
+  const TRACK_LABEL = { hunger: 'Hunger', health: 'Health', willpower: 'Willpower', stains: 'Stains', Humanity: 'Humanity', xpEarned: 'Total Experience', xpSpent: 'Spent Experience' };
+  const NOT_TRACKS = ['sheet', 'xpLedger'];
+  const trackText = (k, v) => (k === 'health' || k === 'willpower' ? (v && (v.sup || v.agg) ? [v.sup ? v.sup + ' Superficial' : null, v.agg ? v.agg + ' Aggravated' : null].filter(Boolean).join(', ') : 'unmarked') : String(v == null ? 0 : v));
+  function change(m, patch, cause) {
+    const cur = (live0(m));
+    const now = (State().state.party || []).find((x) => x.id === m.id) || m;
+    // XP held only on the sheet (Total / Spent Experience) is its "before" until play changes it
+    const before = (k) => (cur[k] != null ? cur[k] : k === 'xpEarned' ? xp(now).earned : k === 'xpSpent' ? xp(now).spent : cur[k]);
+    const changes = Object.keys(patch).filter((k) => NOT_TRACKS.indexOf(k) === -1 && trackText(k, before(k)) !== trackText(k, patch[k]))
+      .map((k) => [TRACK_LABEL[k] || k, trackText(k, before(k)), trackText(k, patch[k])]);
+    State().commit('setPartyLive', [m.id, patch]);
+    if (changes.length) State().commit('appendLog', [{ at: Date.now(), kind: 'track', memberId: m.id, who: m.name || null, changes, cause: cause || null }]);
+  }
+  const live0 = (m) => ((State().state.party || []).find((x) => x.id === m.id) || m).live || {};
+  // a tracker event in the log: "Hunger 1 → 2 · Rouse Check failed (3)"
+  const trackLine = (x) => el('div', { class: 'roll-line track-line' }, [
+    el('span', { class: 'roll-who' }, [x.who || 'A character']),
+    el('span', { class: 'small' }, [(x.changes || []).map((c) => c[0] + ' ' + c[1] + ' → ' + c[2]).join(' · ')]),
+    x.cause ? el('span', { class: 'muted small' }, [x.cause]) : null,
+  ]);
+  function setHunger(m, n, cause) { change(m, { hunger: Math.max(0, Math.min(Dice.HUNGER_MAX, n)) }, cause); }
+  function setLive(m, patch, cause) { change(m, patch, cause || 'marked on the sheet'); }
+
+  // Damage to a tracker of `size` boxes, level by level (Tracking Damage, Impairment):
+  // "Mark each level of Superficial damage on the character sheet by making a “/” … Mark
+  //  Aggravated damage … by making an “X”"; once full, "For every level of damage of either kind
+  //  … that a character takes while Impaired, convert one previously sustained Superficial damage
+  //  to Aggravated damage on a one-for-one basis." Halving is the caller's (a spent point of
+  //  Willpower is already "a level of Superficial damage").
+  function damage(size, t, kind, levels) {
+    let sup = (t && t.sup) || 0, agg = (t && t.agg) || 0;
+    for (let i = 0; i < levels; i++) {
+      if (sup + agg < size) { if (kind === 'agg') agg++; else sup++; }
+      else if (sup > 0) { sup--; agg++; }
+    }
+    return { sup, agg };
+  }
 
   // ── trackers ──
   // A tracker's boxes: `size` boxes, Aggravated marked first from the left, then Superficial.
@@ -350,11 +530,107 @@ window.VtmSheet = (function () {
       r = rollers[key] = Dice.roller({
         pool: 4, hunger: hunger(m), who: m.name,
         onRule: o.onRule || window.VtmOpenEntity,
-        onHunger: (n) => setHunger({ id }, n),
-        onRoll: (entry) => State().commit('appendLog', [Object.assign(entry, { memberId: id })]),
+        onHunger: (n, cause) => setHunger({ id, name: m.name }, n, cause),
+        // a roll made while a conflict is on is that conflict's (the one-roll results read it)
+        onRoll: (entry) => State().commit('appendLog', [Object.assign(entry, { memberId: id }, (State().state.conflict ? { conflict: State().state.conflict.id } : {}))]),
+        onWillpower: (dice) => spendWillpower({ id, name: m.name }, 'Willpower re-roll of ' + dice + (dice === 1 ? ' die' : ' dice')),
+        surge: () => surgeFor({ id }),
       });
-    } else if (r.hunger() !== hunger(m)) r.setHunger(hunger(m));
+    } else {
+      if (r.hunger() !== hunger(m)) r.setHunger(hunger(m));
+      else r.refresh();
+    }
     return r;
+  }
+
+  // "A spent point of Willpower counts as having sustained a level of Superficial damage to
+  //  Willpower" — Willpower
+  function spendWillpower(m, cause) {
+    const cur = (State().state.party || []).find((x) => x.id === m.id) || m;
+    const v = values(cur);
+    const size = +v.Willpower || derived(v).Willpower;
+    change(cur, { willpower: damage(size, live0(cur).willpower || {}, 'sup', 1) }, cause);
+  }
+
+  // ── Experience ──
+  // The ACTOR's Total Experience is XP earned and its Spent Experience XP spent; play changes
+  // either (live.xpEarned, live.xpSpent), and a spend adds its cost to spent and a line to the
+  // ledger — cost, what it bought, a note, the date — logged. A printed ^"Experience Ledger"
+  // ("cost · what · note · when", an instance's layer) is the ledger until play adds to it.
+  function xp(m) {
+    const lv = m.live || {};
+    const v = values(m);
+    const earned = lv.xpEarned != null ? +lv.xpEarned : (+v['Total Experience'] || 0);
+    const spent = lv.xpSpent != null ? +lv.xpSpent : (+v['Spent Experience'] || 0);
+    const printed = (v['Experience Ledger'] || []).map((x) => { const q = String(x).split(' · '); return { cost: parseInt(q[0], 10) || 0, what: q[1] || '', note: q[2] || null, when: q[3] || null }; });
+    return { earned, spent, available: earned - spent, ledger: lv.xpLedger || printed };
+  }
+  const memberNow = (m) => (State().state.party || []).find((x) => x.id === m.id) || m;
+  function xpBlock(m, ro) {
+    const x = xp(m);
+    const adj = (key, d) => { const cur = xp(memberNow(m)); change(memberNow(m), { [key]: Math.max(0, (key === 'xpEarned' ? cur.earned : cur.spent) + d) }, key === 'xpEarned' ? 'experience awarded' : 'corrected by hand'); };
+    const cost = el('input', { class: 'text num small', type: 'number', min: 1, placeholder: 'cost' });
+    const what = el('input', { class: 'text small', type: 'text', placeholder: 'on what (Brawl 2 → 3, a Discipline power…)' });
+    const note = el('input', { class: 'text small', type: 'text', placeholder: 'note' });
+    const stat = (label, key, n) => el('span', { class: 'xp-stat' }, [el('span', { class: 'prop-k' }, [label]),
+      ro || !key ? null : button('−', () => adj(key, -1), 'ghost tiny'), el('b', { class: 'num' }, [String(n)]), ro || !key ? null : button('+', () => adj(key, 1), 'ghost tiny')]);
+    return el('div', { class: 'xp' }, [
+      el('div', { class: 'chiprow tight' }, [stat('Total Experience', 'xpEarned', x.earned), stat('Spent', 'xpSpent', x.spent), stat('Available', null, x.available)]),
+      x.ledger.length ? el('ul', { class: 'items xp-ledger' }, x.ledger.map((e) => el('li', {}, [el('b', { class: 'num' }, [String(e.cost)]), ' ', e.what, e.note ? el('em', { class: 'muted' }, [' ' + e.note]) : null, e.when ? el('span', { class: 'muted small' }, [' · ' + e.when]) : null]))) : null,
+      // Advancement: its own page, priced from the core's Trait Costs (system/vtm5e/advance.js)
+      ro || !window.VtmAdvance ? null : el('div', { class: 'chiprow tight' }, [button('Advancement…', () => window.VtmAdvance.open(memberNow(m)), 'tiny'), el('span', { class: 'muted small' }, ['buy dots at the core’s Trait Costs'])]),
+      ro ? null : el('div', { class: 'chiprow tight' }, [cost, what, note, button('Spend', () => {
+        const n = parseInt(cost.value || '0', 10);
+        if (!(n > 0) || !what.value.trim()) return;
+        const mm = memberNow(m);
+        const cur = xp(mm);
+        const line = { cost: n, what: what.value.trim(), note: note.value.trim() || null, when: new Date().toISOString().slice(0, 10) };
+        change(mm, { xpLedger: cur.ledger.concat([line]), xpSpent: cur.spent + n }, 'spent on ' + line.what + (line.note ? ' (' + line.note + ')' : ''));
+      }, 'ghost tiny')]),
+    ]);
+  }
+
+  // ── Versions ──
+  // An archived copy of the character and its trackers, read-only; the picker shows one in place
+  // of the live sheet (a view in this window — the member does not change). Archiving is an op
+  // (system/vtm5e/ops.js archivePartyVersion), so the room keeps it with the member.
+  const viewing = {};
+  const versionsOf = (m) => m.versions || [];
+  const isViewingArchive = (m) => !!viewing[m.id] && versionsOf(m).some((x) => x.id === viewing[m.id]);
+  function archive(m) {
+    const mm = memberNow(m);
+    const label = window.prompt('Name this version (it is kept read-only):', 'Version ' + (versionsOf(mm).length + 1));
+    if (!label) return;
+    const snap = JSON.parse(JSON.stringify({ character: mm.character || {}, live: mm.live || {} }));
+    State().commit('archivePartyVersion', [mm.id, { id: State().genId('v'), label, date: new Date().toISOString().slice(0, 10), character: snap.character, live: snap.live }]);
+    State().commit('appendLog', [{ at: Date.now(), kind: 'track', memberId: mm.id, who: mm.name, changes: [], cause: 'archived this version as “' + label + '”' }]);
+  }
+  const redrawAll = () => window.VttBus.emit('state:remote', { view: true }, { local: true });
+  function versionPicker(m, noArchive) {
+    const vs = versionsOf(m);
+    const sel = el('select', { class: 'scope tiny', title: 'The live sheet, or an archived version (read-only)' },
+      [el('option', { value: '' }, ['Current'])].concat(vs.map((x) => el('option', { value: x.id, selected: viewing[m.id] === x.id || null }, [x.label + (x.date ? ' · ' + x.date : '')]))));
+    sel.addEventListener('change', () => { viewing[m.id] = sel.value || null; redrawAll(); });
+    return el('div', { class: 'chiprow tight version-pick' }, [vs.length ? sel : null, noArchive ? null : button('Archive this version…', () => archive(m), 'ghost tiny')]);
+  }
+  function archived(m, o) {
+    const ver = versionsOf(m).find((x) => x.id === viewing[m.id]);
+    const am = { id: m.id, name: m.name, character: ver.character, live: ver.live || {} };
+    const v = values(am);
+    const lv = am.live;
+    const box = el('div', { class: 'sheet live archived' });
+    box.appendChild(el('div', { class: 'sheet-head' }, [el('h2', { class: 'chapter-h' }, [m.name]), el('div', { class: 'entity-sub' }, [memberSentence(am)])]));
+    box.appendChild(versionPicker(m));
+    box.appendChild(el('div', { class: 'archive-banner' }, ['Viewing “' + ver.label + '”' + (ver.date ? ' (' + ver.date + ')' : '') + ' — archived, read-only. Its file waits until you return to Current.']));
+    const h = +v.Humanity || 0;
+    box.appendChild(el('div', { class: 'trackers' }, [
+      el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Health']), tracker(+v.Health || derived(v).Health, lv.health || {}, null)]),
+      el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Willpower']), tracker(+v.Willpower || derived(v).Willpower, lv.willpower || {}, null)]),
+      el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Humanity']), humanityTrack(h, +lv.stains || 0, null)]),
+    ]));
+    box.appendChild(xpBlock(am, true));
+    box.appendChild(el('details', { class: 'sheet-details', open: o.player ? 'open' : null }, [el('summary', {}, ['The sheet']), render(v, { edit: null })]));
+    return box;
   }
 
   // Build a pool from the sheet: an Attribute plus a Skill or a Discipline.
@@ -394,16 +670,20 @@ window.VtmSheet = (function () {
   // opts: { player, onRule }
   function live(m, opts) {
     const o = opts || {};
+    if (isViewingArchive(m)) return archived(m, o);
     const v = values(m);
     const lv = m.live || {};
-    const box = el('div', { class: 'sheet live' });
-    box.appendChild(el('div', { class: 'sheet-head' }, [el('h2', { class: 'chapter-h' }, [m.name]), el('div', { class: 'entity-sub' }, [memberSentence(m)])]));
+    const box = el('div', { class: 'sheet live' + (o.player ? ' player' : '') });
+    // Each block belongs to a pane. On a phone the player's page shows one pane at a time behind a
+    // bar at the bottom (assets/css/vtm5e-gm.css, ≤ 640px); everywhere else every block shows.
+    const add = (node, pane) => { if (node) { if (node.setAttribute) node.setAttribute('data-pane', pane); box.appendChild(node); } return node; };
+    add(el('div', { class: 'sheet-head' }, [el('h2', { class: 'chapter-h' }, [m.name]), el('div', { class: 'entity-sub' }, [memberSentence(m)])]), 'play');
     const hSize = +v.Health || derived(v).Health;
     const wSize = +v.Willpower || derived(v).Willpower;
     const ruleLink = (id, label) => el('a', { class: 'rule-link small', href: '#', onclick: (ev) => { ev.preventDefault(); (o.onRule || window.VtmOpenEntity)(id); } }, [label]);
     const h = +v.Humanity || 0;
     const stains = +lv.stains || 0;
-    box.appendChild(el('div', { class: 'trackers' }, [
+    add(el('div', { class: 'trackers' }, [
       el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Health']), tracker(hSize, lv.health || {}, (t) => setLive(m, { health: t })), impaired(hSize, lv.health || {}) ? el('span', { class: 'verdict-bit blood' }, ['Impaired']) : null]),
       el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Willpower']), tracker(wSize, lv.willpower || {}, (t) => setLive(m, { willpower: t })), impaired(wSize, lv.willpower || {}) ? el('span', { class: 'verdict-bit blood' }, ['Impaired']) : null]),
       el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Humanity']), humanityTrack(h, stains, (n) => setLive(m, { stains: n })),
@@ -415,26 +695,130 @@ window.VtmSheet = (function () {
           State().commit('appendLog', [Object.assign(Dice.entry({ who: m.name, label: 'Remorse', pool: n, hunger: 0, difficulty: 1, dice }), { memberId: m.id })]);
           const values2 = Object.assign({}, v);
           if (res.successes < 1) values2.Humanity = Math.max(0, h - 1);
-          State().commit('setPartyLive', [m.id, { stains: 0 }]);
-          if (values2.Humanity !== v.Humanity) updateValues(m, values2);
+          const lost = values2.Humanity !== v.Humanity;
+          change(m, lost ? { stains: 0, sheet: values2 } : { stains: 0 }, 'Remorse test: ' + res.successes + (res.successes === 1 ? ' success' : ' successes') + (lost ? ' — Humanity ' + h + ' → ' + values2.Humanity : ''));
         }, 'ghost tiny') : null]),
-      el('div', { class: 'muted small' }, ['Click a box: empty → ', MARK.sup, ' Superficial → ', MARK.agg, ' Aggravated. ', ruleLink(RULES.tracking, 'Tracking Damage'), ' · ', ruleLink(RULES.impairment, 'Impairment'), ' · ', ruleLink(RULES.stains, 'Stains'), ' · ', ruleLink(RULES.remorse, 'Remorse')]),
-    ]));
+      // the how-to line is the Storyteller's; the player's copy shows no working (owner, I12)
+      o.player ? null : el('div', { class: 'muted small' }, ['Click a box: empty → ', MARK.sup, ' Superficial → ', MARK.agg, ' Aggravated. ', ruleLink(RULES.tracking, 'Tracking Damage'), ' · ', ruleLink(RULES.impairment, 'Impairment'), ' · ', ruleLink(RULES.stains, 'Stains'), ' · ', ruleLink(RULES.remorse, 'Remorse')]),
+    ]), 'play');
     const roller = rollerFor(m, o);
+    if (o.player) {
+      if (window.VtmConflict) add(window.VtmConflict.playerBlock(m, v, roller, o), 'conflict');
+      add(powersBlock(m, v, roller, o), 'play');
+      add(loresheetCards(v), 'play');
+      // the table's order (owner, I14): what it is for, the Difficulty, the dice — then the traits
+      add(roller, 'roll');
+      add(traitLists(m, v, roller), 'roll');
+      const mine = logOf(m).filter((x) => x.kind === 'roll').slice(-5).reverse();
+      if (mine.length) add(el('div', { class: 'roll-log' }, mine.map((x) => Dice.rollLine(x, o.onRule || window.VtmOpenEntity))), 'roll');
+      add(el('div', { class: 'xp-box' }, [el('div', { class: 'prop-k' }, ['Experience']), xpBlock(m, false)]), 'sheet');
+      if (versionsOf(m).length) add(versionPicker(m, true), 'sheet');
+      add(el('div', { class: 'player-sheet' }, [render(v, { edit: (nv) => updateValues(m, nv) })]), 'sheet');
+      add(el('div', { class: 'player-notes' }, [el('div', { class: 'prop-k' }, ['My notes']),
+        el('textarea', { class: 'text', rows: 5, placeholder: 'Only you and the Storyteller see these', oninput: debounce((ev) => State().commit('setPartyPlayerNotes', [m.id, ev.target.value]), 400) }, [m.playerNotes || ''])]), 'sheet');
+      panes(m, box, roller);
+      return box;
+    }
+    box.appendChild(versionPicker(m));
     box.appendChild(poolBuilder(m, roller));
     box.appendChild(roller);
-    box.appendChild(el('details', { class: 'sheet-details', open: o.player ? 'open' : null }, [
+    const pw = powersBlock(m, v, roller, o);
+    if (pw) box.appendChild(pw);
+    box.appendChild(el('details', { class: 'sheet-details xp-details' }, [el('summary', {}, ['Experience · ' + xp(m).available + ' available']), xpBlock(m, false)]));
+    const history = logOf(m);
+    if (history.length) box.appendChild(el('details', { class: 'sheet-details' }, [el('summary', {}, ['This character’s log (' + history.length + ')']),
+      el('div', { class: 'char-log' }, history.slice().reverse().map((x) => (x.kind === 'roll' ? Dice.rollLine(x, o.onRule || window.VtmOpenEntity) : trackLine(x))))]));
+    box.appendChild(el('details', { class: 'sheet-details' }, [
       el('summary', {}, ['The sheet']),
-      render(v, { edit: o.player || o.gmEdit !== false ? (nv) => updateValues(m, nv) : null }),
+      render(v, { edit: o.gmEdit !== false ? (nv) => updateValues(m, nv) : null }),
     ]));
-    if (!o.player) {
-      box.appendChild(el('div', { class: 'prop-k' }, ['Storyteller’s notes', el('span', { class: 'muted' }, [' · never sent to players'])]));
-      box.appendChild(el('textarea', { class: 'text', rows: 4, oninput: debounce((ev) => State().commit('setPartyNotes', [m.id, ev.target.value]), 400) }, [m.notes || '']));
-    }
-    box.appendChild(el('div', { class: 'prop-k' }, [o.player ? 'My notes' : 'The player’s notes']));
-    box.appendChild(el('textarea', { class: 'text', rows: 3, readonly: o.player ? null : 'readonly', oninput: o.player ? debounce((ev) => State().commit('setPartyPlayerNotes', [m.id, ev.target.value]), 400) : null }, [m.playerNotes || '']));
+    box.appendChild(el('div', { class: 'prop-k' }, ['Storyteller’s notes', el('span', { class: 'muted' }, [' · never sent to players'])]));
+    box.appendChild(el('textarea', { class: 'text', rows: 4, oninput: debounce((ev) => State().commit('setPartyNotes', [m.id, ev.target.value]), 400) }, [m.notes || '']));
+    box.appendChild(el('div', { class: 'prop-k' }, ['The player’s notes']));
+    box.appendChild(el('textarea', { class: 'text', rows: 3, readonly: 'readonly' }, [m.playerNotes || '']));
     box.appendChild(el('div', { class: 'chiprow' }, [button('Download character file', () => downloadMember(m), 'ghost tiny')]));
     return box;
+  }
+
+  // ── the player's page on a phone: the traits as lists, the panes and the bar ──
+  // The Roll tab's traits (owner, I17): each group under a short-ruled name, its traits with their
+  // dots on the right. Tapped, an Attribute is the pool's first half, a Skill or Discipline its
+  // second; tapped again, it is taken out. The pool follows (with Impairment, as poolBuilder).
+  const picks = {};   // member id → { a, b } the traits picked for the pool
+  function traitLists(m, v, roller) {
+    const pk = picks[m.id] = picks[m.id] || { a: null, b: null };
+    const live = (memberNow(m).live) || {};
+    const sheetH = +v.Health || derived(v).Health;
+    const sheetW = +v.Willpower || derived(v).Willpower;
+    const disc = {};
+    (v.Disciplines || []).forEach((d) => { if (d.Discipline) disc[d.Discipline] = +d.Dots || 0; });
+    const valueOf = (t) => (t in disc ? disc[t] : +v[t] || 0);
+    const apply = () => {
+      if (!pk.a && !pk.b) return;
+      const n = (pk.a ? valueOf(pk.a) : 0) + (pk.b ? valueOf(pk.b) : 0);
+      const g = pk.a ? groupOf(pk.a) || '' : '';
+      let pen = 0;
+      if (/Physical/.test(g) && impaired(sheetH, live.health || {})) pen = IMPAIRED_PENALTY;
+      if (/Social|Mental/.test(g) && impaired(sheetW, live.willpower || {})) pen = IMPAIRED_PENALTY;
+      roller.setPool(Math.max(0, n - pen), [pk.a, pk.b].filter(Boolean).join(' + ') + (pen ? ' (Impaired −' + pen + ')' : ''), true);
+    };
+    const row = (t, key) => el('button', { type: 'button', class: 'sk-row' + (pk[key] === t ? ' on' : ''),
+      onclick: () => { pk[key] = pk[key] === t ? null : t; apply(); window.VttBus.emit('state:remote', { view: true }, { local: true }); } },
+      [el('span', {}, [t]), el('span', { class: 'sk-dots' }, ['●'.repeat(valueOf(t)) + '○'.repeat(Math.max(0, 5 - valueOf(t)))])]);
+    const groups = (names) => {
+      const by = [];
+      names.forEach((t) => { const g = groupOf(t) || ''; let x = by.find((y) => y[0] === g); if (!x) by.push(x = [g, []]); x[1].push(t); });
+      return by;
+    };
+    const list = el('div', { class: 'skill-list' });
+    groups(attributes()).forEach(([g, ts]) => { list.appendChild(el('div', { class: 'sg-h' }, [g || 'Attributes'])); ts.forEach((t) => list.appendChild(row(t, 'a'))); });
+    groups(skills()).forEach(([g, ts]) => { list.appendChild(el('div', { class: 'sg-h' }, [g || 'Skills'])); ts.forEach((t) => list.appendChild(row(t, 'b'))); });
+    const ds = Object.keys(disc);
+    if (ds.length) { list.appendChild(el('div', { class: 'sg-h' }, ['Disciplines'])); ds.forEach((t) => list.appendChild(row(t, 'b'))); }
+    return list;
+  }
+  // the loresheet levels a character holds, as on the sheet: [Name] [Dots] [Loresheet] [Text]
+  function loresheetCards(v) {
+    const rows = (v['Advantages & Flaws'] || []).filter((r) => r.Advantage);
+    return rows.length ? el('div', { class: 'lore-cards' }, [el('div', { class: 'prop-k' }, ['Loresheets'])].concat(rows.map((r) => levelLine(r, null)))) : null;
+  }
+  const PANES = [['play', 'Play'], ['conflict', 'Conflict'], ['roll', 'Roll'], ['sheet', 'Sheet']];
+  const inConflict = {};   // member id → the conflict the last draw had (its tab opens once)
+  const paneOf = {};   // member id → the pane showing; kept across the page's redraws
+  const shown = {};    // member id → the pane switcher of the sheet on the page now
+  function panes(m, box, roller) {
+    const nav = el('nav', { class: 'pane-nav', 'aria-label': 'Sheet sections' });
+    // on the Roll tab the bar's Roll rolls (red); elsewhere it opens the tab
+    const show = (p, scroll) => {
+      paneOf[m.id] = p;
+      box.setAttribute('data-show', p);
+      nav.querySelectorAll('button').forEach((b) => {
+        b.classList.toggle('on', b.getAttribute('data-for') === p);
+        b.classList.toggle('go', b.getAttribute('data-for') === 'roll' && p === 'roll');
+      });
+      if (scroll) window.scrollTo(0, 0);
+    };
+    // the Storyteller starts a conflict: its tab appears and opens; it ends: the tab goes, back to Play
+    const c = (State().state || {}).conflict;
+    if (c && inConflict[m.id] !== c.id) paneOf[m.id] = 'conflict';
+    if (!c && paneOf[m.id] === 'conflict') paneOf[m.id] = 'play';
+    inConflict[m.id] = c ? c.id : null;
+    PANES.filter(([p]) => p !== 'conflict' || c).forEach(([p, label]) => nav.appendChild(el('button', { type: 'button', 'data-for': p, onclick: () => {
+      if (p === 'roll' && paneOf[m.id] === 'roll' && roller.roll) {
+        roller.roll();
+        setTimeout(() => { const d = roller.querySelector('.dice-row'); if (d && d.isConnected) d.scrollIntoView({ block: 'center' }); }, 60);
+      } else show(p, true);
+    } }, [label])));
+    box.appendChild(nav);
+    shown[m.id] = show;
+    show(paneOf[m.id] || 'play', false);
+    // a power's Roll sets up the pool: take the player to it. The roller outlives the page's
+    // redraws (rollerFor keeps one per member), so it is wrapped once
+    if (!roller.panesWrapped) {
+      const setPool = roller.setPool;
+      roller.setPool = (n, label, stay) => { setPool(n, label); if (!stay && paneOf[m.id] !== 'roll' && shown[m.id]) shown[m.id]('roll', true); };
+      roller.panesWrapped = true;
+    }
   }
 
   // An edit made in play rides in the member's live state (the engine's setPartyLive, which a
@@ -446,7 +830,8 @@ window.VtmSheet = (function () {
   return {
     ACTOR, BOOKS, FILE_KIND, OLD_TEMPLATE_ID, HEALTH_FROM, WILLPOWER_FROM, RULES,
     spec, field, blank, complete, attributes, skills, derived, potencyRow, groupOf, sentence, render,
-    fileOf, download, readMember, newMember, downloadMember, values, hunger, setHunger,
+    fileOf, download, readMember, newMember, downloadMember, values, hunger, setHunger, change, damage, spendWillpower, trackLine,
+    xp, logOf, isViewingArchive, versionsOf, surgeFor, potencyRow,
     memberSentence, live, powersFor, templateId,
   };
 })();

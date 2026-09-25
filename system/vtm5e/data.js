@@ -231,7 +231,27 @@ window.VtmData = (function () {
   // the stylesheet that uses it, not the page, so a relative path would miss.
   const artUrl = (src) => new URL(src, document.baseURI).href;
 
+  // ── clans: a heading in a Clans chapter (core, Players Guide) that prints a "Bane" under it ──
+  // Its in-clan Disciplines are the headings under its "Disciplines" heading (check_shape asserts
+  // three for every clan; the Players Guide once held the first as a field — decision 28).
+  function clans() {
+    const out = [];
+    all(['core', 'players-guide']).forEach((e) => {
+      if (!/clans|caitiff|thin-blooded/.test(e.file)) return;
+      if (children(e.id).some((k) => k.name === 'Bane') && !out.some((c) => c.name === e.name)) out.push({ name: e.name, entity: e, book: e.book });
+    });
+    return out;
+  }
+  function clanDisciplines(name) {
+    const c = clans().find((x) => x.name === name);
+    const d = c && children(c.entity.id).find((k) => k.name === 'Disciplines');
+    const names = d ? children(d.id).map((k) => k.name) : [];
+    const known = disciplines();
+    return known.filter((n) => names.indexOf(n) !== -1);   // in the BASE's order
+  }
+
   return {
+    clans, clanDisciplines,
     artUrl, T, index, books, indexBook, book, loaded, loadedBooks, entity, records, record, disciplines,
     ready, readyAll, bookOf, fetch, children, all, declaration, prop, val, text, chapterTitle, outline, node, trail,
     corrections, powers, characters, levelNumber, generic, recordLabel, headingsNamed, search, excerpt, searchRecords,

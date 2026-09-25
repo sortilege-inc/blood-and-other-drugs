@@ -13,11 +13,13 @@ window.VttRender = (function () {
         else e.setAttribute(k, v === true ? '' : v);
       }
     }
-    (children || []).forEach((c) => {
+    // children may nest in arrays to any depth (a run of arguments, each with its separator)
+    const add = (c) => {
       if (c == null || c === false) return;
-      if (Array.isArray(c)) c.forEach((cc) => cc != null && e.appendChild(typeof cc === 'string' ? document.createTextNode(cc) : cc));
+      if (Array.isArray(c)) c.forEach(add);
       else e.appendChild(typeof c === 'string' || typeof c === 'number' ? document.createTextNode(String(c)) : c);
-    });
+    };
+    (children || []).forEach(add);
     return e;
   }
 

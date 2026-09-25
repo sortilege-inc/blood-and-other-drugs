@@ -57,6 +57,8 @@ BUILD_KEYS = {
     "main": "the data file paths of a book",
     "nested": "ids of the entities a correction carries",
     "op": "a correction's keyword (MODIFY / OVERRIDE)",
+    "loresheet": "a Loresheet Level record's loresheet (the id of the DEF it is printed under)",
+    "levels": "a Loresheet record's level ids",
 }
 BLOB = re.compile(r"var d=(\{.*?\});var T=window\.VTM5E", re.S)
 INDEX_BLOB = re.compile(r"T\.index=(\{.*\});\}\)\(\);", re.S)

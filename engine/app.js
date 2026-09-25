@@ -84,6 +84,7 @@
     const c = State.state.campaign;
     brand.innerHTML = '';
     brand.appendChild(el('div', { class: 'brand-title' }, [CFG.title]));
+    document.title = CFG.title + ' — the GM’s table';
     brand.appendChild(el('div', { class: 'brand-sub' }, [c.name || 'no campaign']));
   }
 
@@ -161,4 +162,6 @@
 
   window.VttApp = { open, render, mode: () => mode };
   render();
+  // an instance's seed fills what its campaign has never had (engine/state.js seed); redraw if it did
+  State.seed().then((keys) => { if (keys.length) render(); }).catch((e) => window.console && console.warn('[vtt] seed: ' + e.message));
 })();

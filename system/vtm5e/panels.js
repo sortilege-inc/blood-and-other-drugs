@@ -251,8 +251,10 @@
       container.appendChild(el('div', { class: 'chiprow tight' }, [el('span', { class: 'prop-k' }, ['Rolling for']), pick]));
       container.appendChild(Dice.roller({
         pool: 5, hunger: m ? Sheet.hunger(m) : 0, who: m ? m.name : 'Storyteller',
-        onHunger: m ? (n) => Sheet.setHunger(m, n) : null,
+        onHunger: m ? (n, cause) => Sheet.setHunger(m, n, cause) : null,
         onRoll: (entry) => log(m ? Object.assign(entry, { memberId: m.id }) : entry),
+        onWillpower: m ? (dice) => Sheet.spendWillpower(m, 'Willpower re-roll of ' + dice + (dice === 1 ? ' die' : ' dice')) : null,
+        surge: m ? () => Sheet.surgeFor(m) : null,
         onRule: window.VtmOpenEntity,
       }));
     };
@@ -331,7 +333,7 @@
       container.innerHTML = '';
       const entries = (S().log || []).slice().reverse();
       if (!entries.length) return container.appendChild(el('div', { class: 'empty' }, ['Nothing logged yet.']));
-      entries.forEach((x) => container.appendChild(x.kind === 'roll' ? Dice.rollLine(x, window.VtmOpenEntity) : el('div', { class: 'roll-line' }, [
+      entries.forEach((x) => container.appendChild(x.kind === 'roll' ? Dice.rollLine(x, window.VtmOpenEntity) : x.kind === 'track' ? Sheet.trackLine(x) : el('div', { class: 'roll-line' }, [
         el('span', { class: 'roll-who' }, [x.kind || 'note']), x.text || JSON.stringify(x),
       ])));
     };

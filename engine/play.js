@@ -9,6 +9,11 @@
   const Sys = window.VttSystem;
   const CFG = window.VttConfig;
 
+  if (CFG && CFG.title) {
+    document.title = CFG.title + ' — play';
+    document.querySelectorAll('.brand-title').forEach((n) => (n.textContent = CFG.title));
+  }
+
   const main = document.getElementById('play-main');
   const statusEl = document.getElementById('play-status');
   const params = new URLSearchParams(location.search);
@@ -20,7 +25,7 @@
       return;
     }
     statusEl.appendChild(el('span', { class: 'chip' + (s.connected ? ' on' : '') }, [s.connected ? 'connected' : s.status]));
-    statusEl.appendChild(el('span', { class: 'muted' }, [' room ', el('b', {}, [s.info.code])]));
+    statusEl.appendChild(el('span', { class: 'muted' }, [el('span', { class: 'room-k' }, [' room ']), el('b', {}, [s.info.code])]));
     statusEl.appendChild(button('Leave', () => { Session.leave(); render(); }, 'ghost tiny'));
   }
 
@@ -110,17 +115,24 @@
     ]);
   }
 
+  const PHONE = window.matchMedia('(max-width: 640px)');
+  let menuOpen = null;   // the player's own choice, kept across redraws
   function sheetScreen(s) {
     const m = (State.state.party || []).find((x) => x.id === s.info.memberId);
     if (!m) return el('div', { class: 'play-card' }, [el('p', { class: 'muted' }, ['Your character isn’t in the party any more.'])]);
     const bar = el('div', { class: 'chiprow play-bar' }, [
       el('a', { class: 'btn ghost', href: CFG.pages.table + '?view=player', target: (CFG.channel || 'vtt') + '-player' }, ['Open the table']),
+      // relationship and scene maps (system/vtm5e/maps.js), where the system has them
+      CFG.pages.maps ? el('a', { class: 'btn ghost', href: CFG.pages.maps + '?view=player', target: (CFG.channel || 'vtt') + '-maps' }, ['Open the maps']) : null,
       button('Download my character', () => Sys.downloadCharacter(m), 'ghost'),   // as played, right now — the file the join screen takes back
       button('Release character', () => Session.unclaim(m.id), 'ghost'),
     ]);
     const clocks = (State.state.clocks || []).filter((c) => c.visible !== false);
     const strip = clocks.length ? el('div', { class: 'clock-strip' }, clocks.map((c) => el('div', { class: 'clock-row' }, [el('div', { class: 'track-head' }, [el('span', { class: 'track-name' }, [c.name]), el('span', { class: 'muted' }, [`${c.filled} / ${c.segments}`])]), el('div', { class: 'boxes clock' }, Array.from({ length: c.segments }, (_, i) => el('span', { class: 'box' + (i < c.filled ? ' on' : '') })))]))) : null;
-    return el('div', { class: 'play-card wide' }, [bar, strip, Sys.liveSheet(m, { player: true })]);
+    // on a phone the three fold into one line (assets/css/vtm5e-gm.css); wider, they stand open as before
+    const menu = el('details', { class: 'play-menu', open: (menuOpen != null ? menuOpen : !PHONE.matches) || null }, [el('summary', {}, ['Table · file · release']), bar]);
+    menu.addEventListener('toggle', () => { menuOpen = menu.open; });
+    return el('div', { class: 'play-card wide' }, [menu, strip, Sys.liveSheet(m, { player: true })]);
   }
 
   function render() {
@@ -146,8 +158,11 @@
   });
 
   render();
-  if (params.get('s') && !Session.current().active) {
-    Session.join(params.get('s'));
+  // a join link names its room: follow it, even from a room this browser is still in
+  const linked = params.get('s') && String(params.get('s')).toUpperCase();
+  if (linked && (!Session.current().active || Session.current().info.code !== linked)) {
+    if (Session.current().active) Session.leave();
+    Session.join(linked);
     render();
   }
 })();

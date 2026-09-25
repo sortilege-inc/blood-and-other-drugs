@@ -142,6 +142,14 @@ def main():
         got = [r["id"] for r in records if r["kind"] == kind]
         check("%s records = scanned DEFs of that shape (count)" % kind, len(got), len(want))
         check("%s records = scanned DEFs of that shape (same ids)" % kind, sorted(got) == sorted(want), True)
+    # ── records by declared type (BASE 0.5.3), against the corpus's own EXTENDS lines ──
+    for kind, word in (("loresheet", "Loresheet"), ("loresheet level", "Loresheet Level")):
+        check("%s records = DEFs that EXTEND ^\"%s\"" % (kind, word), sum(1 for r in records if r["kind"] == kind),
+              grep_count(corpus, r'^\s*EXTENDS #\S+ \^"%s"$' % word))
+    levels = [r for r in records if r["kind"] == "loresheet level"]
+    check("every loresheet level names its loresheet, and is one of its levels",
+          all(r["loresheet"] in ents and r["id"] in next((x.get("levels", []) for x in records if x["id"] == r["loresheet"]), []) for r in levels), True)
+    check("every loresheet level carries its dots (1-5)", all(isinstance(r.get("rating"), int) and 1 <= r["rating"] <= 5 for r in levels), True)
     by_id = {r["id"]: r for r in records}
     check("every record's name is its entity's", all(ents[r["id"]]["name"] == r["name"] for r in records), True)
 
@@ -166,6 +174,13 @@ def main():
           sorted(re.findall(r'"([^"]+)"', m.group(1))) if m else None)
     check("every core Discipline heading followed by Characteristics is a declared name",
           sorted({n for i, (h, n, ps, f) in enumerate(core[:-1]) if core[i + 1][1] == "Characteristics" and n != "Characteristics"} - set(index["disciplines"])), [])
+    # every clan (a clans chapter's heading that prints a Bane; core, Players Guide) names three
+    # in-clan Disciplines as headings under its "Disciplines" — as the creator and Advancement read
+    # them (VtmData.clanDisciplines). The Players Guide once held the first as a field (decision 28).
+    kids = lambda e: [ents[c] for c in e.get("children", []) if c in ents]
+    clans = [e for e in ents.values() if e["book"] in ("core", "players-guide") and re.search(r"clans", e.get("file", "")) and any(k["name"] == "Bane" for k in kids(e))]
+    short = sorted({e["name"] for e in clans if len([k for d in kids(e) if d["name"] == "Disciplines" for k in kids(d) if k["name"] in index["disciplines"]]) != 3})
+    check("every clan names three in-clan Disciplines as headings (%d clans)" % len({e["name"] for e in clans}), short, [])
     oblivion = sum(1 for r in records if r.get("discipline") == "Oblivion" and r["kind"] == "power")
     check("Oblivion powers found (Chicago by Night, Cults, Players Guide…) > 0", oblivion > 0, True)
 
@@ -179,10 +194,17 @@ def main():
     check("die-glyph tokens in the data = in the corpus", sorted(seen), sorted({x for x in raw if x}))
 
     # ── the rules the dice roller cites (system/vtm5e/dice.js RULES), by id and printed name ──
-    dice_js = open(os.path.join(HERE, "system", "vtm5e", "dice.js"), encoding="utf-8").read()
+    # the dice roller's rules, the conflict rules (V7) and Advancement's (V8)
+    dice_js = "".join(open(os.path.join(HERE, "system", "vtm5e", f), encoding="utf-8").read() for f in ("dice.js", "conflict.js", "advance.js"))
     cited = re.findall(r"\{ id: '(#[A-Za-z0-9]+)', name: '([^']+)' \}", dice_js)
     check("rules the dice cite (%d) are in the core under those names" % len(cited),
           [(h, n) for h, n in cited if not (h in ents and ents[h]["name"] == n and ents[h]["book"] == "core")], [])
+
+    # ── the rules the maps cite (system/vtm5e/maps.js RULES: the core's and Blood Sigils'), by id, name and book ──
+    maps_js = open(os.path.join(HERE, "system", "vtm5e", "maps.js"), encoding="utf-8").read()
+    mcited = re.findall(r"\{ id: '(#[A-Za-z0-9]+)', name: '([^']+)', book: '([a-z-]+)' \}", maps_js)
+    check("rules the maps cite (%d) are in their books under those names" % len(mcited),
+          [(h, n, b) for h, n, b in mcited if not (h in ents and ents[h]["name"] == n and ents[h]["book"] == b)], [])
 
     print("check_shape: %s (%d assertions)" % ("OK" if not FAILS else "FAILED: " + ", ".join(FAILS), COUNT[0]))
     return 1 if FAILS else 0
