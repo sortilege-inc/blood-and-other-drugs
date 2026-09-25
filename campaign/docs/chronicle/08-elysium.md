@@ -145,7 +145,7 @@ again. I would like to see about securing you as assets more formally. What are 
 
 "It is an Elysium. We will be meeting at the University. There is a ballroom; we will be hosting. It is neutral territory, so if—" a gesture to Rose "—Evelyn
 wishes to appear, or—" a gesture to all of them "—if some of your uncouth companions wish to join, they may, so long as all understand that it is a safe
-space, where none may harm another, under the protection of Prince Lucian. I would wish for you to be there. It is a good opportunity for you to engage in the
+space, where none may harm another, under the protection of Prince Lucien. I would wish for you to be there. It is a good opportunity for you to engage in the
 proper breadth of Kindred society."
 
 Under that, audibly: *you have learned not to pee in the house. I will let you in the house a little.*
@@ -581,7 +581,7 @@ Prince?"
 
 "Come with me."
 
-She hooked her arm through his and walked him over, and cut off whoever was talking to the Prince at that moment. "Excuse me. Lucian, darling, there's someone I want you to meet. This
+She hooked her arm through his and walked him over, and cut off whoever was talking to the Prince at that moment. "Excuse me. Lucien, darling, there's someone I want you to meet. This
 is Ralph, correct? Ralph Begg. Vincent's childe, I believe."
 
 Ralph didn't correct her.
@@ -624,7 +624,7 @@ I wanted to introduce you to Ethan here, and make sure you were aware that we ar
 
 "We're making progress," said Ethan. "Demonstrable results. Sooner rather than later is our goal."
 
-Lucian looked up at him. "It is my understanding that you have been given Barbara Hall Park as a domain."
+Lucien looked up at him. "It is my understanding that you have been given Barbara Hall Park as a domain."
 
 "Yes. And we're working to make sure it's strong."
 
