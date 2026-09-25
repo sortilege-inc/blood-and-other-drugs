@@ -36,10 +36,12 @@ window.VttConfig = {
   // layer — its cast — is built by build/build_layer.sh into campaign/data/:
   //   bash build/build_layer.sh campaign/dsl campaign "Blood & Other Drugs" campaign/data
   instance: {
-    styles: [],
+    styles: ['campaign/site/campaign.css'],
     stages: {
       data: ['campaign/data/index.js'],
-      site: [], gm: [], table: [], play: [], maps: [],
+      // the chronicle's own tabs, ahead of the books (PLAN.md M3): its prose, then the tabs
+      site: ['campaign/data/docs.js', 'campaign/site/site.js'],
+      gm: [], table: [], play: [], maps: [],
     },
   },
   // The family standards (PLAYBOOK §4b; upstream V11), carried by hand because this file is the

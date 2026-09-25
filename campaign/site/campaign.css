@@ -1,0 +1,42 @@
+/* campaign/site/campaign.css — Blood & Other Drugs' pages, in the VTT's own tokens
+   (assets/css/vtm5e.css): the black band, the paper, the blood. */
+
+.blood-hero { padding-bottom: 20px; }
+.blood-title { font-family: var(--font-display); font-size: clamp(38px, 7vw, 64px); line-height: 1.05; letter-spacing: .01em; }
+.blood-card { min-height: 96px; }
+.blood-home { margin: 0 auto 26px; }
+
+/* prose from campaign/docs */
+.blood-prose { font-size: 19.5px; line-height: 1.6; }
+.blood-prose h2 { font-family: var(--font-display); font-weight: 400; font-size: 27px; color: var(--blood); margin: 34px 0 10px; letter-spacing: .01em; }
+.blood-prose h3 { font-family: var(--font-display); font-weight: 400; font-size: 21px; margin: 24px 0 6px; }
+.blood-prose p { margin: 0 0 .85em; }
+.blood-prose hr { border: 0; text-align: center; margin: 26px 0; }
+.blood-prose hr::after { content: '†'; color: var(--blood); font-size: 18px; }
+.blood-prose blockquote { margin: 14px 0; padding: 4px 18px; border-left: 3px solid var(--blood); color: var(--ink-2); font-style: italic; }
+.blood-prose table { border-collapse: collapse; margin: 12px 0; }
+.blood-prose th, .blood-prose td { border-bottom: 1px solid var(--rule); padding: 5px 12px 5px 0; text-align: left; vertical-align: top; }
+.blood-prose th { font-family: var(--font-ui); font-size: 13px; letter-spacing: .06em; color: var(--blood); }
+.blood-prose img { max-width: 100%; height: auto; }
+.blood-prose a.doc-link { color: var(--blood); text-decoration: none; border-bottom: 1px dotted var(--blood); }
+
+/* the Chronicle */
+.blood-part { color: var(--blood); margin-bottom: 2px; }
+.blood-paging { display: flex; justify-content: space-between; gap: 18px; margin-top: 30px; padding-top: 12px; border-top: 1px solid var(--rule); font-family: var(--font-ui); font-size: 13px; letter-spacing: .04em; }
+.blood-paging a { color: var(--blood); text-decoration: none; }
+h4.blood-group { font-family: var(--font-ui); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--blood-2); margin: 24px 0 8px; }
+ol.blood-toc, ul.blood-toc { font-size: 20px; line-height: 1.7; }
+ol.blood-toc a, ul.blood-toc a { color: var(--bone); text-decoration: none; }
+ol.blood-toc a:hover, ul.blood-toc a:hover { color: var(--blood-2); }
+
+/* people */
+.blood-person { display: flex; gap: 12px; align-items: flex-start; text-decoration: none; }
+.blood-thumb { width: 56px; height: 56px; object-fit: cover; border-radius: 50%; border: 2px solid var(--blood); flex: none; }
+.blood-portrait { float: right; width: min(260px, 40%); margin: 0 0 14px 22px; border: 1px solid var(--rule); box-shadow: 0 4px 14px rgba(0,0,0,.25); }
+.blood-person-page::after { content: ''; display: block; clear: both; }
+
+@media (max-width: 720px) {
+  .blood-portrait { float: none; display: block; width: 100%; margin: 0 0 14px; }
+  .site-reader.solo { padding: 22px 18px 30px; }
+  .blood-prose { font-size: 18px; }
+}
