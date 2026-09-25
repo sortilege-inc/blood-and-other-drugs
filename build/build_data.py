@@ -101,6 +101,30 @@ BOOKS = [
     {"id": "children-of-the-blood", "label": "Children of the Blood", "kind": "book", "prefix": "children-of-the-blood"},
     {"id": "bleed", "label": "Bleed and How to Deal With It", "kind": "book", "prefix": "bleed"},
     {"id": "wod-storyteller", "label": "Storyteller System: Expanded Mechanics", "kind": "book", "prefix": "wod-storyteller"},
+    # ── Sets 5-8 of the bundle (corpus 23cb8e9, 2026-09-25) ──
+    {"id": "chicago-folios", "label": "The Chicago Folios", "kind": "book", "prefix": "chicago-folios"},
+    {"id": "forbidden-religions", "label": "Forbidden Religions", "kind": "book", "prefix": "forbidden-religions"},
+    {"id": "trails-of-ash-and-bone", "label": "Trails of Ash and Bone", "kind": "book", "prefix": "trails-of-ash-and-bone"},
+    {"id": "crimson-gutter", "label": "The Crimson Gutter", "kind": "book", "prefix": "crimson-gutter"},
+    {"id": "swansong", "label": "Swansong: Boston by Night", "kind": "book", "prefix": "swansong"},
+    {"id": "taste-of-the-moon", "label": "A Taste of the Moon", "kind": "book", "prefix": "taste-of-the-moon"},
+    {"id": "auld-sanguine", "label": "Auld Sanguine", "kind": "book", "prefix": "auld-sanguine"},
+    {"id": "love-bites", "label": "Love Bites", "kind": "book", "prefix": "love-bites"},
+    {"id": "midnight-kiss", "label": "Midnight Kiss", "kind": "book", "prefix": "midnight-kiss"},
+    {"id": "reins-of-power", "label": "Reins of Power", "kind": "book", "prefix": "reins-of-power"},
+    {"id": "under-a-changing-moon", "label": "Under a Changing Moon", "kind": "book", "prefix": "under-a-changing-moon"},
+    {"id": "primogens-gambit", "label": "The Primogen’s Gambit", "kind": "book", "prefix": "primogens-gambit"},
+    {"id": "under-the-skin", "label": "Under the Skin", "kind": "book", "prefix": "under-the-skin"},
+    {"id": "wine-dark-waters", "label": "Wine-Dark Waters", "kind": "book", "prefix": "wine-dark-waters"},
+    {"id": "companion", "label": "The Masquerade Companion", "kind": "book", "prefix": "companion"},
+    {"id": "book-of-nod-apocrypha", "label": "The Book of Nod: Apocrypha", "kind": "book", "prefix": "book-of-nod-apocrypha"},
+    {"id": "luciana", "label": "Month of Darkness: Luciana", "kind": "book", "prefix": "luciana"},
+    {"id": "new-blood-story-guide", "label": "New Blood: Story Guide", "kind": "book", "prefix": "new-blood-story-guide"},
+    {"id": "new-blood-reference-guide", "label": "New Blood: Reference Guide", "kind": "book", "prefix": "new-blood-reference-guide"},
+    {"id": "new-blood-components", "label": "New Blood: Components", "kind": "book", "prefix": "new-blood-components"},
+    {"id": "book-of-nod", "label": "The Book of Nod", "kind": "book", "prefix": "book-of-nod"},
+    {"id": "fall-of-london", "label": "The Fall of London", "kind": "book", "prefix": "fall-of-london"},
+    {"id": "found-notes", "label": "Found Notes", "kind": "book", "prefix": "found-notes"},
     {"id": "errata", "label": "Errata and Rules Update", "kind": "errata", "prefix": "errata"},
     # ── the third-party shelf ──
     {"id": "black-hand", "label": "The Black Hand: Playing the Sabbat", "kind": "book",
@@ -149,7 +173,9 @@ RECORD_FIELDS = {
 }
 
 PAGE_RE = re.compile(r"#\s*source:[^\n]*?\(pages?\s+(\d+)")
-LORE_PAGE_RE = re.compile(r"printed\s+(\d+)")
+# a lore file names its page as "printed N" (the core's prologue and handouts) or, under each
+# prop, "*<book>, page N.*" (Found Notes)
+LORE_PAGE_RE = re.compile(r"printed\s+(\d+)|,\s*page\s+(\d+)\.")
 
 
 # ───────────────────────── AST accessors ─────────────────────────
@@ -480,7 +506,7 @@ def claimed_files(roots):
 def first_page(path, lore):
     head = open(path, encoding="utf-8").read(4000)
     m = (LORE_PAGE_RE if lore else PAGE_RE).search(head)
-    return int(m.group(1)) if m else None
+    return int(next(g for g in m.groups() if g)) if m else None
 
 
 def lore_chapter(path, fn):
