@@ -32,7 +32,16 @@ window.VttConfig = {
   //       table: [], play: [],                 // the map table's and the player's page, before they boot
   //     },
   //   },
-  instance: null,
+  // What this instance adds to the upstream pages (engine/instance.js). The campaign's DSL
+  // layer — its cast — is built by build/build_layer.sh into campaign/data/:
+  //   bash build/build_layer.sh campaign/dsl campaign "Blood & Other Drugs" campaign/data
+  instance: {
+    styles: [],
+    stages: {
+      data: ['campaign/data/index.js'],
+      site: [], gm: [], table: [], play: [], maps: [],
+    },
+  },
   // The Worker that holds player sessions. Served from localhost the app talks to
   // `wrangler dev`; deployed, to the URL below. Empty = sessions disabled until the owner
   // deploys (PLAN.md D3).
