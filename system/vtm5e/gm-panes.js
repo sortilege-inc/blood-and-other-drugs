@@ -1,20 +1,31 @@
-// system/vtm5e/gm-panes.js — the Storyteller's three panes (the family's I9, from the L5R5e VTT):
-// Notes, Scenes (the arc), Threads · NPCs. Everything here is the Storyteller's own pack state
-// (system/vtm5e/ops.js: gmNotes, arc, threads) — saved with the pack, never sent to a player. V5
-// has no encounter arithmetic, so the L5R5e builder has no counterpart: the NPCs pane is the
-// current scene's cast with what their records print.
+// system/vtm5e/gm-panes.js — the Storyteller's own panes (the family standard, PLAYBOOK §4b.2, on
+// sortilege-vtt-l5r5e I19 by way of sortilege-vtt-tor2e): Scenes (the chronicle's arc — sessions, a
+// card per scene with its beats, the questions for the table, and "Play it" into the Chronicle),
+// Threads (with what happened to each in play, and the current scene's cast with what their records
+// print), People (with an About picker: whom a section is about, shown in the Inspector and the
+// Coterie), Loresheets, and the Notes document an instance may name. Overview (premise, rulings, free
+// notes, a search), Places and Settings are the engine's (engine/gm-panes.js), which registers only
+// what this file does not. Everything here is the Storyteller's own pack state (system/vtm5e/ops.js:
+// gm, gmNotes, arc, threads — local ops, never sent to a session's room); the text is the GM's small
+// Markdown with its SET / OPEN / SOURCE … tags (engine/gm-text.js). V5 has no encounter arithmetic,
+// so L5R5e's and TOR2e's encounter builder has no counterpart here.
 (function () {
   const { el, button, debounce } = window.VttRender;
   const D = window.VtmData;
   const E = window.VtmEntity;
   const State = window.VttState;
+  const G = window.VttGmText;
   const Panels = window.VttPanels;
   const Sys = () => window.VttSystem;
   const S = () => State.state;
   const CFG = window.VttConfig || {};
   const editing = (c) => document.activeElement && /TEXTAREA|INPUT|SELECT/.test(document.activeElement.tagName) && c.contains(document.activeElement);
   const newId = (p) => State.genId(p);
-  const refocus = (c, placeholder) => { const f = c.querySelector('input[placeholder="' + placeholder + '"]'); if (f) f.focus(); };
+  const redrawOn = (ctx, container, draw) => {
+    ctx.on('state:changed', () => { if (!editing(container)) draw(); });
+    ctx.on('state:remote', () => { if (!editing(container)) draw(); });
+    ctx.on('gm:reveal', draw);
+  };
 
   // ── Notes: an authored document (the instance names it: VttConfig.notes = { src, title, class, gate })
   // rendered, and the Storyteller's free notes below it. A gate (the document's spoiler warning)
@@ -49,26 +60,30 @@
     draw();
   }
 
-  // ── Scenes: the chronicle's arc — the Storyteller's plan, loose and editable ─────────────
-  // arc = [{ id, title, text, played, sceneId }]. The Chronicle's scenes are shared (a player sees
-  // the one in play), so what is only planned lives here, and "Play it" makes an entry a
-  // Chronicle scene — its text becomes that scene's Storyteller's notes when those are empty.
-  const arc = () => (S().arc || []).map((x) => Object.assign({}, x));
+  // ── Scenes: the chronicle's arc — the Storyteller's plan ───────────────
+  // arc = [{ id, title, session, summary, text, sections: [beat], played, sceneId }]. Sessions are
+  // its groups; a session whose scenes are all played folds to one line. The Chronicle's scenes are
+  // shared (a player sees the one in play), so what is only planned lives here, and "Play it" makes
+  // an entry a Chronicle scene — its text becomes that scene's Storyteller's notes when those are empty.
+  const arc = () => JSON.parse(JSON.stringify(S().arc || []));
   const setArc = (list) => State.commit('setArc', [list]);
   const MODULE = 'chronicle';
-  function playIt(i) {
+  const sessionOpen = {};
+  function playIt(id) {
     const l = arc();
+    const i = l.findIndex((y) => y.id === id);
     const x = l[i];
     let sc = x.sceneId && Sys().scene(x.sceneId);
     if (!sc) {
-      const id = newId('sc');
-      State.commit('putScene', [{ id, name: x.title || 'A scene', cast: [] }]);
-      l[i] = Object.assign({}, x, { sceneId: id });
+      const sid = newId('sc');
+      State.commit('putScene', [{ id: sid, name: x.title || 'A scene', cast: [] }]);
+      l[i] = Object.assign({}, x, { sceneId: sid });
       setArc(l);
-      sc = Sys().scene(id);
+      sc = Sys().scene(sid);
     }
     const prog = ((S().progress || {})[MODULE] || {})[sc.id] || {};
-    if (x.text && !prog.notes) State.commit('setSceneNotes', [MODULE, sc.id, x.text]);
+    const text = [x.summary, x.text].filter(Boolean).join('\n\n');
+    if (text && !prog.notes) State.commit('setSceneNotes', [MODULE, sc.id, text]);
     window.VtmPanels.goTo(sc.id);
   }
   function renderScenes(container, ctx) {
@@ -76,37 +91,76 @@
       container.innerHTML = '';
       const list = arc();
       const played = list.filter((x) => x.played).length;
-      container.appendChild(el('h4', {}, ['The arc', el('span', { class: 'muted small' }, [' · ' + list.length + ' scenes, ' + played + ' played · never sent to players'])]));
+      container.appendChild(el('h4', {}, ['The arc', el('span', { class: 'muted small' }, [' · ' + list.length + (list.length === 1 ? ' scene, ' : ' scenes, ') + played + ' played'])]));
       if (!list.length) container.appendChild(el('div', { class: 'empty' }, ['Nothing planned yet. What is only planned stays here; “Play it” puts a scene in the Chronicle.']));
+      const groups = [];
       list.forEach((x, i) => {
-        const upd = (patch) => { const l = arc(); l[i] = Object.assign({}, l[i], patch); setArc(l); };
-        const move = (d) => { const l = arc(); const j = i + d; if (j < 0 || j >= l.length) return; const t = l[i]; l[i] = l[j]; l[j] = t; setArc(l); };
-        const inChronicle = x.sceneId && Sys().scene(x.sceneId);
-        container.appendChild(el('div', { class: 'arc-scene' + (x.played ? ' played' : '') }, [
-          el('div', { class: 'chiprow tight' }, [
-            el('input', { type: 'checkbox', checked: x.played || null, title: 'Played', onchange: (ev) => upd({ played: ev.target.checked }) }),
-            el('input', { class: 'text arc-title', type: 'text', value: x.title || '', placeholder: 'A scene', oninput: debounce((ev) => upd({ title: ev.target.value }), 400) }),
-            button(inChronicle ? 'Go to it' : 'Play it', () => playIt(i), 'tiny'),
-            button('↑', () => move(-1), 'ghost tiny'), button('↓', () => move(1), 'ghost tiny'),
-            button('×', () => { if (confirm('Remove “' + (x.title || 'this scene') + '” from the arc?')) setArc(arc().filter((_, j) => j !== i)); }, 'ghost tiny'),
-          ]),
-          el('textarea', { class: 'text arc-text', rows: 3, placeholder: 'What it is for, who is in it, what the Beast might do…', oninput: debounce((ev) => upd({ text: ev.target.value }), 400) }, [x.text || '']),
-        ]));
+        const g = groups[groups.length - 1];
+        if (g && g.name === (x.session || null)) g.items.push([x, i]);
+        else groups.push({ name: x.session || null, items: [[x, i]] });
       });
-      const title = el('input', { class: 'text', type: 'text', placeholder: 'Plan a scene…' });
-      // added by Enter the field keeps focus, and a pane never redraws under the Storyteller's typing:
-      // draw here, and put the cursor back for the next one
-      const add = () => { if (!title.value.trim()) return; setArc(arc().concat([{ id: newId('arc'), title: title.value.trim(), text: '', played: false }])); draw(); refocus(container, 'Plan a scene…'); };
-      title.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') { ev.preventDefault(); add(); } });
-      container.appendChild(el('div', { class: 'chiprow tight' }, [title, button('Add', add, 'tiny')]));
+      const opts = {
+        redraw: draw, save: setArc, subLabel: 'Beat',
+        cls: (x) => 'arc-card' + (x.played ? ' played' : ''),
+        badges: (x) => (x.played ? el('span', { class: 'chip' }, ['Played']) : null),
+        before: (x) => (x.summary ? el('p', { class: 'arc-summary' }, [x.summary]) : el('span')),
+        actions: (x) => el('span', {}, [
+          button(x.sceneId && Sys().scene(x.sceneId) ? 'Go to it' : 'Play it', () => playIt(x.id), 'tiny'),
+          button(x.played ? 'Not played' : 'Mark played', () => { const l = arc(); const at = l.findIndex((y) => y.id === x.id); l[at].played = !x.played; setArc(l); }, 'ghost tiny'),
+        ]),
+        fields: (d) => el('div', { class: 'chiprow tight' }, [
+          el('input', { class: 'text', type: 'text', value: d.session || '', placeholder: 'Session (groups the scenes)', oninput: (ev) => (d.session = ev.target.value.trim() || undefined) }),
+          el('input', { class: 'text wide', type: 'text', value: d.summary || '', placeholder: 'One line: what the scene is', oninput: (ev) => (d.summary = ev.target.value.trim() || undefined) }),
+        ]),
+      };
+      const next = list.find((x) => !x.played);
+      groups.forEach((g) => {
+        const key = g.name || '';
+        const allPlayed = g.items.every(([x]) => x.played);
+        const isOpen = sessionOpen[key] != null ? sessionOpen[key] : !allPlayed;
+        container.appendChild(el('button', { class: 'arc-session' + (allPlayed ? ' played' : ''), type: 'button', 'aria-expanded': isOpen ? 'true' : 'false', onclick: () => { sessionOpen[key] = !isOpen; draw(); } }, [
+          el('span', { class: 'gm-caret', 'aria-hidden': 'true' }, [isOpen ? '▾' : '▸']), ' ', g.name || 'Scenes',
+          el('span', { class: 'muted small' }, [' · ' + g.items.length + (g.items.length === 1 ? ' scene' : ' scenes') + (allPlayed ? ', played' : '')]),
+        ]));
+        if (!isOpen) return;
+        g.items.forEach(([x, i]) => {
+          if (G.open[x.id] == null) G.open[x.id] = !!next && next.id === x.id;
+          container.appendChild(G.editingId[x.id] ? G.sectionEditor(x, i, list, opts) : G.sectionView(x, opts));
+        });
+      });
+      // a new scene joins the last session unless named otherwise
+      const last = list.length ? list[list.length - 1].session : undefined;
+      const t = el('input', { class: 'text', type: 'text', placeholder: 'Plan a scene…' });
+      const add = () => {
+        if (!t.value.trim()) return;
+        const x = { id: newId('arc'), title: t.value.trim(), session: last, text: '', played: false };
+        G.editingId[x.id] = true; G.open[x.id] = true;
+        setArc(arc().concat([x]));
+        draw();
+      };
+      t.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') { ev.preventDefault(); add(); } });
+      container.appendChild(el('div', { class: 'chiprow tight gm-add' }, [t, button('Add', add, 'tiny')]));
+      // the questions to put to the players, asked or not
+      const qs = Object.assign({ note: '', items: [] }, (S().gm || {}).questions || {});
+      const setQs = (patch) => State.commit('setGm', ['questions', Object.assign({}, qs, patch)]);
+      container.appendChild(el('h4', { 'data-gm-id': 'questions' }, ['Questions for the table', el('span', { class: 'muted small' }, [' · ' + qs.items.filter((x) => !x.asked).length + ' not yet asked'])]));
+      container.appendChild(G.note(() => qs.note, (v) => setQs({ note: v }), 'Add a note on the questions', draw));
+      container.appendChild(el('ul', { class: 'gm-questions' }, qs.items.map((x, i) => el('li', { class: x.asked ? 'asked' : '', 'data-gm-id': x.id }, [
+        el('input', { type: 'checkbox', checked: x.asked || null, title: 'Asked', onchange: (ev) => { const l = qs.items.slice(); l[i] = Object.assign({}, x, { asked: ev.target.checked }); setQs({ items: l }); } }),
+        el('span', { class: 'gm-q', html: G.inline(x.text || '') }),
+        button('×', () => setQs({ items: qs.items.filter((_, j) => j !== i) }), 'ghost tiny'),
+      ]))));
+      const nq = el('input', { class: 'text', type: 'text', placeholder: 'Add a question…' });
+      container.appendChild(el('div', { class: 'chiprow tight gm-add' }, [nq, button('Add', () => { if (nq.value.trim()) setQs({ items: qs.items.concat([{ id: newId('q'), text: nq.value.trim(), asked: false }]) }); }, 'tiny')]));
+      G.reveal(container);
     };
-    ctx.on('state:changed', () => { if (!editing(container)) draw(); });
-    ctx.on('state:remote', () => { if (!editing(container)) draw(); });
+    redrawOn(ctx, container, draw);
     draw();
   }
 
-  // ── Threads · NPCs ─────────────────────────────────────────────────────
-  const threads = () => (S().threads || []).map((x) => Object.assign({}, x));
+  // ── Threads · NPCs: what is in play, and who is in the current scene ─────
+  // threads = [{ id, title, text, sections, open, notes }] — notes are what happened to it in play
+  const threads = () => JSON.parse(JSON.stringify(S().threads || []));
   const setThreads = (l) => State.commit('setThreads', [l]);
   // what a Storyteller character's record prints, in the book's own field names
   const NPC_FIELDS = ['Clan', 'Generation', 'Blood Potency', 'Humanity', 'Standard Dice Pools'];
@@ -115,22 +169,19 @@
     const draw = () => {
       container.innerHTML = '';
       const ts = threads();
-      container.appendChild(el('h4', {}, ['Threads', el('span', { class: 'muted small' }, [' · ' + ts.filter((x) => x.open !== false).length + ' open · never sent to players'])]));
-      ts.forEach((x, i) => {
-        const upd = (patch) => { const l = threads(); l[i] = Object.assign({}, l[i], patch); setThreads(l); };
-        container.appendChild(el('div', { class: 'thread' + (x.open === false ? ' closed' : '') }, [
-          el('div', { class: 'chiprow tight' }, [
-            el('input', { class: 'text', type: 'text', value: x.title || '', oninput: debounce((ev) => upd({ title: ev.target.value }), 400) }),
-            button(x.open === false ? 'reopen' : 'close', () => upd({ open: x.open === false }), 'ghost tiny'),
-            button('×', () => { if (confirm('Remove this thread?')) setThreads(threads().filter((_, j) => j !== i)); }, 'ghost tiny'),
-          ]),
-          x.open === false ? null : el('textarea', { class: 'text', rows: 2, placeholder: 'Where it stands…', oninput: debounce((ev) => upd({ text: ev.target.value }), 400) }, [x.text || '']),
-        ]));
+      container.appendChild(el('h4', { 'data-gm-id': 'threads-note' }, ['Threads', el('span', { class: 'muted small' }, [' · ' + ts.filter((x) => x.open !== false).length + ' open, ' + ts.filter((x) => x.open === false).length + ' closed'])]));
+      container.appendChild(G.note(() => (S().gm || {}).threadsNote, (v) => State.commit('setGm', ['threadsNote', v]), 'Add a note on the threads', draw));
+      const upd = (x, patch) => { const l = threads(); const at = l.findIndex((y) => y.id === x.id); l[at] = Object.assign({}, l[at], patch); setThreads(l); };
+      G.sections(container, ts, {
+        redraw: draw, save: setThreads, addLabel: 'Open a thread…', fresh: () => ({ open: true }),
+        cls: (x) => 'thread' + (x.open === false ? ' closed' : ''),
+        badges: (x) => (x.open === false ? el('span', { class: 'chip' }, ['Closed']) : null),
+        after: (x) => el('div', { class: 'thread-notes' }, [
+          el('div', { class: 'prop-k' }, ['In play']),
+          el('textarea', { class: 'text', rows: 2, placeholder: 'What has happened to it at the table…', oninput: debounce((ev) => upd(x, { notes: ev.target.value }), 400) }, [x.notes || '']),
+        ]),
+        actions: (x) => button(x.open === false ? 'Reopen' : 'Close', () => upd(x, { open: x.open === false }), 'ghost tiny'),
       });
-      const tt = el('input', { class: 'text', type: 'text', placeholder: 'Open a thread…' });
-      const add = () => { if (!tt.value.trim()) return; setThreads(threads().concat([{ id: newId('th'), title: tt.value.trim(), text: '', open: true }])); draw(); refocus(container, 'Open a thread…'); };
-      tt.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') { ev.preventDefault(); add(); } });
-      container.appendChild(el('div', { class: 'chiprow tight' }, [tt, button('Add', add, 'tiny')]));
 
       // NPCs: the scene's cast, each with what its record prints
       const sc = Sys().scene(Sys().currentSceneId());
@@ -140,10 +191,58 @@
         el('button', { class: 'ref', type: 'button', onclick: () => Panels.select({ kind: 'entity', id: r.id }) }, [D.recordLabel(r)]),
         el('span', { class: 'muted small' }, [' ' + npcLine(r)]),
       ]))) : el('div', { class: 'muted small' }, [sc ? 'No one yet — the Cast puts Storyteller characters in a scene.' : 'No scene in play — the Chronicle, or an arc entry’s “Play it”.']));
+      G.reveal(container);
     };
-    ctx.on('state:changed', () => { if (!editing(container)) draw(); });
-    ctx.on('state:remote', () => { if (!editing(container)) draw(); });
+    redrawOn(ctx, container, draw);
     ctx.on('scene:changed', draw);
+    draw();
+  }
+
+  // ── People: the chronicle's people, and the Storyteller's notes on the characters ──
+  // The engine's People pane (engine/gm-panes.js) has no way to say whom a section is about; here each
+  // section's editor names them — a Storyteller character from the books or the chronicle's own layer,
+  // or a member of the Coterie — and the section then shows in the Inspector and on the Coterie card.
+  function aboutField(d, kind) {
+    d.about = (d.about || []).slice();
+    const box = el('div', { class: 'chiprow tight gm-about-edit' });
+    const draw = () => {
+      box.innerHTML = '';
+      box.appendChild(el('span', { class: 'prop-k' }, ['About']));
+      d.about.forEach((k, i) => {
+        const r = kind === 'pc' ? null : D.record(k);
+        box.appendChild(el('span', { class: 'chip' }, [r ? r.name : k, el('button', { class: 'ref tiny', type: 'button', title: 'remove', onclick: () => { d.about.splice(i, 1); draw(); } }, ['×'])]));
+      });
+      if (kind === 'pc') {
+        const sel = el('select', { class: 'scope tiny', 'aria-label': 'About a member of the Coterie' }, [el('option', { value: '' }, ['+ a member of the Coterie…'])].concat((S().party || []).filter((m) => d.about.indexOf(m.name) === -1).map((m) => el('option', { value: m.name }, [m.name]))));
+        sel.addEventListener('change', () => { if (sel.value) { d.about.push(sel.value); draw(); } });
+        box.appendChild(sel);
+      } else {
+        const q = el('input', { type: 'search', class: 'text', placeholder: '+ a Storyteller character', 'aria-label': 'About someone' });
+        const hits = el('span', { class: 'gm-about-hits' });
+        q.addEventListener('input', debounce(() => {
+          hits.innerHTML = '';
+          const t = q.value.trim().toLowerCase();
+          if (t.length < 2) return;
+          D.records().filter((r) => r.kind === 'character' && r.name.toLowerCase().indexOf(t) !== -1 && d.about.indexOf(r.id) === -1).slice(0, 8)
+            .forEach((r) => hits.appendChild(button('+ ' + r.name + ' · ' + ((D.indexBook(r.book) || {}).label || r.book), () => { d.about.push(r.id); draw(); }, 'ghost tiny')));
+        }, 150));
+        box.appendChild(q);
+        box.appendChild(hits);
+      }
+    };
+    draw();
+    return box;
+  }
+  function renderPeople(container, ctx) {
+    const draw = () => {
+      container.innerHTML = '';
+      container.appendChild(el('h4', { 'data-gm-id': 'people' }, ['The chronicle’s people']));
+      G.sections(container, G.list('people'), { redraw: draw, save: (l) => G.setList('people', l), addLabel: 'Add someone…', fields: (d) => aboutField(d, 'people') });
+      container.appendChild(el('h4', { 'data-gm-id': 'pc' }, ['Behind the Coterie', el('span', { class: 'muted small' }, [' · never sent to players'])]));
+      G.sections(container, G.list('pc'), { redraw: draw, save: (l) => G.setList('pc', l), addLabel: 'Add a note on a character…', fields: (d) => aboutField(d, 'pc') });
+      G.reveal(container);
+    };
+    redrawOn(ctx, container, draw);
     draw();
   }
 
@@ -183,6 +282,7 @@
     draw();
   }
 
+  Panels.register('people', { label: 'People', render: renderPeople });
   Panels.register('loresheets', { label: 'Loresheets', render: renderLoresheets });
   Panels.register('notes', { label: 'Notes', render: renderNotes });
   Panels.register('scenes', { label: 'Scenes', render: renderScenes });
