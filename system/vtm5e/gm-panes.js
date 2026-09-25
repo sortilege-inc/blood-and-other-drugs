@@ -257,6 +257,17 @@
       const all = D.records().filter((r) => r.kind === 'loresheet');
       // a checkbox keeps focus, and a pane never redraws under focus: draw here
       const set = (id, yes) => { const l = (S().loresheets || []).filter((x) => x !== id); if (yes) l.push(id); State.commit('setLoresheets', [l]); draw(); };
+      // how the characters may be made: The Black Hand's own walk, for a Sabbat chronicle
+      const bh = D.books().find((b) => b.id === 'black-hand');
+      if (bh) {
+        const yes = !!(S().creation || {}).blackHand;
+        container.appendChild(el('h4', {}, ['Making characters']));
+        container.appendChild(el('label', { class: 'lore-row' + (yes ? ' on' : '') }, [
+          el('input', { type: 'checkbox', checked: yes || null, onchange: (ev) => { State.commit('setCreation', [{ blackHand: ev.target.checked }]); draw(); } }),
+          ' Players may make a Sabbat character with ' + bh.label + '’s Quick Character Creation',
+          el('span', { class: 'muted small' }, [' · on their page, beside loading a character file']),
+        ]));
+      }
       container.appendChild(el('h4', {}, ['Loresheets', el('span', { class: 'muted small' }, [' · ' + on.size + ' of ' + all.length + ' available to the characters'])]));
       const search = el('input', { type: 'search', class: 'search', placeholder: 'Find a loresheet…', value: q });
       search.addEventListener('input', debounce(() => { q = search.value.trim().toLowerCase(); draw(); search.focus(); }, 200));

@@ -233,7 +233,7 @@ window.VttSiteTabs = (function () {
       page.appendChild(el('h4', {}, ['Bloodlines']));
       page.appendChild(grid(BLOODLINES.filter((n) => Art().clans[n])));
       page.appendChild(el('h4', {}, ['Sects and hunters']));
-      page.appendChild(el('div', { class: 'marks' }, Object.keys(Art().sects).map((n) => el('a', { class: 'mark-card', href: ctx.href('search', [n]) }, [mark(Art().sects[n], 'clan-mark'), el('div', { class: 'mark-name' }, [n])]))));
+      page.appendChild(el('div', { class: 'marks' }, Object.keys(Art().sects).map((n) => el(ctx.isOpen('search') ? 'a' : 'div', { class: 'mark-card', href: ctx.isOpen('search') ? ctx.href('search', [n]) : null }, [mark(Art().sects[n], 'clan-mark'), el('div', { class: 'mark-name' }, [n])]))));
       return;
     }
     const all = path[1] === 'all';
@@ -447,10 +447,10 @@ window.VttSiteTabs = (function () {
 
   return [
     { id: 'books', label: 'The books', render: renderBooks, books: true },
-    { id: 'clans', label: 'Clans', render: renderClans, books: true },
-    { id: 'disciplines', label: 'Disciplines', render: renderDisciplines, books: true },
-    { id: 'create', label: 'Making a character', render: (c, path, ctx) => window.VtmCreator.render(c, path, ctx), books: true },
-    { id: 'characters', label: 'Storyteller characters', render: renderCharacters, books: true },
+    { id: 'clans', label: 'Clans', render: renderClans },
+    { id: 'disciplines', label: 'Disciplines', render: renderDisciplines },
+    { id: 'create', label: 'Making a character', render: (c, path, ctx) => window.VtmCreator.render(c, path, ctx) },
+    { id: 'characters', label: 'Storyteller characters', render: renderCharacters },
     { id: 'dice', label: 'Dice', render: renderDice },
     { id: 'search', label: 'Search', render: renderSearch, books: true },
   ];

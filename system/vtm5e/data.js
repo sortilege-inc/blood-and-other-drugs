@@ -250,8 +250,30 @@ window.VtmData = (function () {
     return known.filter((n) => names.indexOf(n) !== -1);   // in the BASE's order
   }
 
+  // ── the clanless: the core's Caitiff and Thin-Blooded chapters, which print no clan heading with
+  // a Bane under it, so clans() never finds them. The Caitiff chapter prints its "Disciplines" and
+  // "Bane" as headings of their own; the Thin-Blooded chapter its "Clan" and "Disciplines" under
+  // "Thin-Blood Characteristics", and no bane ("never suffers any specific clan bane").
+  function clanless() {
+    const out = [];
+    const top = (re, name) => all(['core']).find((e) => re.test(e.file) && e.name === name && !e.parent) || null;
+    const cai = top(/core-caitiff/, 'The Caitiff');
+    if (cai) out.push({ name: 'Caitiff', entity: cai, book: cai.book, bane: top(/core-caitiff/, 'Bane'), about: [top(/core-caitiff/, 'Disciplines')].filter(Boolean) });
+    const tb = top(/core-thin-blooded/, 'The Thin-Blooded');
+    const tc = top(/core-thin-blooded/, 'Thin-Blood Characteristics');
+    const under = (n) => (tc ? children(tc.id).find((k) => k.name === n) : null);
+    if (tb) out.push({ name: 'Thin-blood', entity: tb, book: tb.book, bane: null, about: [under('Clan'), under('Disciplines')].filter(Boolean) });
+    return out;
+  }
+  // the core's Thin-Blood Merits and Flaws, each { name, text } ("They have no dot value")
+  function thinBloodTraits() {
+    const e = all(['core']).find((x) => x.name === 'Thin-Blood Merits and Flaws');
+    const list = (n) => { const k = e && children(e.id).find((x) => x.name === n); return k ? (k.props || []).map((q) => ({ name: q.name, text: q.value })) : []; };
+    return { entity: e || null, merits: list('Thin-blood Merits'), flaws: list('Thin-blood Flaws') };
+  }
+
   return {
-    clans, clanDisciplines,
+    clans, clanDisciplines, clanless, thinBloodTraits,
     artUrl, T, index, books, indexBook, book, loaded, loadedBooks, entity, records, record, disciplines,
     ready, readyAll, bookOf, fetch, children, all, declaration, prop, val, text, chapterTitle, outline, node, trail,
     corrections, powers, characters, levelNumber, generic, recordLabel, headingsNamed, search, excerpt, searchRecords,

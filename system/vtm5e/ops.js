@@ -16,6 +16,8 @@
 //                                                (archivePartyVersion, the player's own)
 //   loresheets [ids]                              the loresheets the Storyteller made available
 //                                                (setLoresheets; shared, the Storyteller's to set)
+//   creation { blackHand }                       how the chronicle's characters may be made
+//                                                (setCreation; shared, the Storyteller's to set)
 //   relmaps [ { id, name, nodes, edges, … } ]    relationship and scene maps (V9, below; shared,
 //                                                drawn by everyone, a hidden one the Storyteller's)
 //   A party member's live state is the engine's setPartyLive: { hunger } until the corpus
@@ -71,6 +73,13 @@
   // Storyteller may set it.
   Ops.shared(['loresheets']);
   Ops.register('setLoresheets', (s, ids) => { s.loresheets = (ids || []).filter((x) => typeof x === 'string'); });
+
+  // How this chronicle's characters may be made (owner, 2026-09-25): { blackHand } — whether a
+  // player may walk The Black Hand's Quick Character Creation (p. 107) and make a Sabbat Kindred
+  // instead of the core's summary. Off unless the Storyteller turns it on; shared, because a
+  // player's page offers it; only the Storyteller may set it.
+  Ops.shared(['creation']);
+  Ops.register('setCreation', (s, c) => { s.creation = { blackHand: !!(c && c.blackHand) }; });
 
   // The conflict the Storyteller has started for the coterie (system/vtm5e/conflict.js): its
   // variant, turn, modules, a one-roll conflict's Difficulty and track. Shared; the Storyteller's.
