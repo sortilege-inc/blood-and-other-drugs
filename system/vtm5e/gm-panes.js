@@ -264,8 +264,8 @@
         container.appendChild(el('h4', {}, ['Making characters']));
         container.appendChild(el('label', { class: 'lore-row' + (yes ? ' on' : '') }, [
           el('input', { type: 'checkbox', checked: yes || null, onchange: (ev) => { State.commit('setCreation', [{ blackHand: ev.target.checked }]); draw(); } }),
-          ' Players may make a Sabbat character with ' + bh.label + '’s Quick Character Creation',
-          el('span', { class: 'muted small' }, [' · on their page, beside loading a character file']),
+          ' Allow characters made with ' + bh.label + '’s options',
+          el('span', { class: 'muted small' }, [' · Sabbat Predator types, a Path of Enlightenment; a character using them says so in the party, and says when it is not allowed']),
         ]));
       }
       container.appendChild(el('h4', {}, ['Loresheets', el('span', { class: 'muted small' }, [' · ' + on.size + ' of ' + all.length + ' available to the characters'])]));

@@ -78,6 +78,12 @@ window.VttSystem = (function () {
   // Making a character on a player's page (the creator, system/vtm5e/creator.js): The Black
   // Hand's walk is offered where the Storyteller turned it on (creation.blackHand); done(member)
   // takes the character to the table as a loaded file would.
+  // what a player is told when a character arrives: one made with The Black Hand needs the table to allow it
+  function memberNotice(m) {
+    if (!Sheet.isSabbat(Sheet.values(m))) return null;
+    if (((S() || {}).creation || {}).blackHand) return null;
+    return m.name + ' is made with The Black Hand’s options: playable here once your Storyteller allows them.';
+  }
   function makeCharacter(container, done, o) {
     if (!window.VtmCreator) return false;
     window.VtmCreator.render(container, [], null, {
@@ -95,6 +101,6 @@ window.VttSystem = (function () {
     byId,
     MODULE, scenes, scene, currentSceneId, cast, maps, mapDef, defaultMapId, legend, mapAssets,
     tokenSources, tokenColor, tokenStatus, selectToken, tokenMenu,
-    liveSheet, readCharacter, downloadCharacter, memberSubtitle, makeCharacter,
+    liveSheet, readCharacter, downloadCharacter, memberSubtitle, makeCharacter, memberNotice,
   };
 })();

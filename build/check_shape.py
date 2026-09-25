@@ -197,14 +197,15 @@ def main():
     oblivion = sum(1 for r in records if r.get("discipline") == "Oblivion" and r["kind"] == "power")
     check("Oblivion powers found (Chicago by Night, Cults, Players Guide…) > 0", oblivion > 0, True)
     # a Sabbat character (system/vtm5e/sheet.js SABBAT): The Black Hand's ACTOR extends the core's
-    # Kindred and adds exactly the Path of Enlightenment; the creator's Black Hand walk has its steps
+    # Kindred and adds exactly the Path of Enlightenment
     sab = [e for e in ents.values() if e.get("form") == "ACTOR" and e["name"] == "Sabbat Kindred"]
     check("The Black Hand's ACTOR \"Sabbat Kindred\" extends Kindred, adding the Path of Enlightenment",
           [(e["book"], e["type"], [p["name"] for p in e["props"]]) for e in sab], [("black-hand", "Kindred", ["Path of Enlightenment"])])
     qcc = [e for e in ents.values() if e["book"] == "black-hand" and e["name"] == "Quick Character Creation"]
-    check("The Black Hand's Quick Character Creation has the creator's nine steps",
-          sorted(ents[k]["name"] for q in qcc for k in q["children"]),
-          sorted(["Core Concept", "Clan", "Attributes", "Skills", "Disciplines", "Path of Enlightenment", "Predator Type", "Advantages", "Years Dead"]))
+    # what the creator shows beside the core's step when The Black Hand is used (creator.js BH_ADDS)
+    check("The Black Hand's Quick Character Creation prints what the creator adds (Predator Type, Path of Enlightenment)",
+          sorted(n for n in (ents[k]["name"] for q in qcc for k in q["children"]) if n in ("Predator Type", "Path of Enlightenment")),
+          ["Path of Enlightenment", "Predator Type"])
 
     # ── the book's die glyphs, carried as the conversion wrote them ──
     tokens = re.compile(r"\[(Regular|Hunger) Die: [A-Za-z ]+\]")

@@ -13,11 +13,13 @@
 // The controls are the sheet's (system/vtm5e/sheet.js), over the ACTOR "Kindred" fields each
 // step names. Which fields a step sets is this tool's (STEP_FIELDS); nothing else is.
 //
-// A second walk, where the Storyteller turns it on (campaign state creation.blackHand — only a
-// player's page has a campaign): The Black Hand's Quick Character Creation (p. 107), whose steps
-// are the headings under it, read the same way, making The Black Hand's ACTOR "Sabbat Kindred"
-// (the Kindred and its Path of Enlightenment). A draft walks it exactly when it is a Sabbat
-// character (Sheet.isSabbat).
+// Third-party options (owner, 2026-09-25): a draft may use the third-party shelf's books — ticked
+// by the player, with an acknowledgment that the character is playable only where the Storyteller
+// allows those sources (the campaign's creation.blackHand says whether a table does). The Black
+// Hand ADDS to the core's walk, never replaces it: its Sabbat Predator types join the Predator
+// pick, and a Path of Enlightenment (with Touchstone Ritae) joins Convictions and Touchstones; its
+// own Quick Character Creation text for those two steps is shown beside the core's. A draft using
+// it is The Black Hand's ACTOR "Sabbat Kindred" (the Kindred and its Path; Sheet.isSabbat).
 window.VtmCreator = (function () {
   const { el, button, debounce } = window.VttRender;
   const D = window.VtmData;
@@ -41,15 +43,14 @@ window.VtmCreator = (function () {
     DISCIPLINES: ['Disciplines'],
     PREDATOR: ['Predator'],
     ADVANTAGES: ['Advantages & Flaws'],
-    'CONVICTIONS AND TOUCHSTONES': ['Touchstones & Convictions', 'Chronicle Tenets', 'Humanity'],
+    'CONVICTIONS AND TOUCHSTONES': ['Path of Enlightenment', 'Touchstones & Convictions', 'Chronicle Tenets', 'Humanity'],
     'SEA OF TIME': ['Generation', 'Blood Potency', 'Total Experience', 'Spent Experience'],
-    'PATH OF ENLIGHTENMENT': ['Path of Enlightenment', 'Touchstones & Convictions', 'Chronicle Tenets', 'Humanity'],
   };
-  // The Black Hand's steps, each the core step it corresponds to (its checks and fields); shown
-  // under the book's own heading
-  const BH_STEP = { 'Core Concept': 'CORE CONCEPT', Clan: 'CLAN AND SIRE', Attributes: 'ATTRIBUTES', Skills: 'SKILLS', Disciplines: 'DISCIPLINES',
-    'Path of Enlightenment': 'PATH OF ENLIGHTENMENT', 'Predator Type': 'PREDATOR', Advantages: 'ADVANTAGES', 'Years Dead': 'SEA OF TIME' };
+  // What The Black Hand adds to a core step: the core step, and the heading under its Quick
+  // Character Creation (p. 107) whose text is shown beside the core's
+  const BH_ADDS = { PREDATOR: 'Predator Type', 'CONVICTIONS AND TOUCHSTONES': 'Path of Enlightenment' };
   const BH_BOOK = 'black-hand';
+  const SUN_BOOK = 'sunburners';
 
   // ── the summary, read from the core ──
   function summaryParas() {
@@ -80,19 +81,11 @@ window.VtmCreator = (function () {
     });
     return out.map((s) => Object.assign(s, { text: s.paras.filter(Boolean).join('\n\n') }));
   }
-  // The Black Hand's walk: the headings under its "Quick Character Creation", each with its
-  // sentence, its list (Skills' distributions, the Predator's grants) and its printed options
-  // (Years Dead's Childer / Neonates / Ancillae) as the paragraphs the checks read
-  function bhSteps() {
-    const q = D.loaded(BH_BOOK) ? D.all([BH_BOOK]).find((e) => e.name === 'Quick Character Creation') : null;
-    if (!q) return [];
-    return D.children(q.id).filter((k) => BH_STEP[k.name]).map((k) => {
-      const paras = [k.desc || ''].concat((D.val(k, 'Items') || []).map((x) => (x && typeof x === 'object' ? x.value : x)))
-        .concat((k.props || []).filter((x) => x.vk === 'scalar').map((x) => x.name + ': ' + x.value)).filter(Boolean);
-      return { key: BH_STEP[k.name], label: k.name, entity: k, paras, text: paras.join('\n\n') };
-    });
+  // the heading The Black Hand's Quick Character Creation prints for what it adds to a core step
+  function bhAdds(key) {
+    const q = BH_ADDS[key] && D.loaded(BH_BOOK) ? D.all([BH_BOOK]).find((e) => e.name === 'Quick Character Creation') : null;
+    return q ? D.children(q.id).find((k) => k.name === BH_ADDS[key]) || null : null;
   }
-  const walkOf = (v) => (Sheet.isSabbat(v) ? bhSteps() : steps());
 
   // ── what the sentences say ──
   function attributeSpread(text) {
@@ -169,8 +162,8 @@ window.VtmCreator = (function () {
   // ("Alleycat:"), and a notes sidebar sits among the types; neither prints grants.
   function predators(v) {
     const out = [];
-    // a Sabbat character picks from The Black Hand's ("Pick your Sabbat Predator type (see pg. 24)")
-    D.all(v && Sheet.isSabbat(v) ? [BH_BOOK] : ['core', 'players-guide']).forEach((e) => {
+    // a character using The Black Hand also has its Sabbat types ("Pick your Sabbat Predator type (see pg. 24)")
+    D.all(['core', 'players-guide'].concat(v && Sheet.isSabbat(v) && D.loaded(BH_BOOK) ? [BH_BOOK] : [])).forEach((e) => {
       if (e.name !== 'Predator Types') return;
       D.children(e.id).forEach((k) => {
         if ((k.props || []).some((p) => p.name === 'Items') && !out.some((p) => p.name === k.name)) out.push({ name: k.name, entity: k });
@@ -181,8 +174,8 @@ window.VtmCreator = (function () {
 
   // The Paths of Enlightenment: every heading on the third-party shelf that carries a "Path
   // Compulsion" (The Black Hand's five, and a homebrew Path written on its template)
-  function paths() {
-    return D.all(['black-hand', 'sunburners'].filter((b) => D.loaded(b))).filter((e) => (e.props || []).some((x) => x.name === 'Path Compulsion'))
+  function paths(sources) {
+    return D.all([BH_BOOK].concat((sources || []).indexOf(SUN_BOOK) !== -1 ? [SUN_BOOK] : []).filter((b) => D.loaded(b))).filter((e) => (e.props || []).some((x) => x.name === 'Path Compulsion'))
       .map((e) => ({ name: e.name, entity: e, book: e.book }));
   }
 
@@ -234,7 +227,7 @@ window.VtmCreator = (function () {
       save(roster);
     }
     const v = roster.drafts[roster.current];
-    const st = walkOf(v);
+    const st = steps();
     if (Sheet.isSabbat(v) && !D.loaded(BH_BOOK)) {
       page.innerHTML = '';
       page.appendChild(el('div', { class: 'loading' }, ['Opening The Black Hand…']));
@@ -248,7 +241,11 @@ window.VtmCreator = (function () {
     const meta = roster.meta[roster.current] || {};
     const setMeta = (patch, values) => {
       roster.meta[roster.current] = Object.assign({}, meta, patch);
-      if (values) roster.drafts[roster.current] = Object.assign({}, v, values);
+      if (values) {
+        const nv = Object.assign({}, v, values);
+        Object.keys(nv).forEach((k) => { if (nv[k] === undefined) delete nv[k]; });   // a field taken away, not blanked
+        roster.drafts[roster.current] = nv;
+      }
       save(roster);
       draw(page);
     };
@@ -263,20 +260,13 @@ window.VtmCreator = (function () {
       button('Download character file', () => Sheet.download(Sheet.fileOf(v, { hunger: +v.Hunger || 0 }), v.Name), 'tiny'),
       button('Remove', () => { if (confirm('Remove ' + (v.Name || 'this character') + ' from this browser?')) { delete roster.drafts[roster.current]; delete roster.meta[roster.current]; roster.current = Object.keys(roster.drafts)[0] || null; save(roster); draw(page); } }, 'ghost tiny'),
     ]));
-    page.appendChild(rulesChoice(v, (sabbat) => {
-      const nv = Object.assign({}, v);
-      if (sabbat) nv['Path of Enlightenment'] = '';
-      else {
-        if (v['Path of Enlightenment'] && !confirm('Make ' + (v.Name || 'this character') + ' a core character? Their Path of Enlightenment (' + v['Path of Enlightenment'] + ') is cleared.')) return;
-        delete nv['Path of Enlightenment'];
-      }
-      roster.drafts[roster.current] = nv;
-      save(roster);
-      stepIndex = 0;
-      draw(page);
+    page.appendChild(thirdParty(v, meta, (m, values) => {
+      const need = [BH_BOOK].concat((m.sources || []).indexOf(SUN_BOOK) !== -1 ? [SUN_BOOK] : []).filter((b) => !D.loaded(b));
+      const go = () => setMeta(m, values);
+      if (need.length && m.thirdParty) D.ready(need).then(go); else go();
     }));
     if (!st.length) {
-      page.appendChild(el('div', { class: 'empty' }, [Sheet.isSabbat(v) ? 'The Black Hand’s Quick Character Creation was not found in the data.' : 'The core’s Character Creation summary was not found in the data.']));
+      page.appendChild(el('div', { class: 'empty' }, ['The core’s Character Creation summary was not found in the data.']));
       return;
     }
     if (stepIndex >= st.length) stepIndex = 0;
@@ -286,7 +276,9 @@ window.VtmCreator = (function () {
       el('span', { class: 'step-flag' }, [checks(s, v, meta).some((c) => !c.ok) ? '•' : '✓']),
     ]))));
     const s = st[stepIndex];
-    const side = el('aside', { class: 'creator-book' }, [el('div', { class: 'group-h' }, [s.label || s.key]), s.entity ? E.render(s.entity, { noKids: true }) : E.prose(s.text)]);
+    const adds = Sheet.isSabbat(v) ? bhAdds(s.key) : null;
+    const side = el('aside', { class: 'creator-book' }, [el('div', { class: 'group-h' }, [s.label || s.key]), s.entity ? E.render(s.entity, { noKids: true }) : E.prose(s.text)]
+      .concat(adds ? [el('div', { class: 'group-h bh-adds' }, [((D.indexBook(BH_BOOK) || {}).label || 'The Black Hand') + ' adds · ' + adds.name]), E.render(adds, { noKids: true })] : []));
     const main = el('div', { class: 'creator-step' });
     main.appendChild(stepControls(s, v, (nv) => { commit(nv); draw(page); }, meta, setMeta));
     const cs = checks(s, v, meta);
@@ -299,26 +291,48 @@ window.VtmCreator = (function () {
     page.appendChild(el('details', { class: 'sheet-details' }, [el('summary', {}, ['The whole sheet']), Sheet.render(v, { edit: (nv) => commit(nv) })]));
   }
 
-  // Which rules this character is made by. Where the Storyteller allows The Black Hand (a player's
-  // page), the choice is on screen for every draft; elsewhere the page says where it is made.
-  function rulesChoice(v, choose) {
-    const bh = D.books().find((b) => b.id === BH_BOOK);
-    if (!bh) return el('span', {});
+  // Third-party options: a checkbox, the shelf's books to use, and the acknowledgment. The Black
+  // Hand takes effect (the draft becomes a Sabbat Kindred) only with all three; untaking it clears
+  // what it added — the Path, a Sabbat Predator type — after asking.
+  function thirdParty(v, meta, change) {
+    const shelf = D.books().filter((b) => b.shelf === 'third-party');
+    if (!shelf.length) return el('span', {});
     const sabbat = Sheet.isSabbat(v);
-    if (opts.blackHand && D.loaded(BH_BOOK)) {
-      const card = (on, title, sub, pickIt) => el('button', { type: 'button', class: 'dist-card' + (on ? ' on' : ''), onclick: () => { if (!on) pickIt(); } }, [el('div', { class: 'dist-name' }, [title]), el('div', { class: 'small' }, [sub])]);
-      return el('div', { class: 'rules-choice' }, [
-        el('div', { class: 'prop-k' }, ['Rules for this character']),
-        el('div', { class: 'dist-cards' }, [
-          card(!sabbat, 'Core Rulebook', 'Character Creation, the summary: a Kindred of the Camarilla, the Anarchs or neither', () => choose(false)),
-          card(sabbat, bh.label, 'Quick Character Creation (p. 107): a Sabbat character on a Path of Enlightenment', () => choose(true)),
-        ]),
-      ]);
-    }
-    if (sabbat) return el('p', { class: 'muted small' }, ['A Sabbat character, made with ' + bh.label + '’s Quick Character Creation.']);
-    return el('p', { class: 'muted small rules-note' }, opts.where === 'play'
-      ? [opts.joined ? 'Sabbat characters (' + bh.label + ') are offered here when your Storyteller allows them, in the Loresheets panel.' : 'Sabbat characters (' + bh.label + ') are offered here once you have joined, if your Storyteller allows them.']
-      : ['Making a Sabbat character with ' + bh.label + '? That is done on the ', el('a', { href: 'gm/play.html' }, ['player’s page']), ', once you have joined a table whose Storyteller allows it.']);
+    const cur = { thirdParty: meta.thirdParty != null ? meta.thirdParty : sabbat, sources: meta.sources || (sabbat ? [BH_BOOK] : []), ack: meta.ack != null ? meta.ack : sabbat };
+    const apply = (patch) => {
+      const m = Object.assign({}, cur, patch);
+      if (m.sources.indexOf(BH_BOOK) === -1) m.sources = m.sources.filter((x) => x !== SUN_BOOK);   // the Sunburners' Path is written on The Black Hand's
+      const want = !!(m.thirdParty && m.ack && m.sources.indexOf(BH_BOOK) !== -1);
+      const values = {};
+      if (want && !sabbat) values['Path of Enlightenment'] = '';
+      const sabbatPred = v.Predator && / \(Sabbat Only\)$/.test(v.Predator);
+      const sunPath = v['Path of Enlightenment'] && m.sources.indexOf(SUN_BOOK) === -1 && paths([SUN_BOOK]).some((p) => p.book === SUN_BOOK && p.name === v['Path of Enlightenment']);
+      if (!want && sabbat) {
+        const lose = [v['Path of Enlightenment'] ? 'the Path (' + v['Path of Enlightenment'] + ')' : null, sabbatPred ? 'the Predator type (' + v.Predator + ')' : null].filter(Boolean);
+        if (lose.length && !window.confirm('Without The Black Hand, ' + (v.Name || 'this character') + ' loses ' + lose.join(' and ') + '. Go on?')) return;
+        values['Path of Enlightenment'] = undefined;
+        if (sabbatPred) { values.Predator = ''; m.pred = null; }
+      } else if (sunPath) values['Path of Enlightenment'] = '';
+      change(m, Object.keys(values).length ? values : null);
+    };
+    const box = el('div', { class: 'third-party' + (cur.thirdParty ? ' on' : '') });
+    box.appendChild(el('label', { class: 'tp-row' }, [el('input', { type: 'checkbox', checked: cur.thirdParty || null, onchange: (ev) => apply({ thirdParty: ev.target.checked }) }), ' Use third-party options']));
+    if (!cur.thirdParty) return box;
+    shelf.forEach((b) => {
+      const on = cur.sources.indexOf(b.id) !== -1;
+      const needsBH = b.id === SUN_BOOK && cur.sources.indexOf(BH_BOOK) === -1;
+      const what = b.id === BH_BOOK ? 'Sabbat Predator types, and a Path of Enlightenment with Touchstone Ritae' : b.id === SUN_BOOK ? 'homebrew: the Path of the Sun, for The Black Hand’s Paths' : '';
+      box.appendChild(el('label', { class: 'tp-row tp-source' + (needsBH ? ' muted' : '') }, [
+        el('input', { type: 'checkbox', checked: on || null, disabled: needsBH ? 'disabled' : null, onchange: (ev) => apply({ sources: ev.target.checked ? cur.sources.concat([b.id]) : cur.sources.filter((x) => x !== b.id) }) }),
+        ' ', el('b', {}, [b.label]), what ? el('span', { class: 'muted small' }, [' — ' + what]) : null,
+      ]));
+    });
+    box.appendChild(el('label', { class: 'tp-row tp-ack' }, [el('input', { type: 'checkbox', checked: cur.ack || null, onchange: (ev) => apply({ ack: ev.target.checked }) }),
+      ' I understand this character can be played only where my Storyteller allows these sources.']));
+    if (cur.sources.length && !cur.ack) box.appendChild(el('p', { class: 'muted small' }, ['Tick the acknowledgment and the options take effect.']));
+    // on a player's page, whether this table allows it
+    if (opts.where === 'play' && sabbat) box.appendChild(el('p', { class: 'small' }, [opts.blackHand ? '✓ Your Storyteller allows The Black Hand at this table.' : opts.joined ? 'Your Storyteller has not allowed The Black Hand at this table yet (their Loresheets panel).' : 'Whether this table allows The Black Hand shows once you have joined.']));
+    return box;
   }
 
   // the controls for one step: the sheet's own, restricted to the step's fields
@@ -344,7 +358,7 @@ window.VtmCreator = (function () {
       hidden.push.apply(hidden, Sheet.skills());
     }
     const pv = G() ? G().fromPredator(ctx.meta) : { humanity: 0, potency: 0, advantages: [] };
-    if ((s.key === 'CONVICTIONS AND TOUCHSTONES' || s.key === 'PATH OF ENLIGHTENMENT') && convictions(s.text).humanity != null) {
+    if (s.key === 'CONVICTIONS AND TOUCHSTONES' && convictions(s.text).humanity != null) {
       const h = convictions(s.text).humanity + pv.humanity;
       if (+v.Humanity !== h) box.appendChild(el('div', { class: 'chiprow tight' }, [button('Set Humanity to ' + h, () => set({ Humanity: h }), 'tiny'),
         pv.humanity ? el('span', { class: 'muted small' }, [convictions(s.text).humanity + ', ' + (pv.humanity > 0 ? 'plus ' : 'less ') + Math.abs(pv.humanity) + ' from your Predator type']) : null]));
@@ -361,11 +375,11 @@ window.VtmCreator = (function () {
         clanlessNamed(v.Clan) ? el('div', { class: 'small' }, clanlessNamed(v.Clan).about.map((a) => el('div', {}, [el('div', { class: 'prop-k' }, [a.name]), E.prose(a.desc)]))) : null,
       ])]));
     }
-    if (s.key === 'PATH OF ENLIGHTENMENT') {
-      const ps = paths();
+    if (s.key === 'CONVICTIONS AND TOUCHSTONES' && Sheet.isSabbat(v)) {
+      const ps = paths((meta || {}).sources || [BH_BOOK]);
       const cur = ps.find((x) => x.name === v['Path of Enlightenment']);
       box.appendChild(el('div', { class: 'prop' }, [el('div', { class: 'prop-k' }, ['Path of Enlightenment']), el('div', { class: 'prop-v' }, [
-        el('select', { class: 'scope', onchange: (ev) => set({ 'Path of Enlightenment': ev.target.value }) }, [el('option', { value: '' }, ['—'])]
+        el('select', { class: 'scope', onchange: (ev) => set({ 'Path of Enlightenment': ev.target.value }) }, [el('option', { value: '' }, ['— none (a Path is The Black Hand’s option)'])]
           .concat(ps.map((x) => el('option', { value: x.name, selected: x.name === v['Path of Enlightenment'] || null }, [x.name + ' (' + ((D.indexBook(x.book) || {}).label || x.book) + ')'])))),
       ])]));
       if (cur) box.appendChild(el('details', { class: 'paper' }, [el('summary', {}, [cur.name + ', as printed']), E.render(cur.entity, { noKids: true })]));
@@ -386,7 +400,7 @@ window.VtmCreator = (function () {
       box.appendChild(el('div', { class: 'prop' }, [el('div', { class: 'prop-k' }, ['Thin-blood Flaws']), el('div', { class: 'prop-v' }, [chips(tb.flaws, true)])]));
     }
     // the sheet's fields for the step (Clan/Predator/Path drawn above as picks; Attributes and Skills by the guides)
-    const shown = names.filter((n) => hidden.indexOf(n) === -1 && !(s.key === 'CLAN AND SIRE' && n === 'Clan') && !(s.key === 'PREDATOR' && n === 'Predator') && !(s.key === 'PATH OF ENLIGHTENMENT' && n === 'Path of Enlightenment'));
+    const shown = names.filter((n) => hidden.indexOf(n) === -1 && !(s.key === 'CLAN AND SIRE' && n === 'Clan') && !(s.key === 'PREDATOR' && n === 'Predator') && n !== 'Path of Enlightenment');
     if (s.key === 'SKILLS' && shown.length) box.appendChild(el('div', { class: 'prop-k' }, ['Every specialty']));
     const full = Object.assign({}, v);
     const part = Sheet.render(full, { edit: (nv) => set(pick(nv, shown)), only: shown });
@@ -495,15 +509,19 @@ window.VtmCreator = (function () {
         out.push({ ok: gens.indexOf(gen) !== -1 && +v['Blood Potency'] === +g[2], text: g[0] + '. This sheet: Generation ' + (v.Generation || '—') + ', Blood Potency ' + (v['Blood Potency'] != null ? v['Blood Potency'] : '—') + '.' });
       }
     }
-    if (s.key === 'PATH OF ENLIGHTENMENT') out.push({ ok: !!v['Path of Enlightenment'], text: v['Path of Enlightenment'] ? 'Path: ' + v['Path of Enlightenment'] + '.' : 'Select a Path of Enlightenment.' });
-    if (s.key === 'CONVICTIONS AND TOUCHSTONES' || s.key === 'PATH OF ENLIGHTENMENT') {
+    if (s.key === 'CONVICTIONS AND TOUCHSTONES' && Sheet.isSabbat(v)) {
+      const add = bhAdds(s.key);
+      const least = add && /at least one of these has to be a Path Conviction/.exec(add.desc || '');
+      out.push({ ok: true, text: v['Path of Enlightenment'] ? 'Path: ' + v['Path of Enlightenment'] + (least ? ' — ' + least[0] + ', each with a Touchstone Ritae.' : '.') : 'No Path of Enlightenment (The Black Hand’s option).' });
+    }
+    if (s.key === 'CONVICTIONS AND TOUCHSTONES') {
       const c = convictions(s.text);
       const n = (v['Touchstones & Convictions'] || []).filter(Boolean).length;
-      if (c.min != null) out.push({ ok: n >= c.min && n <= c.max, text: c.min + ' to ' + c.max + ' Convictions, each with a ' + (s.key === 'PATH OF ENLIGHTENMENT' ? 'Touchstone Ritae or a Touchstone' : 'Touchstone') + '. This sheet: ' + n + '.' });
+      if (c.min != null) out.push({ ok: n >= c.min && n <= c.max, text: c.min + ' to ' + c.max + ' Convictions, each with a ' + (v['Path of Enlightenment'] ? 'Touchstone Ritae or a Touchstone' : 'Touchstone') + '. This sheet: ' + n + '.' });
       if (c.humanity != null) out.push({ ok: +v.Humanity === c.humanity + pv.humanity, text: 'Humanity ' + c.humanity + ' (the book)' + (pv.humanity ? ', ' + (c.humanity + pv.humanity) + ' with your Predator type' : '') + '. This sheet: ' + (v.Humanity || 0) + '.' });
     }
     return out;
   }
 
-  return { render, steps, bhSteps, paths, attributeSpread, skillDistributions, freeSpecialties, disciplineDots, advantagePoints, convictions, clans, clanDisciplines, clanBane, predators };
+  return { render, steps, bhAdds, paths, attributeSpread, skillDistributions, freeSpecialties, disciplineDots, advantagePoints, convictions, clans, clanDisciplines, clanBane, predators };
 })();

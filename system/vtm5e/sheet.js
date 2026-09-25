@@ -461,7 +461,13 @@ window.VtmSheet = (function () {
   };
   const hunger = (m) => Math.max(0, Math.min(Dice.HUNGER_MAX, +((m.live || {}).hunger || 0)));
   // under the member's name (the heading), so it says what they are, not who
-  const memberSentence = (m) => (traits(values(m)).join(' · ') || 'Kindred') + ' · Hunger ' + hunger(m) + ((values(m).player) ? ' · played by ' + values(m).player : '');
+  // a character made with The Black Hand says so, and says when this table has not allowed it
+  const sourceNote = (v) => {
+    if (!isSabbat(v)) return '';
+    const allowed = !!((((State() || {}).state || {}).creation || {}).blackHand);
+    return ' · The Black Hand' + (allowed ? '' : ' (not allowed at this table)');
+  };
+  const memberSentence = (m) => (traits(values(m)).join(' · ') || 'Kindred') + sourceNote(values(m)) + ' · Hunger ' + hunger(m) + ((values(m).player) ? ' · played by ' + values(m).player : '');
 
   // Every change to a character's trackers is one event in the log, with its cause: the live
   // patch and a { kind: 'track' } entry naming each track's before and after. A player may send

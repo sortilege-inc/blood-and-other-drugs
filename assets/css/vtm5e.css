@@ -371,3 +371,9 @@ ul.checks li.warn::before { content: '!'; color: var(--blood-2); font-weight: 70
 .grant-done { color: #9fc49a; font-size: 13px; }
 .grant .chiprow { margin: 4px 0 0; }
 @media (max-width: 640px) { .alloc-name { min-width: 6em; } .alloc-groups { grid-template-columns: 1fr; } }
+.third-party { margin: 4px 0 12px; padding: 8px 12px; border: 1px solid #3a2f35; }
+.third-party.on { border-color: #5a4a52; }
+.tp-row { display: block; padding: 3px 0; cursor: pointer; }
+.tp-source { padding-left: 1.4em; }
+.tp-ack { padding-left: 1.4em; color: var(--bone); }
+.creator-book .bh-adds { margin-top: 18px; }
