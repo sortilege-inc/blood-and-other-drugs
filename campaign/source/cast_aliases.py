@@ -42,6 +42,11 @@ ALIASES = {
     "Danger Sense":            ("Object of Power",       "owner: nearest fit"),
     "Natural Leader":          ("Embraced to Rule",      "owner: nearest fit — the High Clan loresheet's Leadership level"),
     "Vengeful":                ("Risk-taker",            "owner: nearest fit — the books' compulsion Flaw"),
+    # Viorica Dal's three, REPLACED rather than renamed (owner, 2026-09-25): no published
+    # Advantage is near them, so each is the published one that fits her sheet at the same dots
+    "Impostor Syndrome":       ("Dark Secret",           "owner: replaced — the fear of being found out"),
+    "Inoffensive to Animals":  ("Library",               "owner: replaced — her occult scholarship"),
+    "Nightmares":              ("Knowledge Hungry",      "owner: replaced — her hunger to study Blood Sorcery"),
 }
 
 # Advantages the world writes with its annotation run on, with no bracket or colon to split

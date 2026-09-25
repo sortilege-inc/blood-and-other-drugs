@@ -381,8 +381,8 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
             ^"Secondary Attributes" STRING "Health 7, Willpower 4"
             ^"Skills" STRING "Craft 2, Drive 1, Stealth 1; Etiquette 3, Insight 3, Leadership 1, Persuasion 2, Streetwise 2, Subterfuge 2; Academics (Hermetic philosophy) 4, Awareness 2, Finance 2, Investigation (Cross-referencing sources) 3, Medicine (Hematology) 3, Occult (Blood Sorcery theory and ritual design) 5, Politics 2, Science 3, Technology 2"
             ^"Disciplines" STRING "Auspex 2, Blood Sorcery 4, Dominate 1"
-            ^"Advantages" STRING "Resources 2, Haven 2, Contacts 2, Retainers 1, Shrine 3, Linguistics 1, Inoffensive to Animals 1"
-            ^"Flaws" STRING "Impostor Syndrome 3, Nightmares 1, Enemies 2"
+            ^"Advantages" STRING "Resources 2, Haven 2, Contacts 2, Retainers 1, Shrine 3, Linguistics 1, Library 1"
+            ^"Flaws" STRING "Dark Secret 3, Knowledge Hungry 1, Enemies 2"
             ^"Appearance" STRING "Viorica is perpetually disheveled despite clear attempts at precision - her clothing is expensive and carefully chosen, but always slightly askew. Dark hair pulled into a bun that's coming loose. Reading glasses on a chain (doesn't need them, nervous habit from mortal life). Pale, with dark circles under eyes suggesting perpetual exhaustion. Hands stained with ink and reagents from ritual work."
             REFERENCES {
                 "Discipline power" -> #v5uiWgyFE6d4UlvFvVvZDoc ^"Compel"
@@ -395,6 +395,9 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Advantage" -> #v8qIOULRw0EmoUcRgTx5des ^"Retainers"
                 "Advantage" -> #vfxHT5nBffU9tOC8v5sPJJQ ^"Shrine"
                 "Advantage" -> #vldbHgsYdnv5ZG86YvyI26U ^"Linguistics"
+                "Advantage" -> #vnywRtOfdHAZyltJe7Siu2b ^"Library"
+                "Flaw" -> #vfFXmPFLhHqi82HMxFlOD3F ^"Dark Secret"
+                "Flaw" -> #vOTLzbtRteILL1CqGw8E9sG ^"Knowledge Hungry"
                 "Flaw" -> #vdQKoqV6iKm6fyUJmIRr8rz ^"Enemies"
             }
         }
