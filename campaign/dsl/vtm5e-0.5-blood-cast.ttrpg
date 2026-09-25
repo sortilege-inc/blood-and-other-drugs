@@ -1,6 +1,6 @@
 EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
     NAME "Blood & Other Drugs - the cast"
-    VERSION "0.1.0"
+    VERSION "0.1.1"
     SPEC_VERSION "0.5"
     RELEASE_DATE "2026-09-24"
 
@@ -307,7 +307,7 @@ EXTENSION "vtm5e-blood-and-other-drugs-cast" EXTENDS "vtm5e" {
                 "Advantage" -> #vaf7kWzi9lcbxuQDaMx75rL ^"Mawla"
                 "Advantage" -> #vldbHgsYdnv5ZG86YvyI26U ^"Linguistics"
                 "Advantage" -> #vVygPuhul2lEyciF2a3Oyfe ^"Eat food"
-                "Advantage" -> #v5tcEBi8T9BmsE2lJg4zUil ^"Embraced to Rule"
+                "Advantage" -> #v0kW72D3WOwjAt2kYQ9vxH2 ^"Embraced to Rule"
                 "Flaw" -> #vfFXmPFLhHqi82HMxFlOD3F ^"Dark Secret"
                 "Flaw" -> #vJfzwZJ8o6GKGsaGTHjag2j ^"Prey Exclusion"
                 "Flaw" -> #vdQKoqV6iKm6fyUJmIRr8rz ^"Enemies"
