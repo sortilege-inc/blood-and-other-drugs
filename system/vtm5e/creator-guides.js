@@ -199,7 +199,7 @@ window.VtmCreatorGuides = (function () {
   // Each is a typed entity (BASE Advantage / Merit / Flaw / Background) with its Rating, or a
   // printed range ("• to •••", "(• or ••)"). The core's full entries come first; the Players
   // Guide's summary sheet adds the rest of the line's, each citing its book and page.
-  let advQuery = '', advKind = 'all';
+  let advQuery = '', advKind = 'all', advBook = 'all';
   function advantageCatalogue() {
     // every book's, from the records index (data/records.js): no book is loaded to list them
     const order = D.books().map((b) => b.id);
@@ -209,10 +209,13 @@ window.VtmCreatorGuides = (function () {
       const flaw = r.type === 'Flaw' || /\bFlaw\b/i.test(dots) || /\bFlaws?$/i.test(r.under || '');
       const k = r.name.toLowerCase() + '|' + flaw;
       const groups = String(dots).split(/\s+(?:to|or)\s+/).map((g) => (g.match(/[•●]/g) || []).length).filter(Boolean);
-      const choices = r.rating ? [+r.rating] : groups.length === 2 && /\bto\b/.test(dots) ? Array.from({ length: groups[1] - groups[0] + 1 }, (_, n) => groups[0] + n) : groups;
+      // five dots at most (owner, 2026-09-25): the Players Guide's master list prints Allies "• to ••••••"
+      const choices = (r.rating ? [+r.rating] : groups.length === 2 && /\bto\b/.test(dots) ? Array.from({ length: groups[1] - groups[0] + 1 }, (_, n) => groups[0] + n) : groups).filter((n) => n <= 5);
       const x = { r, name: r.name, flaw, kind: flaw ? 'Flaw' : r.type === 'Background' ? 'Background' : 'Merit', choices, dots, parent: r.under || '', books: [r.book] };
       // a name printed in several books is one entry, citing each (the core's text first)
-      if (seen[k]) { if (seen[k].books.indexOf(r.book) === -1) seen[k].books.push(r.book); return; }
+      // (the dots from whichever book prints them: the core's "Allies" heading has none, the Players
+      // Guide's summary line "• to •••••")
+      if (seen[k]) { const s = seen[k]; if (s.books.indexOf(r.book) === -1) s.books.push(r.book); if (!s.choices.length && choices.length) Object.assign(s, { choices, dots }); return; }
       seen[k] = x;
       out.push(x);
     });
@@ -239,48 +242,168 @@ window.VtmCreatorGuides = (function () {
         f ? detailsOf(['details'], f.id, f.book) : null,
       ]));
     });
-    // the loresheets chosen on step 0: each level, readable, taken like any Advantage
+    // the finder: every book's Merits, Backgrounds and Flaws -- and, where step 0 took them up,
+    // the loresheets -- filtered by type and by book
     const lore = ctx.meta.lore || {};
-    if (lore.on && lore.ack && (lore.ids || []).length) {
-      box.appendChild(el('div', { class: 'prop-k adv-find' }, ['Your loresheets']));
-      const recs = D.records();
-      lore.ids.forEach((id) => {
-        const ls = recs.find((r) => r.id === id);
-        if (!ls) return;
-        const card = el('div', { class: 'disc-card' }, [detailsOf([el('b', {}, [ls.name]), el('span', { class: 'muted small' }, [' · ' + ((D.indexBook(ls.book) || {}).label || ls.book)])], ls.id, ls.book)]);
-        recs.filter((r) => r.kind === 'loresheet level' && r.loresheet === id).sort((a, b) => (a.rating || 0) - (b.rating || 0)).forEach((lv) => {
-          const i = rows.findIndex((r) => r.Advantage === lv.id);
-          const take = button(i !== -1 ? 'taken ✓' : 'take ' + DOT.repeat(lv.rating || 0), () => {
-            const n = rows.slice();
-            if (i !== -1) n.splice(i, 1); else n.push({ Name: lv.name, Dots: lv.rating || 0, Flaw: false, Advantage: lv.id });
-            set({ 'Advantages & Flaws': n });
-          }, i !== -1 ? 'tiny' : 'ghost tiny');
-          card.appendChild(el('div', { class: 'power-row' + (i !== -1 ? ' on' : '') }, [take, detailsOf([lv.name + ' ' + DOT.repeat(lv.rating || 0)], lv.id, lv.book)]));
-        });
-        box.appendChild(card);
-      });
-    }
-    // the finder
-    const cat = advantageCatalogue();
-    const q = el('input', { type: 'search', class: 'search', placeholder: 'Find a Merit, Background or Flaw…', value: advQuery });
+    const loreOn = !!(lore.on && lore.ack);
+    const recs = D.records();
+    const cat = advantageCatalogue().concat(loreOn ? recs.filter((r) => r.kind === 'loresheet').map((r) => ({ r, name: r.name, kind: 'Loresheet', books: [r.book], parent: '', choices: [], dots: '' })) : []);
+    const kinds = ['all', 'Merit', 'Background', 'Flaw'].concat(loreOn ? ['Loresheet'] : []);
+    if (kinds.indexOf(advKind) === -1) advKind = 'all';
+    const bookIds = D.books().map((b) => b.id).filter((id) => cat.some((x) => x.books.indexOf(id) !== -1));
+    const q = el('input', { type: 'search', class: 'search', placeholder: 'Find a Merit, Background, Flaw' + (loreOn ? ' or loresheet' : '') + '…', value: advQuery });
     q.addEventListener('input', debounce(() => { advQuery = q.value; o.redraw(); }, 250));
     box.appendChild(el('div', { class: 'prop-k adv-find' }, ['Find in the books']));
-    box.appendChild(el('div', { class: 'chiprow tight' }, [q].concat(['all', 'Merit', 'Background', 'Flaw'].map((k) => button(k === 'all' ? 'All' : k + 's', () => { advKind = k; o.redraw(); }, advKind === k ? 'tiny' : 'ghost tiny')))));
+    box.appendChild(el('div', { class: 'chiprow tight' }, [q].concat(kinds.map((k) => button(k === 'all' ? 'All' : k + 's', () => { advKind = k; o.redraw(); }, advKind === k ? 'tiny' : 'ghost tiny')))));
+    box.appendChild(el('div', { class: 'chiprow tight' }, [el('span', { class: 'muted small' }, ['Source']),
+      el('select', { class: 'scope', onchange: (ev) => { advBook = ev.target.value; o.redraw(); } }, [el('option', { value: 'all' }, ['every book'])]
+        .concat(bookIds.map((id) => el('option', { value: id, selected: advBook === id || null }, [(D.indexBook(id) || {}).label || id]))))]));
     const ql = advQuery.trim().toLowerCase();
-    const hits = cat.filter((x) => (advKind === 'all' || x.kind === advKind) && (!ql || x.name.toLowerCase().indexOf(ql) !== -1 || x.parent.toLowerCase().indexOf(ql) !== -1));
+    const hits = cat.filter((x) => (advKind === 'all' || x.kind === advKind) && (advBook === 'all' || x.books.indexOf(advBook) !== -1)
+      && (!ql || x.name.toLowerCase().indexOf(ql) !== -1 || x.parent.toLowerCase().indexOf(ql) !== -1));
     const shown = hits.slice(0, 40);
     const list = el('div', { class: 'adv-list' });
+    const bookLabel = (x) => x.books.map((b) => (D.indexBook(b) || {}).label || b).join(', ');
     shown.forEach((x) => {
+      if (x.kind === 'Loresheet') {
+        // a loresheet: its levels, each read and taken like any Advantage
+        const levels = recs.filter((r) => r.kind === 'loresheet level' && r.loresheet === x.r.id).sort((a, b) => (a.rating || 0) - (b.rating || 0));
+        const card = el('div', { class: 'adv-hit adv-lore' }, [detailsOf([el('b', {}, [x.name]), el('span', { class: 'muted small' }, [' · Loresheet · ' + levels.length + ' levels · ' + bookLabel(x)])], x.r.id, x.r.book)]);
+        const lv = el('div', { class: 'lore-levels' });
+        levels.forEach((l) => {
+          const i = rows.findIndex((r) => r.Advantage === l.id);
+          lv.appendChild(el('div', { class: 'power-row' + (i !== -1 ? ' on' : '') }, [
+            button(i !== -1 ? 'taken ✓' : '+ ' + DOT.repeat(l.rating || 0), () => { const n = rows.slice(); if (i !== -1) n.splice(i, 1); else n.push({ Name: l.name, Dots: l.rating || 0, Flaw: false, Advantage: l.id }); set({ 'Advantages & Flaws': n }); }, i !== -1 ? 'tiny' : 'ghost tiny'),
+            detailsOf([l.name], l.id, l.book),
+          ]));
+        });
+        list.appendChild(el('div', {}, [card, lv]));
+        return;
+      }
       const add = (dots) => set({ 'Advantages & Flaws': rows.concat([{ Name: x.name, Dots: dots, Flaw: x.flaw, Advantage: x.r.id }]) });
       const adds = x.choices.length ? x.choices.map((d) => button('+ ' + DOT.repeat(d), () => add(d), 'ghost tiny')) : [button('+ add', () => add(0), 'ghost tiny')];
       list.appendChild(el('div', { class: 'adv-hit' }, [
-        detailsOf([el('b', {}, [x.name]), el('span', { class: 'muted small' }, [' · ' + x.kind + (x.parent && !/^(Merits|Flaws|Backgrounds)$/.test(x.parent) ? ' · ' + x.parent : '') + (x.dots ? ' · ' + x.dots : '') + ' · ' + x.books.map((b) => (D.indexBook(b) || {}).label || b).join(', ')])], x.r.id, x.r.book),
+        detailsOf([el('b', {}, [x.name]), el('span', { class: 'muted small' }, [' · ' + x.kind + (x.parent && !/^(Merits|Flaws|Backgrounds)$/.test(x.parent) ? ' · ' + x.parent : '') + (x.dots ? ' · ' + x.dots : '') + ' · ' + bookLabel(x)])], x.r.id, x.r.book),
         el('span', { class: 'chiprow tight' }, adds),
       ]));
     });
     box.appendChild(list);
     box.appendChild(el('p', { class: 'muted small' }, [hits.length > shown.length ? 'Showing ' + shown.length + ' of ' + hits.length + ' — narrow the search.' : hits.length + ' found.']));
     return box;
+  }
+
+  // ── Sea of Time: the coterie's age, its Generation and Blood Potency, and experience spent ──
+  // The summary's own paragraphs: a band opens "childer:" / "neonates:" / "ancillae:", and the
+  // lines under it say its Generations ("12th or 13th Generation: Blood Potency 1"), what each player
+  // spends ("Each player spends 15 experience points") and adds ("adds 2 points of Advantages",
+  // "subtracts 1 Humanity"). Spending is Advancement's (system/vtm5e/advance.js): the core's Trait
+  // Costs table, read, and its purchases -- each one undone on its own.
+  function seaBands(paras) {
+    const bands = [];
+    (paras || []).forEach((p) => {
+      const m = /^([a-z][a-z ]+):\s*(.*)$/.exec(p);   // the bands' small caps reach the data in lower case
+      if (m && !/Generation/i.test(m[1])) { bands.push({ name: m[1], text: m[2], lines: [], gens: [], xp: 0, adv: 0, flaws: 0, humanity: 0 }); return; }
+      const b = bands[bands.length - 1];
+      if (!b || !/[a-z]/.test(p)) return;         // the next section's heading ("TRAIT COSTS: EXPERIENCE") is no band's
+      b.lines.push(p);
+      let x;
+      if ((x = /^((?:\d+\w\w,?\s*(?:or\s+)?)+)Generation(\s*\(thin-bloods\))?:\s*Blood Potency (\d+)/i.exec(p))) b.gens.push({ gens: x[1].match(/\d+/g).map(Number), thin: !!x[2], bp: +x[3], text: p });
+      if ((x = /spends (\d+) experience points/i.exec(p))) b.xp = +x[1];
+      if ((x = /adds (\d+) points? of Advantages/i.exec(p))) b.adv = +x[1];
+      if ((x = /adds (\d+) points? of Flaws/i.exec(p))) b.flaws = +x[1];
+      if ((x = /subtracts (\d+) Humanity/i.exec(p))) b.humanity = -x[1];
+    });
+    return bands;
+  }
+  function seaOfTime(ctx, s, o) {
+    const { v, meta, set, setMeta } = ctx;
+    const bands = seaBands(s.paras);
+    const box = el('div', {});
+    const band = bands.find((b) => b.name === meta.band) || null;
+    box.appendChild(el('div', { class: 'prop-k' }, ['Your coterie are']));
+    box.appendChild(el('div', { class: 'dist-cards' }, bands.map((b) => el('button', {
+      type: 'button', class: 'dist-card' + (band === b ? ' on' : ''),
+      onclick: () => { if (band === b) return; if ((meta.xpBuys || []).length && !window.confirm('Changing the coterie’s age takes back the experience already spent. Go on?')) return;
+        let nv = Object.assign({}, v); (meta.xpBuys || []).slice().reverse().forEach((u) => { nv = undoBuy(nv, u); });
+        setMeta({ band: b.name, xpBuys: [] }, Object.assign(nv, { 'Total Experience': b.xp || null, 'Spent Experience': b.xp ? 0 : null })); },
+    }, [el('div', { class: 'dist-name' }, [titleCase(b.name)]), el('div', { class: 'small' }, [b.text]),
+        el('div', { class: 'small muted' }, [b.lines.join(' · ')])]))));
+    if (!band) return box;
+    // Generation and Blood Potency, as the band prints them (a thin-blood's line only for a thin-blood)
+    const gens = band.gens.filter((g) => g.thin === !!o.thin);
+    if (gens.length) {
+      box.appendChild(el('div', { class: 'prop-k' }, ['Generation and Blood Potency']));
+      box.appendChild(el('div', { class: 'chiprow tight' }, gens.reduce((a, g) => a.concat(g.gens.map((n) => {
+        const bp = g.bp + (o.potency || 0);
+        const on = +v.Generation === n && +v['Blood Potency'] === bp;
+        return button(n + 'th Generation · Blood Potency ' + bp, () => set({ Generation: n, 'Blood Potency': bp }), on ? 'tiny' : 'ghost tiny');
+      })), [])));
+      if (o.potency) box.appendChild(el('p', { class: 'muted small' }, ['Blood Potency includes the ' + o.potency + ' your Predator type adds.']));
+    }
+    if (!band.xp) return box;
+    // experience, spent at the Trait Costs table's prices
+    const A = window.VtmAdvance;
+    const C = A && A.costs();
+    if (!C) { box.appendChild(el('p', { class: 'muted' }, ['The core’s Trait Costs table is not in the data, so nothing can be priced.'])); return box; }
+    const buys = meta.xpBuys || [];
+    const spent = buys.reduce((a, b) => a + b.cost, 0);
+    const left = band.xp - spent;
+    const price = (c, n) => (!c ? null : c.times ? c.times * n : c.perDot ? c.perDot * n : c.fixed);
+    const buy = (b) => {
+      if (b.cost > left) return;
+      const nv = A.apply(v, [b]);
+      setMeta({ xpBuys: buys.concat([Object.assign({}, b, { from: b.from })]) }, Object.assign(nv, { 'Spent Experience': spent + b.cost, 'Total Experience': band.xp }));
+    };
+    box.appendChild(el('div', { class: 'xp-bar' }, [el('span', { class: 'prop-k' }, ['Experience']), el('b', {}, [left + ' of ' + band.xp + ' left']),
+      el('span', { class: 'muted small' }, [' — ' + band.lines.find((l) => /experience points/i.test(l))])]));
+    const sec = (title, kids) => box.appendChild(el('details', { class: 'xp-sec', open: 'open' }, [el('summary', {}, [title])].concat(kids)));
+    const btn = (label, b) => { const x = button(label + ' · ' + b.cost + ' XP', () => buy(b), 'ghost tiny'); if (b.cost > left) x.disabled = true; return x; };
+    const traits = (names, kind, c, max) => el('div', { class: 'chiprow tight' }, names.filter((n) => (+v[n] || 0) < max).map((n) => {
+      const to = (+v[n] || 0) + 1;
+      return btn(n + ' ' + (to - 1) + '→' + to, { kind, key: n, from: to - 1, to, cost: price(c, to), what: n + ' ' + (to - 1) + ' → ' + to });
+    }));
+    sec('Attributes · ' + C.attribute.text, [traits(Sheet.attributes(), 'attribute', C.attribute, 5)]);
+    sec('Skills · ' + C.skill.text, [traits(Sheet.skills(), 'skill', C.skill, 5)]);
+    // a specialty: a Skill the character has, and its name
+    const sk = el('select', { class: 'scope' }, Sheet.skills().filter((n) => (+v[n] || 0) > 0).map((n) => el('option', { value: n }, [n])));
+    const sp = el('input', { type: 'text', class: 'text', placeholder: 'the specialty' });
+    const spBtn = button('Add · ' + price(C.specialty, 1) + ' XP', () => { if (sp.value.trim()) buy({ kind: 'specialty', key: sp.value.trim(), cost: price(C.specialty, 1), what: 'Specialty: ' + sk.value + ' (' + sp.value.trim() + ')', extra: { skill: sk.value } }); }, 'ghost tiny');
+    if (price(C.specialty, 1) > left) spBtn.disabled = true;
+    sec('Specialties · ' + C.specialty.text, [el('div', { class: 'chiprow tight' }, [sk, sp, spBtn])]);
+    // Disciplines: each held, and a new one
+    const known = D.disciplines();
+    const held = (v.Disciplines || []).filter((d) => d.Discipline);
+    const dBtns = held.filter((d) => (+d.Dots || 0) < 5).map((d) => {
+      const rate = A.disciplineRate(v, d.Discipline); const to = (+d.Dots || 0) + 1;
+      return btn(d.Discipline + ' ' + (to - 1) + '→' + to + ' (' + rate.why + ')', { kind: 'discipline', key: d.Discipline, from: to - 1, to, cost: price(C[rate.key], to), what: d.Discipline + ' ' + (to - 1) + ' → ' + to });
+    });
+    const nd = el('select', { class: 'scope' }, [el('option', { value: '' }, ['a new Discipline…'])].concat(known.filter((n) => !held.some((d) => d.Discipline === n)).map((n) => {
+      const rate = A.disciplineRate(v, n); return el('option', { value: n }, [n + ' · ' + price(C[rate.key], 1) + ' XP (' + rate.why + ')']);
+    })));
+    nd.addEventListener('change', () => { const n = nd.value; if (!n) return; const rate = A.disciplineRate(v, n); buy({ kind: 'discipline', key: n, from: 0, to: 1, cost: price(C[rate.key], 1), what: n + ' 0 → 1' }); });
+    sec('Disciplines · in-clan ' + C.clan.text + ', other ' + C.other.text + ', Caitiff ' + C.caitiff.text, [el('div', { class: 'chiprow tight' }, dBtns.concat([nd])), el('p', { class: 'muted small' }, ['Take a power for each new dot on the Disciplines step.'])]);
+    // Advantages: a dot more on one held
+    const advs = (v['Advantages & Flaws'] || []).filter((r) => !r.Flaw && r.Name && !r.Advantage && (+r.Dots || 0) < 5);
+    sec('Advantages · ' + C.advantage.text, [el('div', { class: 'chiprow tight' }, advs.map((r) => btn(r.Name + ' ' + (+r.Dots || 0) + '→' + ((+r.Dots || 0) + 1), { kind: 'advantage', key: r.Name, from: +r.Dots || 0, to: (+r.Dots || 0) + 1, cost: price(C.advantage, 1), what: r.Name + ' ' + (+r.Dots || 0) + ' → ' + ((+r.Dots || 0) + 1) })))]);
+    if (!o.thin) sec('Blood Potency · ' + C.potency.text, [el('div', { class: 'chiprow tight' }, [(+v['Blood Potency'] || 0) < 10 ? btn('Blood Potency ' + (+v['Blood Potency'] || 0) + '→' + ((+v['Blood Potency'] || 0) + 1), { kind: 'potency', key: 'Blood Potency', from: +v['Blood Potency'] || 0, to: (+v['Blood Potency'] || 0) + 1, cost: price(C.potency, (+v['Blood Potency'] || 0) + 1), what: 'Blood Potency ' + (+v['Blood Potency'] || 0) + ' → ' + ((+v['Blood Potency'] || 0) + 1) }) : null])]);
+    // what has been bought, each undone on its own
+    if (buys.length) {
+      box.appendChild(el('div', { class: 'prop-k' }, ['Spent']));
+      box.appendChild(el('ol', { class: 'grants' }, buys.map((b, k) => el('li', { class: 'grant done' }, [el('span', {}, [b.what + ' · ' + b.cost + ' XP ']),
+        button('undo', () => { const nv = undoBuy(v, b); const rest = buys.filter((_, j) => j !== k); setMeta({ xpBuys: rest }, Object.assign(nv, { 'Spent Experience': rest.reduce((a, x) => a + x.cost, 0) })); }, 'ghost tiny')]))));
+    }
+    box.appendChild(el('details', { class: 'paper' }, [el('summary', {}, ['Trait Costs, as printed']), el('table', { class: 'plain' }, C.table.rows.map((r) => el('tr', {}, r.map((c) => el('td', {}, [String(c)])))))]));
+    return box;
+  }
+  // a purchase taken back: the trait returns to what it was before it
+  function undoBuy(v, b) {
+    const nv = JSON.parse(JSON.stringify(v));
+    if (b.kind === 'attribute' || b.kind === 'skill') nv[b.key] = b.from;
+    else if (b.kind === 'potency') nv['Blood Potency'] = b.from;
+    else if (b.kind === 'discipline') { const r = (nv.Disciplines || []).find((d) => d.Discipline === b.key); if (r) { if (b.from) r.Dots = b.from; else nv.Disciplines = nv.Disciplines.filter((d) => d !== r); } }
+    else if (b.kind === 'specialty') { const i = (nv.Specialties || []).findIndex((x) => x.Skill === b.extra.skill && x.Specialty === b.key); if (i !== -1) nv.Specialties.splice(i, 1); }
+    else if (b.kind === 'advantage') { const r = (nv['Advantages & Flaws'] || []).find((x) => !x.Flaw && x.Name === b.key); if (r) r.Dots = b.from; }
+    return nv;
   }
 
   // ── a Predator type's grants, read ──
@@ -511,5 +634,5 @@ window.VtmCreatorGuides = (function () {
     return 'in the Notes';
   }
 
-  return { detailsOf, allocator, skills, predator, disciplines, advantages, grantsOf, parseGrant, fromPredator, predatorDots, describe, titleCase };
+  return { seaOfTime, seaBands, detailsOf, allocator, skills, predator, disciplines, advantages, grantsOf, parseGrant, fromPredator, predatorDots, describe, titleCase };
 })();
