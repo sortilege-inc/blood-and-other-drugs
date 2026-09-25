@@ -47,7 +47,12 @@ window.VtmCreator = (function () {
     if (start === -1) return [];
     const paras = [];
     for (let i = start; i < texts.length; i++) {
-      texts[i].split(/\n\s*\n/).forEach((p) => paras.push(p.trim()));
+      texts[i].split(/\n\s*\n/).forEach((p, j) => {
+        p = p.trim();
+        // a word the page break split ("Preda-" | "tor type."): one paragraph, as printed
+        if (j === 0 && paras.length && /[a-z]-$/.test(paras[paras.length - 1]) && /^[a-z]/.test(p)) paras[paras.length - 1] = paras[paras.length - 1].slice(0, -1) + p;
+        else paras.push(p);
+      });
       if (paras.some((p) => /^SEA OF TIME\b/.test(p)) && /Each player spends 35|experience points\.?$/.test(texts[i])) break;
       if (i > start + 4) break;
     }
@@ -109,11 +114,28 @@ window.VtmCreator = (function () {
   const clans = () => D.clans();
   const clanNamed = (name) => clans().find((c) => c.name === name) || null;
   const clanDisciplines = (name) => D.clanDisciplines(name);
+  // Caitiff and thin-bloods: the core's own chapters (VtmData.clanless); a thin-blood has no bane
+  const clanlessNamed = (name) => D.clanless().find((c) => c.name === name) || null;
+  const isThin = (v) => /^thin-?blood/i.test(v.Clan || '');
   function clanBane(name) {
+    const cl = clanlessNamed(name);
+    if (cl) return cl.bane ? cl.bane.desc : '';
     const c = clanNamed(name);
     const b = c && D.children(c.entity.id).find((k) => k.name === 'Bane');
     return b ? b.desc : null;
   }
+  // a sentence the core prints outside the summary (the step-by-step chapter), found by its words
+  const sentences = {};
+  function bookSentence(key, re) {
+    if (!(key in sentences)) {
+      let hit = null;
+      D.all(['core']).some((e) => { const m = re.exec(e.desc || ''); if (m) hit = m[0].trim(); return !!m; });
+      sentences[key] = hit;
+    }
+    return sentences[key];
+  }
+  const noPredator = () => bookSentence('predator', /[^.]*\bdo not select a Predator type[^.]*\./);
+  const thinForbidden = () => bookSentence('forbidden', /No thin-blood can buy [^.]*during character creation\./);
   // Predator types: the headings under a "Predator Types" section (core, Players Guide)
   // that print their grants (an Items list: "Add a specialty…", "Gain one dot of…"). The
   // Players Guide's summary sheet also heads a "Predator Types" of one-line reminders
@@ -222,9 +244,11 @@ window.VtmCreator = (function () {
     if (s.key === 'CLAN AND SIRE') {
       const cl = clans();
       box.appendChild(el('div', { class: 'prop' }, [el('div', { class: 'prop-k' }, ['Clan']), el('div', { class: 'prop-v' }, [
-        el('select', { class: 'scope', onchange: (ev) => set({ Clan: ev.target.value, 'Clan Bane': clanBane(ev.target.value) || v['Clan Bane'] }) },
-          [el('option', { value: '' }, ['—'])].concat(cl.map((c) => el('option', { value: c.name, selected: c.name === v.Clan || null }, [c.name + ' (' + (D.indexBook(c.book) || {}).label + ')'])))),
+        el('select', { class: 'scope', onchange: (ev) => { const b = clanBane(ev.target.value); set({ Clan: ev.target.value, 'Clan Bane': b != null ? b : v['Clan Bane'] }); } },
+          [el('option', { value: '' }, ['—'])].concat(cl.map((c) => el('option', { value: c.name, selected: c.name === v.Clan || null }, [c.name + ' (' + (D.indexBook(c.book) || {}).label + ')'])))
+            .concat(D.clanless().length ? [el('optgroup', { label: 'Without a clan' }, D.clanless().map((c) => el('option', { value: c.name, selected: c.name === v.Clan || null }, [c.name + ' (' + (D.indexBook(c.book) || {}).label + ')'])))] : [])),
         v.Clan && clanDisciplines(v.Clan).length ? el('div', { class: 'muted small' }, ['Clan Disciplines: ' + clanDisciplines(v.Clan).join(', ')]) : null,
+        clanlessNamed(v.Clan) ? el('div', { class: 'small' }, clanlessNamed(v.Clan).about.map((a) => el('div', {}, [el('div', { class: 'prop-k' }, [a.name]), E.prose(a.desc)]))) : null,
       ])]));
     }
     if (s.key === 'PREDATOR') {
@@ -234,6 +258,16 @@ window.VtmCreator = (function () {
         el('select', { class: 'scope', onchange: (ev) => set({ Predator: ev.target.value }) }, [el('option', { value: '' }, ['—'])].concat(pr.map((p) => el('option', { value: p.name, selected: p.name === v.Predator || null }, [p.name])))),
       ])]));
       if (cur) box.appendChild(el('div', { class: 'paper' }, [E.render(cur.entity, { noKids: true })]));
+    }
+    if (s.key === 'ADVANTAGES' && isThin(v)) {
+      const tb = D.thinBloodTraits();
+      const rows = v['Advantages & Flaws'] || [];
+      const has = (n, flaw) => rows.some((r) => r.Name === n && !!r.Flaw === flaw);
+      const toggle = (n, flaw) => set({ 'Advantages & Flaws': has(n, flaw) ? rows.filter((r) => !(r.Name === n && !!r.Flaw === flaw)) : rows.concat([{ Name: n, Dots: 0, Flaw: flaw }]) });
+      const chips = (list, flaw) => el('div', { class: 'chiprow tight' }, list.map((t) => { const b = button(t.name + (has(t.name, flaw) ? ' ✓' : ''), () => toggle(t.name, flaw), has(t.name, flaw) ? 'tiny' : 'ghost tiny'); b.title = t.text || ''; return b; }));
+      if (tb.entity) box.appendChild(el('div', { class: 'muted small' }, [tb.entity.desc]));
+      box.appendChild(el('div', { class: 'prop' }, [el('div', { class: 'prop-k' }, ['Thin-blood Merits']), el('div', { class: 'prop-v' }, [chips(tb.merits, false)])]));
+      box.appendChild(el('div', { class: 'prop' }, [el('div', { class: 'prop-k' }, ['Thin-blood Flaws']), el('div', { class: 'prop-v' }, [chips(tb.flaws, true)])]));
     }
     if (s.key === 'SKILLS') {
       const ds = skillDistributions(s.paras);
@@ -288,7 +322,11 @@ window.VtmCreator = (function () {
       const missing = fs.named.filter((n) => (+v[n] || 0) > 0 && specs.indexOf(n) === -1);
       out.push({ ok: !missing.length, text: 'Free specialties for ' + fs.named.join(', ') + (fs.more ? ', and ' + fs.more + ' more' : '') + (missing.length ? ' — still to add: ' + missing.join(', ') : '') + '.' });
     }
-    if (s.key === 'DISCIPLINES') {
+    if (s.key === 'DISCIPLINES' && isThin(v)) {
+      const none = /Thin-blood characters have no intrinsic Disciplines\./.exec(s.text);
+      const extra = (v.Disciplines || []).filter((d) => (+d.Dots || 0) > 0 && d.Discipline !== 'Thin-Blood Alchemy').map((d) => d.Discipline);
+      if (none) out.push({ ok: !extra.length, text: none[0] + (extra.length ? ' This sheet: ' + extra.join(', ') + '.' : '') });
+    } else if (s.key === 'DISCIPLINES') {
       const want = disciplineDots(s.text);
       const have = (v.Disciplines || []).map((d) => +d.Dots || 0).sort().reverse();
       if (want) out.push({ ok: JSON.stringify(have) === JSON.stringify(want.slice().sort().reverse()), text: 'The book: ' + want.join(' and ') + ' dots. This sheet: ' + (have.join(' and ') || 'none') + '.' });
@@ -297,13 +335,35 @@ window.VtmCreator = (function () {
         out.push({ ok: !off.length || /Caitiff/.test(v.Clan), text: off.length ? off.join(', ') + ' is not among ' + v.Clan + '’s ' + clanDisciplines(v.Clan).join(', ') + '.' : 'Clan Disciplines: ' + clanDisciplines(v.Clan).join(', ') + '.' });
       }
     }
-    if (s.key === 'PREDATOR') out.push({ ok: !!v.Predator, text: v.Predator ? 'Predator: ' + v.Predator + ' — apply what it lists.' : 'Pick a Predator type.' });
+    if (s.key === 'PREDATOR' && isThin(v) && !v.Predator && noPredator()) out.push({ ok: true, text: noPredator() });
+    else if (s.key === 'PREDATOR') out.push({ ok: !!v.Predator, text: v.Predator ? 'Predator: ' + v.Predator + ' — apply what it lists.' : 'Pick a Predator type.' });
     if (s.key === 'ADVANTAGES') {
       const want = advantagePoints(s.text);
       const rows = v['Advantages & Flaws'] || [];
       const adv = rows.filter((r) => !r.Flaw).reduce((a, r) => a + (+r.Dots || 0), 0);
       const fl = rows.filter((r) => r.Flaw).reduce((a, r) => a + (+r.Dots || 0), 0);
       if (want) out.push({ ok: adv === want.advantages && fl >= want.flaws, text: 'The book: ' + want.advantages + ' points of Advantages, ' + want.flaws + ' points of Flaws (besides the Predator’s). This sheet: ' + adv + ' and ' + fl + '.' });
+      const tm = /Thin-blood characters must take between (\w+) and (\w+) Thin-Blood Merits and the same number of Thin-Blood Flaws\./.exec(s.text);
+      if (isThin(v) && tm) {
+        const tb = D.thinBloodTraits();
+        const m = rows.filter((r) => !r.Flaw && tb.merits.some((t) => t.name === r.Name)).length;
+        const f = rows.filter((r) => r.Flaw && tb.flaws.some((t) => t.name === r.Name)).length;
+        out.push({ ok: m >= num(tm[1]) && m <= num(tm[2]) && m === f, text: tm[0] + ' This sheet: ' + m + ' and ' + f + '.' });
+      }
+      const fb = isThin(v) && thinForbidden();
+      if (fb) {
+        const names = /buy (.+) during/.exec(fb)[1].split(/,\s*(?:or\s+)?|\s+or\s+/).map((x) => x.trim()).filter(Boolean);
+        const bad = rows.filter((r) => !r.Flaw && names.some((n) => new RegExp('^' + n + '\\b', 'i').test(r.Name || ''))).map((r) => r.Name);
+        out.push({ ok: !bad.length, text: fb + (bad.length ? ' This sheet: ' + bad.join(', ') + '.' : '') });
+      }
+    }
+    if (s.key === 'SEA OF TIME' && isThin(v)) {
+      const g = /((?:\d+th,?\s*(?:or\s+)?)+)Generation \(thin-bloods\): Blood Potency (\d+)/.exec(s.text);
+      if (g) {
+        const gens = g[1].match(/\d+/g).map(Number);
+        const gen = parseInt(v.Generation, 10);
+        out.push({ ok: gens.indexOf(gen) !== -1 && +v['Blood Potency'] === +g[2], text: g[0] + '. This sheet: Generation ' + (v.Generation || '—') + ', Blood Potency ' + (v['Blood Potency'] != null ? v['Blood Potency'] : '—') + '.' });
+      }
     }
     if (s.key === 'CONVICTIONS AND TOUCHSTONES') {
       const c = convictions(s.text);
