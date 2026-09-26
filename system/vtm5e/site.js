@@ -272,6 +272,32 @@ window.VttSiteTabs = (function () {
     const k = Object.keys(d).find((x) => x.toLowerCase() === String(name).toLowerCase());
     return k ? d[k] : null;
   };
+  // the filter both Discipline pages share (owner: "the disciplines section should be filterable"):
+  // a name or any printed word, the Discipline, the level, the kind, the book
+  const discState = { q: '', disc: '', level: '', kind: '', book: '' };
+  const kindOf = (r) => (r.kind === 'power' ? 'power' : r.discipline === 'Oblivion' ? 'ceremony' : r.discipline === 'Thin-Blood Alchemy' ? 'formula' : 'ritual');
+  function discFilter(recs, onChange, withDisc) {
+    const text = (r) => (r.name + ' ' + (r.under || '') + ' ' + Object.values(r.fields || {}).join(' ')).toLowerCase();
+    const test = (r) => {
+      const t = discState.q.toLowerCase();
+      return (!withDisc || !discState.disc || r.discipline === discState.disc) && (!discState.level || String(D.levelNumber(r) || '') === discState.level)
+        && (!discState.kind || kindOf(r) === discState.kind) && (!discState.book || r.book === discState.book) && (!t || text(r).indexOf(t) !== -1);
+    };
+    const q = el('input', { type: 'search', class: 'search', placeholder: 'A name, or any word the entry prints…', value: discState.q });
+    const opt = (key, first, list) => {
+      const sel = el('select', { class: 'scope' }, [el('option', { value: '' }, [first])].concat(list.map((o) => el('option', { value: o[0], selected: discState[key] === o[0] || null }, [o[1]]))));
+      sel.addEventListener('change', () => { discState[key] = sel.value; onChange(); });
+      return sel;
+    };
+    const books = D.books().filter((b) => recs.some((r) => r.book === b.id));
+    const bar = el('div', { class: 'chiprow disc-filter' }, [q,
+      withDisc ? opt('disc', 'Every Discipline', D.disciplines().map((n) => [n, n])) : null,
+      opt('level', 'Every level', [1, 2, 3, 4, 5].map((n) => [String(n), 'Level ' + n])),
+      opt('kind', 'Every kind', [['power', 'Powers'], ['ritual', 'Rituals'], ['ceremony', 'Ceremonies'], ['formula', 'Formulae']]),
+      opt('book', 'Every book', books.map((b) => [b.id, b.label]))]);
+    q.addEventListener('input', debounce(() => { discState.q = q.value.trim(); onChange(); }, 150));
+    return { bar, test };
+  }
   function renderDisciplines(container, path, ctx) {
     const page = el('div', { class: 'page' });
     container.appendChild(page);
@@ -286,10 +312,21 @@ window.VttSiteTabs = (function () {
         el('div', { class: 'mark-name' }, [n]),
         el('div', { class: 'muted small' }, [recs.filter((r) => r.discipline === n).length + ' entries']),
       ]))));
+      const found = el('div', {});
+      const count = el('span', { class: 'muted small' });
+      const f = discFilter(recs, () => draw(), true);
+      const draw = () => { const hit = recs.filter(f.test); count.textContent = hit.length + ' of ' + recs.length; found.innerHTML = ''; found.appendChild(recordTable(hit, ctx, true)); };
+      page.appendChild(el('h4', {}, ['Every entry']));
+      f.bar.appendChild(count);
+      page.appendChild(f.bar);
+      page.appendChild(found);
+      draw();
       const lost = recs.filter((r) => !r.discipline || !r.level);
-      page.appendChild(el('h4', {}, ['Not placed by Discipline and level', el('span', { class: 'muted small' }, [' · ' + lost.length])]));
-      page.appendChild(el('p', { class: 'muted small' }, ['The corpus lost these entries’ Discipline or level heading in conversion (merged into a Discipline’s own heading, or named after the level). Reported to the corpus; listed here as they stand.']));
-      page.appendChild(recordTable(lost, ctx, true));
+      if (lost.length) {
+        page.appendChild(el('h4', {}, ['Not placed by Discipline and level', el('span', { class: 'muted small' }, [' · ' + lost.length])]));
+        page.appendChild(el('p', { class: 'muted small' }, ['The corpus does not place these under a Discipline and a level.']));
+        page.appendChild(recordTable(lost, ctx, true));
+      }
       return;
     }
     page.appendChild(el('div', { class: 'crumbs' }, [el('a', { href: ctx.href('disciplines', []) }, ['Disciplines']), ' › ', name]));
@@ -299,15 +336,27 @@ window.VttSiteTabs = (function () {
     const side = el('nav', { class: 'site-toc' });
     const view = el('div', { class: 'site-reader' });
     const openId = path[1] || null;
-    [1, 2, 3, 4, 5, null].forEach((lv) => {
-      const at = mine.filter((r) => D.levelNumber(r) === lv);
-      if (!at.length) return;
-      side.appendChild(el('div', { class: 'toc-phase' }, [lv ? 'Level ' + lv : 'Level not printed']));
-      side.appendChild(el('ul', { class: 'toc' }, at.map((r) => el('li', {}, [
-        el('a', { class: 'ref' + (r.id === openId ? ' active' : ''), href: ctx.href('disciplines', [name, r.id]) }, [r.name]),
-        el('span', { class: 'muted small' }, [' · ' + (r.kind === 'ritual' ? 'ritual · ' : '') + (D.indexBook(r.book) || {}).label]),
-      ]))));
-    });
+    const listed = el('div', {});
+    const count = el('div', { class: 'muted small' });
+    const f = discFilter(mine, () => drawSide(), false);
+    const drawSide = () => {
+      listed.innerHTML = '';
+      const hit = mine.filter(f.test);
+      count.textContent = hit.length + ' of ' + mine.length;
+      [1, 2, 3, 4, 5, null].forEach((lv) => {
+        const at = hit.filter((r) => D.levelNumber(r) === lv);
+        if (!at.length) return;
+        listed.appendChild(el('div', { class: 'toc-phase' }, [lv ? 'Level ' + lv : 'Level not printed']));
+        listed.appendChild(el('ul', { class: 'toc' }, at.map((r) => el('li', {}, [
+          el('a', { class: 'ref' + (r.id === openId ? ' active' : ''), href: ctx.href('disciplines', [name, r.id]) }, [r.name]),
+          el('span', { class: 'muted small' }, [' · ' + (r.kind === 'power' ? '' : kindOf(r) + ' · ') + (D.indexBook(r.book) || {}).label]),
+        ]))));
+      });
+    };
+    side.appendChild(f.bar);
+    side.appendChild(count);
+    side.appendChild(listed);
+    drawSide();
     cols.appendChild(side);
     cols.appendChild(view);
     page.appendChild(cols);

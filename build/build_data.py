@@ -154,8 +154,7 @@ DEFERRED_EXTS = {
 # ───────────────────────── records by shape ─────────────────────────
 # Field names the book prints on a record — keys only. A record is the FIRST shape it fits.
 SHAPES = [
-    ("power", lambda ps: "Cost" in ps and ("System" in ps or "Duration" in ps)),
-    ("ritual", lambda ps: "Ingredients" in ps and ("Process" in ps or "System" in ps)),
+    # (powers and rituals are declared, BASE 0.5.6 -- TYPED_KINDS; no longer found by their fields)
     ("character", lambda ps: "Standard Dice Pools" in ps or "Secondary Attributes" in ps
      or ("Attributes" in ps and "Skills" in ps)),
 ]
@@ -165,7 +164,10 @@ SHAPE_NAMES = [s[0] for s in SHAPES]
 TYPED_KINDS = {"Loresheet": "loresheet", "Loresheet Level": "loresheet level",
                # BASE 0.5.4: a DEF that EXTENDS ^"Advantage" or one of the types that extend it (Merit,
                # Flaw, Background) is an Advantage the creator offers, from every book
-               "Advantage": "advantage", "Merit": "advantage", "Flaw": "advantage", "Background": "advantage"}
+               "Advantage": "advantage", "Merit": "advantage", "Flaw": "advantage", "Background": "advantage",
+               # BASE 0.5.6: every power a book prints declares its Discipline and its level; a Ritual, a
+               # Ceremony and a Formula are the ritual records (their Ingredients and Process)
+               "Discipline Power": "power", "Ritual": "ritual", "Ceremony": "ritual", "Formula": "ritual"}
 # "Level 3", or a label that names what the level holds ("Level 4 Powers", "Level 3
 # Ceremonies", "Level 5 Formula" -- Tattered Facade, and the rituals appendices)
 LEVEL_HEADING = re.compile(r"^Level \d+( (Powers?|Rituals?|Ceremony|Ceremonies|Formulae?))?$")
@@ -538,6 +540,14 @@ def disciplines_of(entities):
     return set(decl[0]["enum"])
 
 
+def param_first(e, name):
+    """a level the book offers two of ("LEVEL 1 OR 3 RITUAL": the corpus's PARAMETERS chooser, which
+    the reader does not keep): the first, from the level as printed"""
+    printed = scalar(e, "Printed " + name) or ""
+    m = re.search(r"(\d)", printed)
+    return int(m.group(1)) if m else None
+
+
 def scalar(e, name):
     p = next((x for x in e["props"] if x["name"] == name), None)
     return p.get("value") if p and p.get("vk") in ("scalar", "enum") else None
@@ -557,7 +567,7 @@ def records_of(entities, orders, disciplines):
             opens = next((d for d in disciplines if e["name"] == d or e["name"].startswith(d + " ")), None)
             if opens:                    # "Oblivion", "Oblivion Ceremonies", "Thin-Blood Alchemy Formulae"
                 discipline, level = opens, None
-            if e.get("typeHash") in typed and not (typed[e["typeHash"]] == "advantage" and e.get("book") == "base"):
+            if e.get("typeHash") in typed and e.get("book") != "base":   # (BASE's own types are the types, not picks)
                 kind = typed[e["typeHash"]]      # (BASE's own Merit, Flaw and Background are the types, not picks)
                 rec = {"id": h, "name": e["name"], "book": e["book"], "kind": kind,
                        "under": entities[e["parent"]]["name"] if e["parent"] else None}
@@ -570,6 +580,18 @@ def records_of(entities, orders, disciplines):
                     rec["type"] = e.get("type")
                     rec["rating"] = scalar(e, "Rating")
                     rec["dots"] = scalar(e, "Dots")
+                elif kind in ("power", "ritual"):
+                    # where the book puts it, as declared: its Discipline and its level ("Level 3"; a
+                    # Ritual the book offers at two levels, "Level 1 or 3", at the first)
+                    rec["type"] = e.get("type")
+                    rec["discipline"] = scalar(e, "Discipline")
+                    lv = scalar(e, "Level") or param_first(e, "Level")
+                    rec["level"] = "Level %s" % lv if lv is not None else None
+                    if scalar(e, "Printed Level"):
+                        rec["printedLevel"] = scalar(e, "Printed Level")
+                    fields = {f: scalar(e, f) for f in RECORD_FIELDS[kind] if scalar(e, f) is not None}
+                    if fields:
+                        rec["fields"] = fields
                 else:
                     rec["levels"] = [c for c in e.get("children", []) if entities.get(c, {}).get("typeHash") in typed]
                 out.append(rec)
