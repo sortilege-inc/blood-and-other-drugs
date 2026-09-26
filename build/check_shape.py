@@ -166,6 +166,8 @@ def main():
           grep_count(ttrpg, r'^\s*EXTENDS #\S+ \^"(Ritual|Ceremony|Formula)"$'))
     check("every power and ritual names one of the BASE's Disciplines and a level 1-5",
           [r["name"] for r in records if r["kind"] in ("power", "ritual") and (r.get("discipline") not in index["disciplines"] or not re.match(r"^Level [1-5]$", r.get("level") or ""))], [])
+    check("predator records = DEFs that EXTEND ^\"Predator Type\"", sum(1 for r in records if r["kind"] == "predator"),
+          grep_count([p for p in ttrpg if os.path.basename(p) != "vtm5e-0.5-base.ttrpg"], r'^\s*EXTENDS #\S+ \^"Predator Type"$'))
     check("advantage records = DEFs that EXTEND ^\"Advantage\", ^\"Merit\", ^\"Flaw\" or ^\"Background\"", sum(1 for r in records if r["kind"] == "advantage"),
           grep_count([p for p in ttrpg if os.path.basename(p) != "vtm5e-0.5-base.ttrpg"], r'^\s*EXTENDS #\S+ \^"(Advantage|Merit|Flaw|Background)"$'))
     check("every advantage record carries its type", all(r.get("type") in ("Advantage", "Merit", "Flaw", "Background") for r in records if r["kind"] == "advantage"), True)
