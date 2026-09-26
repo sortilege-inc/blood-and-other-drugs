@@ -272,7 +272,8 @@ window.VtmCreatorGuides = (function () {
         .concat(bookIds.map((id) => el('option', { value: id, selected: advBook === id || null }, [(D.indexBook(id) || {}).label || id]))))]));
     const ql = advQuery.trim().toLowerCase();
     const hits = cat.filter((x) => (advKind === 'all' || x.kind === advKind) && (advBook === 'all' || x.books.indexOf(advBook) !== -1)
-      && (!ql || x.name.toLowerCase().indexOf(ql) !== -1 || x.parent.toLowerCase().indexOf(ql) !== -1));
+      && (!ql || x.name.toLowerCase().indexOf(ql) !== -1 || x.parent.toLowerCase().indexOf(ql) !== -1
+        || ((x.r && x.r.aliases) || []).some((a) => a.toLowerCase().indexOf(ql) !== -1)));   // either name finds it
     const shown = hits.slice(0, 40);
     const list = el('div', { class: 'adv-list' });
     const bookLabel = (x) => x.books.map((b) => (D.indexBook(b) || {}).label || b).join(', ');
@@ -280,7 +281,7 @@ window.VtmCreatorGuides = (function () {
       if (x.kind === 'Loresheet') {
         // a loresheet: its levels, each read and taken like any Advantage
         const levels = recs.filter((r) => r.kind === 'loresheet level' && r.loresheet === x.r.id).sort((a, b) => (a.rating || 0) - (b.rating || 0));
-        const card = el('div', { class: 'adv-hit adv-lore' }, [detailsOf([el('b', {}, [x.name]), el('span', { class: 'muted small' }, [' · Loresheet · ' + levels.length + ' levels · ' + bookLabel(x)])], x.r.id, x.r.book)]);
+        const card = el('div', { class: 'adv-hit adv-lore' }, [detailsOf([el('b', {}, [x.name]), el('span', { class: 'muted small' }, [((x.r.aliases || []).length ? ' (also ' + x.r.aliases.join(', ') + ')' : '') + ' · Loresheet · ' + levels.length + ' levels · ' + bookLabel(x)])], x.r.id, x.r.book)]);
         const lv = el('div', { class: 'lore-levels' });
         levels.forEach((l) => {
           const i = rows.findIndex((r) => r.Advantage === l.id);
