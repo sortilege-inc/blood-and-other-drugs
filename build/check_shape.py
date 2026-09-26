@@ -159,6 +159,13 @@ def main():
     for kind, word in (("loresheet", "Loresheet"), ("loresheet level", "Loresheet Level")):
         check("%s records = DEFs that EXTEND ^\"%s\"" % (kind, word), sum(1 for r in records if r["kind"] == kind),
               grep_count(ttrpg, r'^\s*EXTENDS #\S+ \^"%s"$' % word))
+    # powers, Rituals, Ceremonies and Formulae (BASE 0.5.6): each declared, with its Discipline and level
+    check("power records = DEFs that EXTEND ^\"Discipline Power\"", sum(1 for r in records if r["kind"] == "power"),
+          grep_count([p for p in ttrpg if os.path.basename(p) != "vtm5e-0.5-base.ttrpg"], r'^\s*EXTENDS #\S+ \^"Discipline Power"$'))
+    check("ritual records = DEFs that EXTEND ^\"Ritual\", ^\"Ceremony\" or ^\"Formula\"", sum(1 for r in records if r["kind"] == "ritual"),
+          grep_count(ttrpg, r'^\s*EXTENDS #\S+ \^"(Ritual|Ceremony|Formula)"$'))
+    check("every power and ritual names one of the BASE's Disciplines and a level 1-5",
+          [r["name"] for r in records if r["kind"] in ("power", "ritual") and (r.get("discipline") not in index["disciplines"] or not re.match(r"^Level [1-5]$", r.get("level") or ""))], [])
     check("advantage records = DEFs that EXTEND ^\"Advantage\", ^\"Merit\", ^\"Flaw\" or ^\"Background\"", sum(1 for r in records if r["kind"] == "advantage"),
           grep_count([p for p in ttrpg if os.path.basename(p) != "vtm5e-0.5-base.ttrpg"], r'^\s*EXTENDS #\S+ \^"(Advantage|Merit|Flaw|Background)"$'))
     check("every advantage record carries its type", all(r.get("type") in ("Advantage", "Merit", "Flaw", "Background") for r in records if r["kind"] == "advantage"), True)

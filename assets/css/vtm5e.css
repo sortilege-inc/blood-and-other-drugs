@@ -102,6 +102,8 @@ h4 { font-family: var(--font-ui); font-size: 12px; letter-spacing: .16em; text-t
 .reader { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 26px; align-items: start; }
 .site-toc { position: sticky; top: 76px; max-height: calc(100vh - 96px); overflow: auto; padding-right: 8px; font-family: var(--font-ui); font-size: 13px; }
 .site-toc .search { width: 100%; margin-bottom: 10px; }
+.site-toc .disc-filter { flex-direction: column; align-items: stretch; gap: 6px; margin-bottom: 8px; }
+.site-toc .disc-filter .search { margin-bottom: 0; }
 .toc { list-style: none; margin: 0; padding: 0 0 0 12px; }
 .toc.toc-top { padding-left: 0; }
 .toc li { margin: 2px 0; }
@@ -283,6 +285,8 @@ input.search.wide { width: 100%; font-size: 17px; padding: 12px 14px; }
 .row-line { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 4px 0; border-bottom: 1px dotted #3a2f35; }
 .row-field { display: inline-flex; gap: 6px; align-items: center; }
 .row-powers { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; width: 100%; }
+.row-powers .chip { display: inline-flex; align-items: center; gap: 8px; padding: 2px 4px 2px 10px; border: 1px solid var(--line, #3a2f35); }
+.row-powers .chip > button { margin: 0; padding: 0 6px; line-height: 1.4; }
 .potency { margin: 4px 0 12px; }
 .sheet-details { margin: 14px 0; }
 .sheet-details > summary { cursor: pointer; font-family: var(--font-ui); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--bone-2); }
@@ -363,6 +367,10 @@ ul.checks li.warn::before { content: '!'; color: var(--blood-2); font-weight: 70
 .dist-card { text-align: left; background: transparent; color: var(--bone-2); border: 1px solid #4a3d44; padding: 10px 12px; cursor: pointer; font: inherit; }
 .dist-card:hover { border-color: var(--blood-2); color: var(--bone); }
 .dist-card.on { border-color: var(--blood-2); background: rgba(160, 20, 40, .18); color: var(--bone); }
+.pred-cards { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.pred-desc { margin-top: 6px; font-size: 14px; line-height: 1.45; }
+.pred-desc p { margin: 0 0 6px; }
+.pred-desc.clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .dist-name { font-family: var(--font-ui); letter-spacing: .1em; text-transform: uppercase; font-size: 12px; margin-bottom: 4px; }
 .rules-choice { margin: 4px 0 10px; }
 .grants { margin: 6px 0 12px; padding-left: 1.3em; }

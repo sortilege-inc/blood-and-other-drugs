@@ -309,6 +309,7 @@ window.VtmCreator = (function () {
 
   // ── what the page says in its own words (not the book's) ──
   const SOURCES_TEXT = 'Every character is made with the Core Rulebook’s Character Creation, the Players Guide adding its clans and Predator types.\n\n'
+    + 'The other books add Advantages, loresheets, powers and rituals; turn off any this character should not draw on.\n\n'
     + 'Third-party books add options to those steps — they never replace them. A character that uses one is playable only where the Storyteller allows it.';
   // Small caps the book prints as lower case ("jack of all trades", "CLAN AND SIRE") in title case
   const MINOR = /^(a|an|and|the|of|to|in|on|or|for|at|by|with)$/;
@@ -326,6 +327,7 @@ window.VtmCreator = (function () {
     if (s.key === 'SOURCES') {
       const tp = Sheet.isSabbat(v) ? [((D.indexBook(BH_BOOK) || {}).label || 'The Black Hand')].concat(((meta || {}).sources || []).indexOf(SUN_BOOK) !== -1 ? [((D.indexBook(SUN_BOOK) || {}).label || 'Path of the Sun')] : []) : [];
       put('Rules', ['Core Rulebook', 'Players Guide'].concat(tp).join(' · '));
+      if ((meta || {}).books) put('Books', ['Core Rulebook', 'Players Guide'].concat(meta.books.map((id) => (D.indexBook(id) || {}).label || id)).join(' · '));
       return out;
     }
     const names = [];
@@ -405,11 +407,38 @@ window.VtmCreator = (function () {
   // Step 0: the sources. The Core Rulebook always; third-party books by the player's choice.
   function sourcesStep(v, meta, change, setMeta) {
     return el('div', {}, [
-      el('div', { class: 'prop-k' }, ['The rules']),
-      el('p', {}, ['Core Rulebook · Players Guide — always.']),
+      booksBlock(meta, setMeta),
       thirdParty(v, meta, change),
       loresheetsBlock(v, meta, setMeta),
     ]);
+  }
+  // The official books this character draws on (owner: "Sources should allow you to toggle any of
+  // the sources made available"): each book that prints character options -- Advantages,
+  // loresheets, powers, rituals -- with what it offers; the core always. meta.books lists the ones
+  // on; unset, every one is. The finder, the loresheets and the Discipline powers follow it.
+  const OFFERS = [['advantage', 'Advantage', 'Advantages'], ['loresheet', 'loresheet', 'loresheets'], ['power', 'power', 'powers'], ['ritual', 'ritual', 'rituals']];
+  function booksBlock(meta, setMeta) {
+    const recs = D.records();
+    const offers = {};
+    recs.forEach((r) => { if (OFFERS.some((o) => o[0] === r.kind)) { const b = offers[r.book] = offers[r.book] || {}; b[r.kind] = (b[r.kind] || 0) + 1; } });
+    const books = D.books().filter((b) => b.shelf !== 'third-party' && b.kind === 'book' && offers[b.id]);
+    const always = (id) => G().ALWAYS.indexOf(id) !== -1;
+    const others = books.filter((b) => !always(b.id)).map((b) => b.id);
+    const on = meta.books ? meta.books.filter((id) => others.indexOf(id) !== -1) : others.slice();
+    const put = (ids) => setMeta({ books: ids });
+    const said = (id) => OFFERS.filter((o) => offers[id][o[0]]).map((o) => offers[id][o[0]] + ' ' + (offers[id][o[0]] === 1 ? o[1] : o[2])).join(' · ');
+    const box = el('div', { class: 'third-party on books-on' });
+    box.appendChild(el('div', { class: 'prop-k' }, ['The books · ' + (on.length + books.length - others.length) + ' of ' + books.length + ' on']));
+    box.appendChild(el('div', { class: 'chiprow tight' }, [button('All', () => put(others.slice()), 'ghost tiny'), button('Only the core and the Players Guide', () => put([]), 'ghost tiny')]));
+    books.forEach((b) => {
+      const core = always(b.id);
+      const is = core || on.indexOf(b.id) !== -1;
+      box.appendChild(el('label', { class: 'tp-row tp-source' }, [
+        el('input', { type: 'checkbox', checked: is || null, disabled: core ? 'disabled' : null, onchange: (ev) => put(ev.target.checked ? on.concat([b.id]) : on.filter((x) => x !== b.id)) }),
+        ' ', el('b', {}, [b.label]), el('span', { class: 'muted small' }, [' — ' + (core ? 'always · ' : '') + said(b.id)]),
+      ]));
+    });
+    return box;
   }
   // Loresheets, as third-party books are: the player picks the ones this character may draw on
   // (each, or all), acknowledging that a loresheet is played only where the Storyteller allows it
@@ -627,7 +656,8 @@ window.VtmCreator = (function () {
       const src = ((meta || {}).sources || (Sheet.isSabbat(v) ? [BH_BOOK] : []));
       const lore = (meta || {}).lore || {};
       if (lore.on) out.push({ ok: !!lore.ack, text: lore.ack ? 'Loresheets in the Advantages finder; playable where the Storyteller allows them.' : 'Tick the loresheets acknowledgment for them to take effect.' });
-      if (!tp) out.push({ ok: true, text: 'Core Rulebook only.' });
+      out.push({ ok: true, text: (meta || {}).books ? (meta.books.length + 2) + ' official books on.' : 'Every official book on.' });
+      if (!tp) out.push({ ok: true, text: 'No third-party options.' });
       else if (!src.length) out.push({ ok: false, text: 'Choose the third-party books to use, or untick third-party options.' });
       else out.push({ ok: !!ack, text: ack ? 'Third-party options in effect; playable where the Storyteller allows them.' : 'Tick the acknowledgment for the options to take effect.' });
     }
