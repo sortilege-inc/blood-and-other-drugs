@@ -167,7 +167,10 @@ TYPED_KINDS = {"Loresheet": "loresheet", "Loresheet Level": "loresheet level",
                "Advantage": "advantage", "Merit": "advantage", "Flaw": "advantage", "Background": "advantage",
                # BASE 0.5.6: every power a book prints declares its Discipline and its level; a Ritual, a
                # Ceremony and a Formula are the ritual records (their Ingredients and Process)
-               "Discipline Power": "power", "Ritual": "ritual", "Ceremony": "ritual", "Formula": "ritual"}
+               "Discipline Power": "power", "Ritual": "ritual", "Ceremony": "ritual", "Formula": "ritual",
+               # BASE 0.5.7: every Predator type a book prints, with its grants (Items); the creator offers
+               # the ones of the books a character draws on, loading a book only when it is on
+               "Predator Type": "predator"}
 # "Level 3", or a label that names what the level holds ("Level 4 Powers", "Level 3
 # Ceremonies", "Level 5 Formula" -- Tattered Facade, and the rituals appendices)
 LEVEL_HEADING = re.compile(r"^Level \d+( (Powers?|Rituals?|Ceremony|Ceremonies|Formulae?))?$")
@@ -580,6 +583,8 @@ def records_of(entities, orders, disciplines):
                     rec["type"] = e.get("type")
                     rec["rating"] = scalar(e, "Rating")
                     rec["dots"] = scalar(e, "Dots")
+                elif kind == "predator":
+                    pass                         # its name, book and section are the record; its grants load with its book
                 elif kind in ("power", "ritual"):
                     # where the book puts it, as declared: its Discipline and its level ("Level 3"; a
                     # Ritual the book offers at two levels, "Level 1 or 3", at the first)

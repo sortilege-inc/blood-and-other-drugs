@@ -157,18 +157,26 @@ window.VtmCreator = (function () {
   const powerPerDot = () => bookSentence('power', /Remember to also pick a power for each dot\.(?: \(See p\. \d+\.\))?/);
   const lackingSkill = () => bookSentence('lacking', /If a Predator type adds a specialty for which you lack the matching Skill[^.]*\./);
   const thinForbidden = () => bookSentence('forbidden', /No thin-blood can buy [^.]*during character creation\./);
-  // Predator types: the headings under a "Predator Types" section (core, Players Guide)
-  // that print their grants (an Items list: "Add a specialty…", "Gain one dot of…"). The
-  // Players Guide's summary sheet also heads a "Predator Types" of one-line reminders
-  // ("Alleycat:"), and a notes sidebar sits among the types; neither prints grants.
-  function predators(v) {
+  // Predator types: every one a book prints (BASE 0.5.7 Predator Type, a record each in the index),
+  // from the books this character draws on (step 0's Sources; The Black Hand's only for a Sabbat
+  // character). A name printed in several books is offered once, from the first book in shelf
+  // order (the core, then the Players Guide); "Predator Type: Roadside Killer" is offered by its name.
+  // A book not yet loaded is loaded, and the step redrawn (predatorBooks).
+  const predName = (n) => n.replace(/^Predator Type:\s*/, '');
+  function predatorRecords(v, meta) {
+    const order = D.books().map((b) => b.id);
+    return D.records().filter((r) => r.kind === 'predator' && G() && G().bookOn(meta || {}, r.book)
+        && (r.book !== BH_BOOK || Sheet.isSabbat(v)))
+      .sort((a, b) => order.indexOf(a.book) - order.indexOf(b.book));
+  }
+  function predatorBooks(v, meta) {
+    return [...new Set(predatorRecords(v, meta).map((r) => r.book))].filter((b) => !D.loaded(b));
+  }
+  function predators(v, meta) {
     const out = [];
-    // a character using The Black Hand also has its Sabbat types ("Pick your Sabbat Predator type (see pg. 24)")
-    D.all(['core', 'players-guide'].concat(v && Sheet.isSabbat(v) && D.loaded(BH_BOOK) ? [BH_BOOK] : [])).forEach((e) => {
-      if (e.name !== 'Predator Types') return;
-      D.children(e.id).forEach((k) => {
-        if ((k.props || []).some((p) => p.name === 'Items') && !out.some((p) => p.name === k.name)) out.push({ name: k.name, entity: k });
-      });
+    predatorRecords(v, meta).forEach((r) => {
+      const e = D.loaded(r.book) ? D.entity(r.id) : null;
+      if (e && !out.some((p) => p.name === predName(r.name))) out.push({ name: predName(r.name), entity: e, book: r.book });
     });
     return out;
   }
@@ -349,7 +357,7 @@ window.VtmCreator = (function () {
     }
     if (s.key === 'PREDATOR') {
       put('Predator type', v.Predator);
-      const cur = predators(v).find((p) => p.name === v.Predator);
+      const cur = predators(v, meta).find((p) => p.name === v.Predator);
       const pred = (meta || {}).pred;
       if (cur && pred && pred.name === v.Predator && G()) {
         const gs = G().grantsOf(cur.entity);
@@ -595,7 +603,11 @@ window.VtmCreator = (function () {
       if (cur) box.appendChild(el('details', { class: 'paper' }, [el('summary', {}, [cur.name + ', as printed']), E.render(cur.entity, { noKids: true })]));
     }
     if (s.key === 'PREDATOR' && G()) {
-      box.appendChild(G().predator(ctx, predators(v), lackingSkill()));
+      const need = predatorBooks(v, meta);
+      if (need.length) {
+        box.appendChild(el('p', { class: 'muted' }, ['Opening the Predator types of ' + need.map((b) => (D.indexBook(b) || {}).label || b).join(', ') + '…']));
+        D.ready(need).then(() => setMeta({}));
+      } else box.appendChild(G().predator(ctx, predators(v, meta), lackingSkill()));
     }
     if (s.key === 'ADVANTAGES' && isThin(v)) {
       const tb = D.thinBloodTraits();
@@ -701,7 +713,7 @@ window.VtmCreator = (function () {
     }
     if (s.key === 'PREDATOR' && isThin(v) && !v.Predator && noPredator()) out.push({ ok: true, text: noPredator() });
     else if (s.key === 'PREDATOR') {
-      const cur = predators(v).find((p) => p.name === v.Predator);
+      const cur = predators(v, meta).find((p) => p.name === v.Predator);
       const n = cur && G() ? G().grantsOf(cur.entity).length : 0;
       const done = Object.keys((((meta || {}).pred || {}).name === v.Predator && (meta || {}).pred.applied) || {}).length;
       out.push({ ok: !!v.Predator && done >= n, text: v.Predator ? v.Predator + ': ' + done + ' of ' + n + ' grants applied.' : 'Pick a Predator type.' });

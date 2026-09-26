@@ -436,12 +436,13 @@ window.VtmCreatorGuides = (function () {
   function advantageOption(t) {
     const flaw = /\bFlaw\b/.test(t);
     let dots = dotsIn(t);
-    const w = /\b(one|two|three|four|five) dots? of (?:the )?(.+?)(?: Background)?$/i.exec(t);
+    const w = /\b(one|two|three|four|five) (?:additional )?dots? of (?:the )?(.+?)(?: Background)?$/i.exec(t);   // "two additional dots of migrating Herd"
     if (!dots && w) dots = num(w[1]);
     let name;
     if (w && !dotsIn(t)) name = w[2].replace(/^either\s+/i, '');
     else {
-      const s = t.replace(/^(?:Gain\s+)?(?:either\s+)?(?:the\s+)?/i, '');
+      // "Gain the Flaw Prey Exclusion (locals)", "Gain an Adversary (••)": the article and the kind are not the name
+      const s = t.replace(/^(?:Gain\s+)?(?:either\s+)?(?:the\s+|an?\s+)?(?:(?:Merit|Flaw|Background|Advantage)\s+(?=[A-Z]))?/i, '');
       // the words before the printed dots ("Dark Secret (Mortal Ties)", "Feeding Merit: Iron Gullet")
       const before = s.split(/\s*\(?[•●]/)[0].replace(/:\s*$/, '').trim();
       // the words after them: a name ("Beautiful", "Prey Exclusion (mortals)"), not a description
@@ -455,12 +456,19 @@ window.VtmCreatorGuides = (function () {
       else name = bare || s;
       name = name.replace(/\s*\b(Feeding|Mythic|Looks|Haven|Retainer|Mask)?\s*(Merit|Flaw|Advantage)\s*$/i, '').replace(/[•●]/g, '').replace(/\(\s*\)/g, '').replace(/^one\s+\w+\s+Flaw$/i, '').replace(/\s+/g, ' ').trim();
     }
-    return { name: name.charAt(0).toUpperCase() + name.slice(1), dots, flaw, text: t };
+    name = name.charAt(0).toUpperCase() + name.slice(1);
+    // no dots in the grant: the rating the books give that Advantage, where it has one (Prey Exclusion ●)
+    if (!dots) { const r = D.records().find((x) => x.kind === 'advantage' && x.rating && x.name === stripParens(name)); if (r) dots = +r.rating; }
+    return { name, dots, flaw, text: t };
   }
   // "A or B": a choice only where each side names an Advantage of its own; "A and B" (each with its
   // dots) is both, in one choice. A choice is a list of Advantage lines.
   const own = (p) => dotsIn(p) || /\b(Merit|Flaw)\b/.test(p);
   function advantageOptions(t) {
+    // "Gain three dots of Domain or Status, representing …": one of the two, each at those dots (the
+    // rest of the line is what they represent; the grant keeps it as printed)
+    const pick = /^Gain\s+(one|two|three|four|five) (?:additional )?dots? of ([A-Z][\w ]*?) or ([A-Z][\w ]*?)(?:,.*)?$/.exec(t);
+    if (pick) return [pick[2], pick[3]].map((n) => [{ name: n.trim(), dots: num(pick[1]), flaw: false, text: t }]);
     const body = t.replace(/^Gain\s+(?:either\s+)?/i, '');
     const parts = body.split(/,?\s+or\s+(?:the\s+)?/);
     const choices = parts.length > 1 && parts.every(own) ? parts : [body];
@@ -474,13 +482,13 @@ window.VtmCreatorGuides = (function () {
 
   function parseGrant(t) {
     let m;
-    if ((m = /^Add a specialty:\s*(.+)$/i.exec(t))) {
+    if ((m = /^Add a specialty:?\s*(.+)$/i.exec(t))) {          // (Let the Streets Run Red prints no colon)
       return { kind: 'specialty', options: m[1].split(/,\s*(?:or\s+)?|\s+or\s+/).map((o) => { const x = /^(.+?)\s*\((.+)\)\s*$/.exec(o.trim()); return x ? { skill: x[1].trim(), spec: x[2].trim() } : null; }).filter(Boolean) };
     }
     if ((m = /^(Lose|Gain) (\w+) dots? of Humanity\.?$/i.exec(t))) return { kind: 'humanity', delta: (m[1].toLowerCase() === 'lose' ? -1 : 1) * num(m[2]) };
     if ((m = /^Increase (?:your )?Blood Potency by (\w+)\.?$/i.exec(t))) return { kind: 'potency', delta: num(m[1]) };
     const known = D.disciplines();
-    const segs = t.split(/\s+and\s+gain\s+/i).map((sg) => /^(?:Gain\s+)?one dot of (.+?)\.?$/i.exec(sg.trim()));
+    const segs = t.split(/\s+and\s+gain\s+/i).map((sg) => /^(?:(?:Gain|Add)\s+)?one dot of (.+?)\.?$/i.exec(sg.trim()));   // "Add one dot of Fortitude or Protean"
     if (segs.every(Boolean)) {
       const sets = segs.map((x) => x[1].split(/\s+or\s+/).map((o) => ({ name: stripParens(o), text: o.trim() })));
       if (sets.every((s) => s.every((o) => known.indexOf(o.name) !== -1))) return { kind: 'discipline', sets };
