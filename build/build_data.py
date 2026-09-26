@@ -363,6 +363,8 @@ def entity_record(e, doc, book, parent_id=None, slot=None):
         "slot": slot,
         "children": [],
         "desc": kwstr(body, "DESCRIPTION"),
+        # another name the entity answers to (spec ALIAS: "The Nation of Blood", printed "Descendants of the Baron")
+        "aliases": [a["v"] for n in kws(body, "ALIAS") for a in n["args"] if a["k"] == "str"] or None,
         "props": props,
         "entries": defs_block(body, "ENTRIES"),
         "table": table_of(body),
@@ -574,6 +576,8 @@ def records_of(entities, orders, disciplines):
                 kind = typed[e["typeHash"]]      # (BASE's own Merit, Flaw and Background are the types, not picks)
                 rec = {"id": h, "name": e["name"], "book": e["book"], "kind": kind,
                        "under": entities[e["parent"]]["name"] if e["parent"] else None}
+                if e.get("aliases"):
+                    rec["aliases"] = e["aliases"]
                 if kind == "loresheet level":
                     # its dots, and the loresheet it is printed under
                     rec["rating"] = scalar(e, "Rating")

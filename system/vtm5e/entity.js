@@ -177,6 +177,8 @@ window.VtmEntity = (function () {
     const box = el('article', { class: 'entity' + (kind ? ' rec-' + kind : '') + (e.type ? ' type-' + e.type.toLowerCase() : '') + (depth ? ' depth-' + Math.min(depth, 4) : '') });
     if (!o.bare) {
       box.appendChild(el(depth ? 'h' + Math.min(6, 3 + depth) : 'h3', { class: 'entity-h' }, [e.name]));
+      // another name it answers to (ALIAS): the Cults of the Blood Gods prints The Nation of Blood as Descendants of the Baron
+      if (e.aliases && e.aliases.length) box.appendChild(el('div', { class: 'entity-alias muted small' }, ['Also called ' + e.aliases.join(', ')]));
       if (!depth) {
         const sub = subline(e);
         if (sub) box.appendChild(el('div', { class: 'entity-sub' }, [sub]));

@@ -175,7 +175,7 @@ window.VtmData = (function () {
 
   // ── search (the loaded books, and the records always) ──────────────
   function searchText(e) {
-    const parts = [e.name, e.desc || ''];
+    const parts = [e.name].concat(e.aliases || [], [e.desc || '']);   // an ALIAS finds it too
     (e.props || []).forEach((p) => {
       if ((p.vk === 'scalar' || p.vk === 'enum') && typeof p.value === 'string') parts.push(p.value);
       if (p.vk === 'list') (p.items || []).forEach((it) => {
