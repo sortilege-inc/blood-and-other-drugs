@@ -122,15 +122,22 @@
       container.appendChild(el('div', { class: 'chiprow tight' }, [name, player, button('Add', add, 'tiny')]));
       container.appendChild(el('div', { class: 'chiprow tight' }, [characterLoader('Load character file(s)…', 'ghost tiny')]));
       if (!party.length) container.appendChild(el('div', { class: 'empty' }, ['No one in the coterie yet.']));
-      party.forEach((m) => container.appendChild(el('div', { class: 'member' }, [
+      // a retinue follows its head, indented (engine/ops.js retinue: whoever claims the head plays it)
+      const heads = party.filter((m) => !m.retinueOf || !party.some((x) => x.id === m.retinueOf));
+      const ordered = [];
+      heads.forEach((h) => { ordered.push(h); party.filter((x) => x.retinueOf === h.id).forEach((x) => ordered.push(x)); });
+      party.forEach((m) => { if (ordered.indexOf(m) === -1) ordered.push(m); });
+      ordered.forEach((m) => container.appendChild(el('div', { class: 'member' + (m.retinueOf ? ' retinue' : '') }, [
         el('button', { class: 'card static-card', type: 'button', onclick: () => Panels.select({ kind: 'party', id: m.id }) }, [
           el('div', { class: 'card-name' }, [m.name]),
           el('div', { class: 'card-meta' }, [Sheet.memberSentence(m)]),
-          el('div', { class: 'hunger-mini' }, Array.from({ length: Dice.HUNGER_MAX }, (_, i) => el('span', { class: 'pip' + (i < Sheet.hunger(m) ? ' on' : '') }))),
+          Sheet.isVampire(Sheet.values(m)) ? el('div', { class: 'hunger-mini' }, Array.from({ length: Dice.HUNGER_MAX }, (_, i) => el('span', { class: 'pip' + (i < Sheet.hunger(m) ? ' on' : '') }))) : null,
         ]),
         // the Storyteller's notes on this character (the People pane's "Behind the Coterie" sections about them)
         window.VttGmText ? window.VttGmText.aboutSections('pc', m.name, draw) : null,
         el('div', { class: 'member-ops' }, [
+          el('select', { class: 'scope tiny', title: 'Whose retinue: whoever claims them plays this character too', onchange: (ev) => State.commit('setPartyRetinue', [m.id, ev.target.value || null]) },
+            [el('option', { value: '' }, ['serves no one'])].concat(party.filter((x) => x.id !== m.id && !x.retinueOf).map((x) => el('option', { value: x.id, selected: m.retinueOf === x.id || null }, ['retinue of ' + x.name])))),
           button('file', () => Sheet.downloadMember(m), 'ghost tiny'),
           button('remove', () => { if (confirm('Remove ' + m.name + ' from the coterie?')) State.commit('removePartyMember', [m.id]); }, 'ghost tiny'),
         ]),

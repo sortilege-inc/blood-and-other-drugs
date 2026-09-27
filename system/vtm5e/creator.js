@@ -20,6 +20,11 @@
 // pick, and a Path of Enlightenment (with Touchstone Ritae) joins Convictions and Touchstones; its
 // own Quick Character Creation text for those two steps is shown beside the core's. A draft using
 // it is The Black Hand's ACTOR "Sabbat Kindred" (the Kindred and its Path; Sheet.isSabbat).
+// Summoned Stories (owner, 2026-09-27) is the other kind of option: its brief REPLACES a step's
+// fields - "Humanity: This is replaced by the Road system", "We will not be using Touchstones or
+// Convictions" - so a draft using it is Summoned Stories' ACTOR "Cainite", which takes a Road and
+// its rating ("Start with rating of 7", read from the brief's Starting Rating) in their place. A
+// Road and a Path are two answers to one question; a draft takes one book or the other.
 window.VtmCreator = (function () {
   const { el, button, debounce } = window.VttRender;
   const D = window.VtmData;
@@ -43,7 +48,7 @@ window.VtmCreator = (function () {
     DISCIPLINES: ['Disciplines'],
     PREDATOR: ['Predator'],
     ADVANTAGES: ['Advantages & Flaws'],
-    'CONVICTIONS AND TOUCHSTONES': ['Path of Enlightenment', 'Touchstones & Convictions', 'Chronicle Tenets', 'Humanity'],
+    'CONVICTIONS AND TOUCHSTONES': ['Path of Enlightenment', 'Road', 'Road Rating', 'Touchstones & Convictions', 'Chronicle Tenets', 'Humanity'],
     'SEA OF TIME': ['Generation', 'Blood Potency', 'Total Experience', 'Spent Experience'],
   };
   // What The Black Hand adds to a core step: the core step, and the heading under its Quick
@@ -51,6 +56,19 @@ window.VtmCreator = (function () {
   const BH_ADDS = { PREDATOR: 'Predator Type', 'CONVICTIONS AND TOUCHSTONES': 'Path of Enlightenment' };
   const BH_BOOK = 'black-hand';
   const SUN_BOOK = 'sunburners';
+  const SS_BOOK = 'summoned-stories';
+  const isCainite = (v) => Sheet.kindOf(v) === 'cainite';
+  // the Roads the Road System prints: a Road heading with its Hierarchy of Sins under it
+  function roads() {
+    if (!D.loaded(SS_BOOK)) return [];
+    return D.all([SS_BOOK]).filter((e) => /^Road of [^:]+$/.test(e.name) && D.children(e.id).some((k) => /Hierarchy of Sins$/.test(k.name)))
+      .map((e) => ({ name: e.name, entity: e }));
+  }
+  // "Start with rating of 7." - the brief's Roads, its Starting Rating
+  function roadStart() {
+    const e = D.loaded(SS_BOOK) ? D.all([SS_BOOK]).find((x) => x.key === 'Roads' && D.val(x, 'Starting Rating') != null) : null;
+    return e ? +D.val(e, 'Starting Rating') : null;
+  }
 
   // ── the summary, read from the core ──
   function summaryParas() {
@@ -205,7 +223,9 @@ window.VtmCreator = (function () {
     container.appendChild(page);
     page.appendChild(el('div', { class: 'loading' }, ['Opening the Core Rulebook and the Players Guide…']));
     const sabbatDraft = Object.values(load().drafts || {}).some((d) => Sheet.isSabbat(d));
-    const books = Sheet.BOOKS.concat(['players-guide'], opts.blackHand || sabbatDraft ? [BH_BOOK, 'sunburners'].filter((b) => D.books().some((x) => x.id === b)) : []);
+    const roadDraft = Object.values(load().drafts || {}).some((d) => isCainite(d));
+    const books = Sheet.BOOKS.concat(['players-guide'], opts.blackHand || sabbatDraft ? [BH_BOOK, 'sunburners'].filter((b) => D.books().some((x) => x.id === b)) : [],
+      opts.roads || roadDraft ? [SS_BOOK].filter((b) => D.books().some((x) => x.id === b)) : []);
     D.ready(books).then(() => { page.innerHTML = ''; draw(page); });
   }
 
@@ -242,6 +262,12 @@ window.VtmCreator = (function () {
       page.innerHTML = '';
       page.appendChild(el('div', { class: 'loading' }, ['Opening The Black Hand…']));
       D.ready([BH_BOOK]).then(() => draw(page));
+      return;
+    }
+    if (isCainite(v) && !D.loaded(SS_BOOK)) {
+      page.innerHTML = '';
+      page.appendChild(el('div', { class: 'loading' }, ['Opening Summoned Stories…']));
+      D.ready([SS_BOOK]).then(() => draw(page));
       return;
     }
     const commit = (nv) => { roster.drafts[roster.current] = nv; save(roster); };
@@ -385,9 +411,9 @@ window.VtmCreator = (function () {
   function sheetView(v, meta, back) {
     const d = Sheet.derived(v);
     const w = Object.assign({}, v, { Health: v.Health || d.Health, Willpower: v.Willpower || d.Willpower });
-    const part = (names) => Sheet.render(w, { readOnly: true, only: names.filter((n) => Sheet.field(n) || (n === 'Path of Enlightenment' && Sheet.isSabbat(w))) });
+    const part = (names) => Sheet.render(w, { readOnly: true, only: names.filter((n) => Sheet.field(n) || (n === 'Path of Enlightenment' && Sheet.isSabbat(w)) || (/^Road/.test(n) && isCainite(w))) });
     const sec = (title, node) => el('section', { class: 'cs-sec' }, [el('div', { class: 'cs-h' }, [title]), node]);
-    const top = ['Concept', 'Predator', 'Chronicle', 'Ambition', 'Clan', 'Sire', 'Sire Clan', 'Desire', 'Generation'].concat(Sheet.isSabbat(w) ? ['Path of Enlightenment'] : []);
+    const top = ['Concept', 'Predator', 'Chronicle', 'Ambition', 'Clan', 'Sire', 'Sire Clan', 'Desire', 'Generation'].concat(Sheet.isSabbat(w) ? ['Path of Enlightenment'] : [], isCainite(w) ? ['Road', 'Road Rating'] : []);
     return el('div', { class: 'creator-sheet' }, [
       el('div', { class: 'sheet-head' }, [
         el('div', { class: 'sheet-name' }, [w.Name || 'An unnamed Kindred']),
@@ -471,12 +497,27 @@ window.VtmCreator = (function () {
     const shelf = D.books().filter((b) => b.shelf === 'third-party');
     if (!shelf.length) return el('span', {});
     const sabbat = Sheet.isSabbat(v);
-    const cur = { thirdParty: meta.thirdParty != null ? meta.thirdParty : sabbat, sources: meta.sources || (sabbat ? [BH_BOOK] : []), ack: meta.ack != null ? meta.ack : sabbat };
+    const cainite = isCainite(v);
+    const cur = { thirdParty: meta.thirdParty != null ? meta.thirdParty : sabbat || cainite, sources: meta.sources || (sabbat ? [BH_BOOK] : cainite ? [SS_BOOK] : []), ack: meta.ack != null ? meta.ack : sabbat || cainite };
     const apply = (patch) => {
       const m = Object.assign({}, cur, patch);
+      // a Road and a Path answer one question: the book just ticked wins
+      const ticked = (patch.sources || []).filter((x) => cur.sources.indexOf(x) === -1);
+      if (ticked.indexOf(SS_BOOK) !== -1) m.sources = m.sources.filter((x) => x !== BH_BOOK && x !== SUN_BOOK);
+      if (ticked.indexOf(BH_BOOK) !== -1) m.sources = m.sources.filter((x) => x !== SS_BOOK);
       if (m.sources.indexOf(BH_BOOK) === -1) m.sources = m.sources.filter((x) => x !== SUN_BOOK);   // the Sunburners' Path is written on The Black Hand's
       const want = !!(m.thirdParty && m.ack && m.sources.indexOf(BH_BOOK) !== -1);
+      const wantRoad = !!(m.thirdParty && m.ack && m.sources.indexOf(SS_BOOK) !== -1);
       const values = {};
+      if (wantRoad && !cainite) {
+        // the brief's replacements: a Road and its starting rating, no Humanity, no Touchstones or Convictions
+        if (!D.loaded(SS_BOOK)) { D.ready([SS_BOOK]).then(() => apply(patch)); return; }
+        Object.assign(values, { Road: '', 'Road Rating': roadStart() || 0, Humanity: undefined, 'Touchstones & Convictions': undefined });
+      }
+      if (!wantRoad && cainite) {
+        if (v.Road && !window.confirm('Without Summoned Stories, ' + (v.Name || 'this character') + ' loses the Road (' + v.Road + '). Go on?')) return;
+        Object.assign(values, { Road: undefined, 'Road Rating': undefined });
+      }
       if (want && !sabbat) values['Path of Enlightenment'] = '';
       const sabbatPred = v.Predator && / \(Sabbat Only\)$/.test(v.Predator);
       const sunPath = v['Path of Enlightenment'] && m.sources.indexOf(SUN_BOOK) === -1 && paths([SUN_BOOK]).some((p) => p.book === SUN_BOOK && p.name === v['Path of Enlightenment']);
@@ -494,7 +535,8 @@ window.VtmCreator = (function () {
     shelf.forEach((b) => {
       const on = cur.sources.indexOf(b.id) !== -1;
       const needsBH = b.id === SUN_BOOK && cur.sources.indexOf(BH_BOOK) === -1;
-      const what = b.id === BH_BOOK ? 'Sabbat Predator types, and a Path of Enlightenment with Touchstone Ritae' : b.id === SUN_BOOK ? 'homebrew: the Path of the Sun, for The Black Hand’s Paths' : '';
+      const what = b.id === BH_BOOK ? 'Sabbat Predator types, and a Path of Enlightenment with Touchstone Ritae' : b.id === SUN_BOOK ? 'homebrew: the Path of the Sun, for The Black Hand’s Paths'
+        : b.id === SS_BOOK ? 'a chronicle’s house rules: a Road and its rating in place of Humanity, and no Touchstones or Convictions' : '';
       box.appendChild(el('label', { class: 'tp-row tp-source' + (needsBH ? ' muted' : '') }, [
         el('input', { type: 'checkbox', checked: on || null, disabled: needsBH ? 'disabled' : null, onchange: (ev) => apply({ sources: ev.target.checked ? cur.sources.concat([b.id]) : cur.sources.filter((x) => x !== b.id) }) }),
         ' ', el('b', {}, [b.label]), what ? el('span', { class: 'muted small' }, [' — ' + what]) : null,
@@ -505,6 +547,7 @@ window.VtmCreator = (function () {
     if (cur.sources.length && !cur.ack) box.appendChild(el('p', { class: 'muted small' }, ['Tick the acknowledgment and the options take effect.']));
     // on a player's page, whether this table allows it
     if (opts.where === 'play' && sabbat) box.appendChild(el('p', { class: 'small' }, [opts.blackHand ? '✓ Your Storyteller allows The Black Hand at this table.' : opts.joined ? 'Your Storyteller has not allowed The Black Hand at this table yet (their Loresheets panel).' : 'Whether this table allows The Black Hand shows once you have joined.']));
+    if (opts.where === 'play' && cainite) box.appendChild(el('p', { class: 'small' }, [opts.roads ? '✓ Your Storyteller allows Summoned Stories’ Roads at this table.' : opts.joined ? 'Your Storyteller has not allowed Summoned Stories’ Roads at this table yet (their Loresheets panel).' : 'Whether this table allows the Roads shows once you have joined.']));
     return box;
   }
 
@@ -602,6 +645,17 @@ window.VtmCreator = (function () {
       ])]));
       if (cur) box.appendChild(el('details', { class: 'paper' }, [el('summary', {}, [cur.name + ', as printed']), E.render(cur.entity, { noKids: true })]));
     }
+    if (s.key === 'CONVICTIONS AND TOUCHSTONES' && isCainite(v)) {
+      const rs = roads();
+      const cur = rs.find((x) => x.name === v.Road);
+      const brief = D.loaded(SS_BOOK) ? D.all([SS_BOOK]).find((x) => x.key === 'Roads' && D.val(x, 'Starting Rating') != null) : null;
+      if (brief) box.appendChild(el('details', { class: 'paper', open: 'open' }, [el('summary', {}, ['Summoned Stories: Roads, as the brief prints it']), E.render(brief, { noKids: true })]));
+      box.appendChild(el('div', { class: 'prop' }, [el('div', { class: 'prop-k' }, ['Road']), el('div', { class: 'prop-v' }, [
+        el('select', { class: 'scope', onchange: (ev) => set({ Road: ev.target.value }) }, [el('option', { value: '' }, ['—'])]
+          .concat(rs.map((x) => el('option', { value: x.name, selected: x.name === v.Road || null }, [x.name])))),
+      ])]));
+      if (cur) box.appendChild(el('details', { class: 'paper' }, [el('summary', {}, [cur.name + ', as printed']), E.render(cur.entity, { noKids: true })]));
+    }
     if (s.key === 'PREDATOR' && G()) {
       const need = predatorBooks(v, meta);
       if (need.length) {
@@ -622,7 +676,7 @@ window.VtmCreator = (function () {
       if (has(CLAN_CURSE, true)) box.appendChild(clanCurse(v, rows, tb, set));
     }
     // the sheet's fields for the step (Clan/Predator/Path drawn above as picks; Attributes and Skills by the guides)
-    const shown = names.filter((n) => hidden.indexOf(n) === -1 && !(s.key === 'CLAN AND SIRE' && n === 'Clan') && !(s.key === 'PREDATOR' && n === 'Predator') && n !== 'Path of Enlightenment');
+    const shown = names.filter((n) => hidden.indexOf(n) === -1 && !(s.key === 'CLAN AND SIRE' && n === 'Clan') && !(s.key === 'PREDATOR' && n === 'Predator') && n !== 'Path of Enlightenment' && n !== 'Road');
     if (s.key === 'SKILLS' && shown.length) box.appendChild(el('div', { class: 'prop-k' }, ['Every specialty']));
     const full = Object.assign({}, v);
     const part = Sheet.render(full, { edit: (nv) => set(pick(nv, shown)), only: shown });
@@ -765,7 +819,12 @@ window.VtmCreator = (function () {
       const least = add && /at least one of these has to be a Path Conviction/.exec(add.desc || '');
       out.push({ ok: true, text: v['Path of Enlightenment'] ? 'Path: ' + v['Path of Enlightenment'] + (least ? ' — ' + least[0] + ', each with a Touchstone Ritae.' : '.') : 'No Path of Enlightenment (The Black Hand’s option).' });
     }
-    if (s.key === 'CONVICTIONS AND TOUCHSTONES') {
+    if (s.key === 'CONVICTIONS AND TOUCHSTONES' && isCainite(v)) {
+      const st = roadStart();
+      out.push({ ok: !!v.Road, text: v.Road ? 'Road: ' + v.Road + '.' : 'Choose a Road (Summoned Stories).' });
+      if (st != null) out.push({ ok: +v['Road Rating'] === st, text: 'Road rating ' + st + ' (the brief’s Starting Rating). This sheet: ' + (v['Road Rating'] || 0) + '.' });
+    }
+    if (s.key === 'CONVICTIONS AND TOUCHSTONES' && !isCainite(v)) {
       const c = convictions(s.text);
       const n = (v['Touchstones & Convictions'] || []).filter(Boolean).length;
       if (c.min != null) out.push({ ok: n >= c.min && n <= c.max, text: c.min + ' to ' + c.max + ' Convictions, each with a ' + (v['Path of Enlightenment'] ? 'Touchstone Ritae or a Touchstone' : 'Touchstone') + '. This sheet: ' + n + '.' });
@@ -775,5 +834,5 @@ window.VtmCreator = (function () {
     return out;
   }
 
-  return { render, steps, bhAdds, paths, attributeSpread, skillDistributions, freeSpecialties, disciplineDots, advantagePoints, convictions, clans, clanDisciplines, clanBane, predators };
+  return { render, steps, bhAdds, paths, roads, roadStart, attributeSpread, skillDistributions, freeSpecialties, disciplineDots, advantagePoints, convictions, clans, clanDisciplines, clanBane, predators };
 })();

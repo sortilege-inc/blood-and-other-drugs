@@ -268,6 +268,17 @@
           el('span', { class: 'muted small' }, [' · Sabbat Predator types, a Path of Enlightenment; a character using them says so in the party, and says when it is not allowed']),
         ]));
       }
+      // Summoned Stories' Road System: a Road in Humanity's place (its ACTOR "Cainite")
+      const ss = D.books().find((b) => b.id === 'summoned-stories');
+      if (ss) {
+        const yes = !!(S().creation || {}).roads;
+        if (!bh) container.appendChild(el('h4', {}, ['Making characters']));
+        container.appendChild(el('label', { class: 'lore-row' + (yes ? ' on' : '') }, [
+          el('input', { type: 'checkbox', checked: yes || null, onchange: (ev) => { State.commit('setCreation', [{ roads: ev.target.checked }]); draw(); } }),
+          ' Allow characters made with ' + ss.label + '’s options',
+          el('span', { class: 'muted small' }, [' · a Road and its rating in place of Humanity; a character using them says so in the party, and says when it is not allowed']),
+        ]));
+      }
       container.appendChild(el('h4', {}, ['Loresheets', el('span', { class: 'muted small' }, [' · ' + on.size + ' of ' + all.length + ' available to the characters'])]));
       const search = el('input', { type: 'search', class: 'search', placeholder: 'Find a loresheet…', value: q });
       search.addEventListener('input', debounce(() => { q = search.value.trim().toLowerCase(); draw(); search.focus(); }, 200));
