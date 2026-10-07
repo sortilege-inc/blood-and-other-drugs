@@ -16,7 +16,7 @@
 //                                                (archivePartyVersion, the player's own)
 //   loresheets [ids]                              the loresheets the Storyteller made available
 //                                                (setLoresheets; shared, the Storyteller's to set)
-//   creation { blackHand }                       how the chronicle's characters may be made
+//   creation { blackHand, roads }                how the chronicle's characters may be made
 //                                                (setCreation; shared, the Storyteller's to set)
 //   relmaps [ { id, name, nodes, edges, … } ]    relationship and scene maps (V9, below; shared,
 //                                                drawn by everyone, a hidden one the Storyteller's)
@@ -79,7 +79,8 @@
   // instead of the core's summary. Off unless the Storyteller turns it on; shared, because a
   // player's page offers it; only the Storyteller may set it.
   Ops.shared(['creation']);
-  Ops.register('setCreation', (s, c) => { s.creation = { blackHand: !!(c && c.blackHand) }; });
+  // each switch set on its own keeps the others (a table may allow The Black Hand, Summoned Stories' Roads, both)
+  Ops.register('setCreation', (s, c) => { const m = Object.assign({}, s.creation || {}, c || {}); s.creation = { blackHand: !!m.blackHand, roads: !!m.roads }; });
 
   // The conflict the Storyteller has started for the coterie (system/vtm5e/conflict.js): its
   // variant, turn, modules, a one-roll conflict's Difficulty and track. Shared; the Storyteller's.

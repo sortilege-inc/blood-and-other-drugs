@@ -47,13 +47,21 @@
     fn.apply(null, [s].concat(args || []));
   }
 
+  // A player plays the character they claimed and its retinue: the party members whose
+  // `retinueOf` names it (a ghoul, a retainer, a household). A player rule is asked for the
+  // claimed character first, then for each of its retinue, so no op has to know about retinues.
+  function retinue(s, memberId) {
+    return (s.party || []).filter((m) => m.retinueOf === memberId && m.id !== memberId).map((m) => m.id);
+  }
   function permits(s, role, memberId, name, args) {
     if (!OPS[name]) return false;
     if (role === 'gm') return true;
     if (role !== 'player') return false;
     if (!memberId && !UNCLAIMED[name]) return false;
     const rule = PLAYER_RULES[name];
-    return !!rule && !!rule(s, memberId, args || []);
+    if (!rule) return false;
+    if (rule(s, memberId, args || [])) return true;
+    return !!memberId && retinue(s, memberId).some((id) => !!rule(s, id, args || []));
   }
 
   function playerView(s) {
@@ -142,6 +150,11 @@
   register('removePartyMember', (s, id) => {
     s.party = (s.party || []).filter((m) => m.id !== id);
   });
+  // the member this one serves (its retinue's head), or none: the Storyteller's to set
+  register('setPartyRetinue', (s, id, headId) => {
+    const m = (s.party || []).find((x) => x.id === id);
+    if (m && headId !== id) m.retinueOf = headId || null;
+  });
   register('setPartyLive', (s, id, patch) => {
     const m = (s.party || []).find((x) => x.id === id);
     if (m) m.live = Object.assign({}, m.live || {}, patch);
@@ -200,5 +213,5 @@
     return doc;
   });
 
-  return { OPS, PLAYER_RULES, SHARED_KEYS, LOCAL, register, shared, playerFilter, apply, permits, playerView, forPlayers, sharedSlice };
+  return { OPS, PLAYER_RULES, SHARED_KEYS, LOCAL, register, shared, playerFilter, apply, permits, retinue, playerView, forPlayers, sharedSlice };
 });

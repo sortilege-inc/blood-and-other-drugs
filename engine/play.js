@@ -120,7 +120,11 @@
       const claimed = s.claims[m.id];
       const b = button(claimed ? `Claimed by ${claimed.name}` : 'Claim', () => Session.claim(m.id), claimed ? 'ghost' : '');
       b.disabled = !!claimed;
-      return el('div', { class: 'card static' }, [el('div', { class: 'card-name' }, [m.name]), el('div', { class: 'card-sub' }, [Sys.memberSubtitle(m)]), b]);
+      // a member of someone's retinue is played by whoever claims its head
+      const head = m.retinueOf && party.find((x) => x.id === m.retinueOf);
+      const n = party.filter((x) => x.retinueOf === m.id).length;
+      return el('div', { class: 'card static' }, [el('div', { class: 'card-name' }, [m.name]), el('div', { class: 'card-sub' }, [Sys.memberSubtitle(m)]),
+        head ? el('div', { class: 'muted small' }, ['plays with ' + head.name]) : n ? el('div', { class: 'muted small' }, ['with a retinue of ' + n]) : null, b]);
     });
     return el('div', { class: 'play-card' }, [
       el('h1', {}, ['Who are you?']),
@@ -131,22 +135,30 @@
 
   const PHONE = window.matchMedia('(max-width: 640px)');
   let menuOpen = null;   // the player's own choice, kept across redraws
+  let playing = null;    // which of the player's characters is on screen: the claimed one or one of its retinue
   function sheetScreen(s) {
-    const m = (State.state.party || []).find((x) => x.id === s.info.memberId);
-    if (!m) return el('div', { class: 'play-card' }, [el('p', { class: 'muted' }, ['Your character isn’t in the party any more.'])]);
+    const party = State.state.party || [];
+    const head = party.find((x) => x.id === s.info.memberId);
+    if (!head) return el('div', { class: 'play-card' }, [el('p', { class: 'muted' }, ['Your character isn’t in the party any more.'])]);
+    // the claimed character, then its retinue (engine/ops.js retinue): one player, the whole household
+    const mine = [head].concat(party.filter((x) => x.retinueOf === head.id && x.id !== head.id));
+    const m = mine.find((x) => x.id === playing) || head;
+    playing = m.id;
+    const who = mine.length > 1 ? el('div', { class: 'chiprow tight play-who', role: 'tablist', 'aria-label': 'Your characters' }, mine.map((x) =>
+      el('button', { type: 'button', class: 'btn tiny' + (x.id === m.id ? '' : ' ghost'), 'aria-selected': String(x.id === m.id), onclick: () => { playing = x.id; render(); window.scrollTo(0, 0); } }, [x.name]))) : null;
     const bar = el('div', { class: 'chiprow play-bar' }, [
       el('a', { class: 'btn ghost', href: CFG.pages.table + '?view=player', target: (CFG.channel || 'vtt') + '-player' }, ['Open the table']),
       // relationship and scene maps (system/vtm5e/maps.js), where the system has them
       CFG.pages.maps ? el('a', { class: 'btn ghost', href: CFG.pages.maps + '?view=player', target: (CFG.channel || 'vtt') + '-maps' }, ['Open the maps']) : null,
       button('Download my character', () => Sys.downloadCharacter(m), 'ghost'),   // as played, right now — the file the join screen takes back
-      button('Release character', () => Session.unclaim(m.id), 'ghost'),
+      button('Release character', () => Session.unclaim(head.id), 'ghost'),
     ]);
     const clocks = (State.state.clocks || []).filter((c) => c.visible !== false);
     const strip = clocks.length ? el('div', { class: 'clock-strip' }, clocks.map((c) => el('div', { class: 'clock-row' }, [el('div', { class: 'track-head' }, [el('span', { class: 'track-name' }, [c.name]), el('span', { class: 'muted' }, [`${c.filled} / ${c.segments}`])]), el('div', { class: 'boxes clock' }, Array.from({ length: c.segments }, (_, i) => el('span', { class: 'box' + (i < c.filled ? ' on' : '') })))]))) : null;
     // on a phone the three fold into one line (assets/css/vtm5e-gm.css); wider, they stand open as before
     const menu = el('details', { class: 'play-menu', open: (menuOpen != null ? menuOpen : !PHONE.matches) || null }, [el('summary', {}, ['Table · file · release']), bar]);
     menu.addEventListener('toggle', () => { menuOpen = menu.open; });
-    return el('div', { class: 'play-card wide' }, [menu, strip, Sys.liveSheet(m, { player: true })]);
+    return el('div', { class: 'play-card wide' }, [who, menu, strip, Sys.liveSheet(m, { player: true })]);
   }
 
   function render() {

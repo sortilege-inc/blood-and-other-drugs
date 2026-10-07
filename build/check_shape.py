@@ -213,6 +213,23 @@ def main():
     sab = [e for e in ents.values() if e.get("form") == "ACTOR" and e["name"] == "Sabbat Kindred"]
     check("The Black Hand's ACTOR \"Sabbat Kindred\" extends Kindred, adding the Path of Enlightenment",
           [(e["book"], e["type"], [p["name"] for p in e["props"]]) for e in sab], [("black-hand", "Kindred", ["Path of Enlightenment"])])
+    # the other kinds the sheet reads (sheet.js KINDS): the BASE's Mortal and its Ghoul, and
+    # Summoned Stories' Cainite, whose Road the sheet reads in Humanity's place
+    kinds = {e["name"]: (e["book"], e.get("type"), [p["name"] for p in e["props"]]) for e in ents.values()
+             if e.get("form") == "ACTOR" and e["name"] in ("Mortal", "Ghoul", "Cainite")}
+    check("the BASE's ACTOR \"Mortal\" carries Attributes, Skills and Humanity, and no clan, Hunger or Blood Potency",
+          [kinds.get("Mortal", ("", None, []))[0]] + [f in kinds.get("Mortal", ("", None, []))[2] for f in ("Strength", "Athletics", "Humanity", "Clan", "Hunger", "Blood Potency")],
+          ["base", True, True, True, False, False, False])
+    check("the BASE's ACTOR \"Ghoul\" extends Mortal, adding its Domitor and Disciplines",
+          kinds.get("Ghoul"), ("base", "Mortal", ["Domitor", "Disciplines"]))
+    check("Summoned Stories' ACTOR \"Cainite\" extends Kindred, adding the Road and its rating",
+          kinds.get("Cainite"), ("summoned-stories", "Kindred", ["Road", "Road Rating"]))
+    roads = sorted(e["name"] for e in ents.values() if e["book"] == "summoned-stories" and re.match(r"Road of .+: Rating \d+$", e["name"]))
+    check("every Road prints ratings 10-1 (sheet.js roadAt reads '<Road>: Rating N')", len(roads), 40)
+    # the price a ghoul pays for a level-1 power (advance.js ghoulPowerCost reads it from this sentence)
+    gp = [re.search(r"purchase additional level-1 powers at the cost of (\d+) experience points each", e.get("desc") or "").group(1)
+          for e in ents.values() if e["book"] == "companion" and re.search(r"purchase additional level-1 powers at the cost of \d+ experience points each", e.get("desc") or "")]
+    check("the Companion prints a ghoul's price for a level-1 power once (advance.js ghoulPowerCost)", gp, ["10"])
     qcc = [e for e in ents.values() if e["book"] == "black-hand" and e["name"] == "Quick Character Creation"]
     # what the creator shows beside the core's step when The Black Hand is used (creator.js BH_ADDS)
     check("The Black Hand's Quick Character Creation prints what the creator adds (Predator Type, Path of Enlightenment)",

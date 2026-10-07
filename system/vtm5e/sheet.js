@@ -53,11 +53,66 @@ window.VtmSheet = (function () {
   // values hold that field; its sheet then needs The Black Hand in memory (booksFor).
   const SABBAT = 'Sabbat Kindred';
   const SABBAT_BOOK = 'black-hand';
-  const sabbatDecl = () => (D.loaded(SABBAT_BOOK) ? D.all([SABBAT_BOOK]).find((e) => e.form === 'ACTOR' && e.key === SABBAT && e.type === ACTOR) || null : null);
-  const sabbatFields = () => ((sabbatDecl() || {}).props || []).map((p) => p.name);
-  const isSabbat = (v) => !!v && Object.prototype.hasOwnProperty.call(v, 'Path of Enlightenment');
-  const booksFor = (v) => (isSabbat(v) ? BOOKS.concat([SABBAT_BOOK]) : BOOKS);
-  const templateId = (v) => (isSabbat(v) && sabbatDecl() ? sabbatDecl().id : (actor() || {}).id || '#vtm5Kindred000000001');
+  const sabbatDecl = () => kindDecl('sabbat');
+  const has = (v, k) => !!v && Object.prototype.hasOwnProperty.call(v, k);
+  const isSabbat = (v) => has(v, 'Path of Enlightenment');
+
+  // ── the character's kind: an ACTOR the corpus declares, and the book that declares it ──
+  // A character is the core's Kindred unless its values hold the field that marks another kind:
+  // The Black Hand's Sabbat Kindred (its Path), Summoned Stories' Cainite (its Road, which that
+  // chronicle's brief puts in Humanity's place), or the BASE's Ghoul (their domitor) and Mortal
+  // (Attributes and no clan and no Blood Potency - the Kindred's own fields). Every kind's sheet
+  // is its ACTOR's fields, with the fields of the ACTOR it EXTENDS first.
+  const KINDS = {
+    kindred: { actor: ACTOR, book: 'base', label: 'Kindred', vampire: true },
+    sabbat: { actor: SABBAT, book: SABBAT_BOOK, label: 'Kindred', vampire: true, marker: 'Path of Enlightenment' },
+    cainite: { actor: 'Cainite', book: 'summoned-stories', label: 'Cainite', vampire: true, marker: 'Road Rating', also: ['Road'] },
+    ghoul: { actor: 'Ghoul', book: 'base', label: 'Ghoul', vampire: false, marker: 'Domitor' },
+    mortal: { actor: 'Mortal', book: 'base', label: 'Mortal', vampire: false },
+  };
+  // "Humanity: This is replaced by the Road system." / "Touchstones and Convictions: We will not
+  // be using Touchstones or Convictions" - Summoned Stories, Character Creation
+  const NOT_ON = { cainite: ['Humanity', 'Touchstones & Convictions'] };
+  function kindOf(v) {
+    if (has(v, 'Road Rating')) return 'cainite';
+    if (isSabbat(v)) return 'sabbat';
+    if (has(v, 'Domitor')) return 'ghoul';
+    if (has(v, 'Strength') && !has(v, 'Clan') && !has(v, 'Blood Potency')) return 'mortal';
+    return 'kindred';
+  }
+  const kindKey = (k) => (KINDS[k] ? k : Object.keys(KINDS).find((x) => KINDS[x].actor === k) || 'kindred');
+  const isVampire = (v) => KINDS[kindOf(v)].vampire;
+  const findActor = (book, key) => (D.loaded(book) ? D.all([book]).find((e) => e.form === 'ACTOR' && e.key === key) || null : null);
+  function kindDecl(k) {
+    const K = KINDS[kindKey(k)];
+    return K.actor === ACTOR ? actor() : findActor(K.book, K.actor);
+  }
+  // an ACTOR's fields and its parents', the parent's first (an ACTOR EXTENDS by its name)
+  function propsOf(e) {
+    if (!e) return [];
+    const parent = e.type ? (e.type === ACTOR ? actor() : findActor('base', e.type)) : null;
+    return propsOf(parent).concat(e.props || []);
+  }
+  const booksFor = (v) => { const b = KINDS[kindOf(v)].book; return b === 'base' ? BOOKS : BOOKS.concat([b]); };
+  const templateId = (v) => (kindDecl(kindOf(v)) || actor() || {}).id || '#vtm5Kindred000000001';
+  // the track a character's Beast is held by: Humanity, or a Cainite's Road rating
+  const morality = (v) => (kindOf(v) === 'cainite' ? { key: 'Road Rating', label: v.Road || 'Road' } : { key: 'Humanity', label: 'Humanity' });
+
+  // A trait's name on the sheet: its own, or the one a campaign's house rule gives it - a MODIFY on
+  // the core's entity for the trait that sets ^"Label" (an instance's layer; a Dark Ages table's
+  // Archery for Firearms). The value stays under the trait's own name; only what the sheet prints
+  // changes, so a pool, a power's Dice Pools and a character file read as before.
+  let labels = null;
+  function label(name) {
+    if (!labels) {
+      labels = {};
+      (D.index().corrections || []).forEach((c) => {
+        const l = (c.props || []).find((p) => p.name === 'Label' && typeof p.value === 'string');
+        if (l && c.target && c.target.name && !(c.target.name in labels)) labels[c.target.name] = l.value;
+      });
+    }
+    return labels[name] || name;
+  }
 
   // Where the core's Characters chapter prints a field: the heading its entity sits under.
   let parentOf = null;
@@ -92,24 +147,34 @@ window.VtmSheet = (function () {
     return s;
   }
   const spec = () => ((actor() || {}).props || []).map(fieldSpec);
-  // a character's own fields: the Kindred's, and a Sabbat character's one more, after them
-  const specFor = (v) => (isSabbat(v) && sabbatDecl() ? spec().concat(sabbatDecl().props.map(fieldSpec)) : spec());
+  // a kind's fields, in declared order (a Kindred when its book is not in memory yet)
+  function specOfKind(k) {
+    const kk = kindKey(k);
+    const d = kindDecl(kk);
+    const specs = d ? propsOf(d).map(fieldSpec) : spec();
+    const off = NOT_ON[kk] || [];
+    return specs.filter((x) => off.indexOf(x.name) === -1);
+  }
+  // a character's own fields: its kind's
+  const specFor = (v) => specOfKind(kindOf(v));
   const field = (name) => spec().find((s) => s.name === name) || null;
 
-  // kind: SABBAT for a Sabbat character (The Black Hand must be in memory)
+  // kind: a kind's key or its ACTOR's name (SABBAT for a Sabbat character; its book must be in memory)
   function blank(kind) {
     const v = {};
-    const specs = kind === SABBAT && sabbatDecl() ? spec().concat(sabbatDecl().props.map(fieldSpec)) : spec();
-    specs.forEach((s) => {
+    specOfKind(kind || 'kindred').forEach((s) => {
       v[s.name] = s.kind === 'rows' || s.kind === 'lines' ? [] : s.kind === 'dots' ? (s.min || 0) : s.kind === 'number' ? null : s.kind === 'flag' ? s.default : '';
     });
     return v;
   }
   function complete(v) {
-    const out = blank(isSabbat(v) ? SABBAT : null);
-    // a Sabbat character stays one even before The Black Hand is in memory
-    if (isSabbat(v) && !isSabbat(out)) out['Path of Enlightenment'] = '';
-    Object.keys(v || {}).forEach((k) => { if (v[k] != null) out[k] = Array.isArray(v[k]) ? v[k].slice() : v[k]; });
+    const k = kindOf(v);
+    const out = blank(k);
+    // a character stays its kind even before the book that declares it is in memory
+    const K = KINDS[k];
+    [K.marker].concat(K.also || []).filter(Boolean).forEach((f) => { if (!has(out, f)) out[f] = ''; });
+    if (k === 'mortal') { delete out.Clan; delete out['Blood Potency']; }
+    Object.keys(v || {}).forEach((k2) => { if (v[k2] != null && (NOT_ON[k] || []).indexOf(k2) === -1) out[k2] = Array.isArray(v[k2]) ? v[k2].slice() : v[k2]; });
     return out;
   }
 
@@ -186,19 +251,27 @@ window.VtmSheet = (function () {
     // "Add one die to your dice pools when using or resisting discipline powers." and "Roll two
     // dice and pick the highest when rolling a Rouse Check for discipline powers of level 2 and
     // below." — Blood Potency; the figures are the chart's row
-    const bonus = potencyFigure(v, 'discipline power bonus');
-    const reroll = potencyFigure(v, 'discipline rouse check re-roll');
+    // A ghoul has no Blood Potency and no Hunger: the power's Cost is shown as printed ("Ghouls who
+    // use powers above level 1 ... take 1 point of Aggravated damage to their Health instead of
+    // making a Rouse Check" - core, Ghouls)
+    const vamp = isVampire(v);
+    const bonus = vamp ? potencyFigure(v, 'discipline power bonus') : 0;
+    const reroll = vamp ? potencyFigure(v, 'discipline rouse check re-roll') : 0;
     const open = (id) => (o.onRule || window.VtmOpenEntity)(id);
     return el('div', { class: 'powers' }, [
-      el('div', { class: 'prop-k' }, ['Disciplines', el('span', { class: 'muted' }, [' · Blood Potency ' + (v['Blood Potency'] || 0) + ': +' + bonus + ' to power pools, Rouse re-roll ' + (reroll ? 'at level ' + reroll + ' and below' : 'none')])]),
+      el('div', { class: 'prop-k' }, ['Disciplines', vamp ? el('span', { class: 'muted' }, [' · Blood Potency ' + (v['Blood Potency'] || 0) + ': +' + bonus + ' to power pools, Rouse re-roll ' + (reroll ? 'at level ' + reroll + ' and below' : 'none')]) : null]),
       ...rows.map((d) => el('div', { class: 'power-disc' }, [
         el('div', { class: 'power-disc-h' }, [d.Discipline + ' ', el('span', { class: 'muted small' }, ['●'.repeat(+d.Dots || 0)])]),
         ...(d.Powers || []).map((name) => {
-          const r = D.powers().find((x) => x.discipline === d.Discipline && x.name === name);
+          // a power taken more than once carries the table's note in brackets ("Koldunic Sorcery
+          // (Earth)" - the book: "A koldun character can command multiple elements only by taking
+          // the Koldunic Sorcery power multiple times"); the book's name is what it resolves by
+          const r = D.powers().find((x) => x.discipline === d.Discipline && x.name === name)
+            || D.powers().find((x) => x.discipline === d.Discipline && x.name === String(name).replace(/\s*\([^()]*\)$/, ''));
           if (!r) return el('div', { class: 'power-card muted' }, [name + ' (not found in the books)']);
           const f = r.fields || {};
           const lvl = D.levelNumber(r);
-          const n = rouseCount(f.Cost);
+          const n = vamp ? rouseCount(f.Cost) : 0;
           const twoDice = !!(reroll && lvl != null && lvl <= reroll);
           const pools = poolsOf(f['Dice Pools'], v);
           return el('div', { class: 'power-card' }, [
@@ -220,10 +293,15 @@ window.VtmSheet = (function () {
   }
 
   // ── a sentence for who this is ──
-  const traits = (v) => [v.Clan, v.Predator ? v.Predator : null, v.Generation ? v.Generation + 'th Generation' : null].filter(Boolean);
+  function traits(v) {
+    const k = kindOf(v);
+    if (k === 'ghoul') return ['Ghoul', v.Domitor ? 'domitor ' + v.Domitor : null, v.Concept || null].filter(Boolean);
+    if (k === 'mortal') return ['Mortal', v.Concept || null].filter(Boolean);
+    return [v.Clan, v.Predator ? v.Predator : null, v.Generation ? v.Generation + 'th Generation' : null, k === 'cainite' && v.Road ? v.Road + ' ' + (+v['Road Rating'] || 0) : null].filter(Boolean);
+  }
   function sentence(v) {
     const bits = traits(v);
-    return [(v.Name || 'An unnamed Kindred')].concat(bits.length ? [bits.join(' · ')] : []).join(', ');
+    return [(v.Name || 'An unnamed ' + KINDS[kindOf(v)].label)].concat(bits.length ? [bits.join(' · ')] : []).join(', ');
   }
 
   // ── controls ──
@@ -359,7 +437,7 @@ window.VtmSheet = (function () {
         });
         box.appendChild(el('div', { class: 'dot-groups' }, groups.map((g) => el('div', { class: 'dot-group' }, [
           el('div', { class: 'group-h' }, [g.label]),
-          ...g.fields.map((f) => el('div', { class: 'dot-row' }, [el('span', { class: 'dot-k' }, [f.name]), o.readOnly ? dots(v[f.name], f.min, f.max) : input(f, v[f.name], (val) => set(f.name, val))])),
+          ...g.fields.map((f) => el('div', { class: 'dot-row' }, [el('span', { class: 'dot-k', title: label(f.name) !== f.name ? f.name : null }, [label(f.name)]), o.readOnly ? dots(v[f.name], f.min, f.max) : input(f, v[f.name], (val) => set(f.name, val))])),
         ]))));
         continue;
       }
@@ -477,11 +555,12 @@ window.VtmSheet = (function () {
   const sourceNote = (v) => {
     const bits = [];
     if (isSabbat(v)) bits.push(' · The Black Hand' + ((((State() || {}).state || {}).creation || {}).blackHand ? '' : ' (not allowed at this table)'));
+    if (kindOf(v) === 'cainite') bits.push(' · Summoned Stories' + ((((State() || {}).state || {}).creation || {}).roads ? '' : ' (not allowed at this table)'));
     const ls = unavailableLoresheets(v);
     if (ls.length) bits.push(' · ' + ls.join(', ') + ' (loresheet not available here)');
     return bits.join('');
   };
-  const memberSentence = (m) => (traits(values(m)).join(' · ') || 'Kindred') + sourceNote(values(m)) + ' · Hunger ' + hunger(m) + ((values(m).player) ? ' · played by ' + values(m).player : '');
+  const memberSentence = (m) => { const v = values(m); return (traits(v).join(' · ') || KINDS[kindOf(v)].label) + sourceNote(v) + (isVampire(v) ? ' · Hunger ' + hunger(m) : '') + (v.player ? ' · played by ' + v.player : ''); };
 
   // Every change to a character's trackers is one event in the log, with its cause: the live
   // patch and a { kind: 'track' } entry naming each track's before and after. A player may send
@@ -545,14 +624,44 @@ window.VtmSheet = (function () {
   const impaired = (size, t) => size > 0 && ((t.sup || 0) + (t.agg || 0)) >= size;
 
   // Humanity with its Stains: dots from the left, Stains checked from the right.
-  function humanityTrack(h, stains, onStains) {
+  function humanityTrack(h, stains, onStains, label) {
     return el('span', { class: 'tracker humanity' }, Array.from({ length: 10 }, (_, i) => {
       const stained = i >= 10 - stains;
       const k = i < h ? 'dot-on' : stained ? 'stain' : '';
-      return el('button', { type: 'button', class: 'tbox ' + k, title: k === 'stain' ? 'Stain' : i < h ? 'Humanity' : 'empty',
+      return el('button', { type: 'button', class: 'tbox ' + k, title: k === 'stain' ? 'Stain' : i < h ? (label || 'Humanity') : 'empty',
         onclick: onStains ? () => onStains(stained ? Math.max(0, stains - 1) : Math.min(10 - h, 10 - i)) : null,
       }, [k === 'stain' ? '/' : k === 'dot-on' ? '●' : '']);
     }));
+  }
+
+  // ── a Cainite's Road at its rating (Summoned Stories, The Road System) ──
+  // "The Road rating determines the level of sin the character recognizes, as well as all sins
+  // listed below that rating" - Degeneration. The Road's entry at the character's rating (its
+  // Moral Guideline, Rationale and Effects) and the Road's Aura, each read from the book.
+  const ROAD_BOOK = KINDS.cainite.book;
+  const roadEntity = (key) => (D.loaded(ROAD_BOOK) ? D.all([ROAD_BOOK]).find((e) => e.key === key) || null : null);
+  const roadAt = (road, n) => (road ? roadEntity(road + ': Rating ' + n) : null);
+  // The Aura entity prints one line per Road ("Kings" - "Air of Authority"), keyed by the word the
+  // Road's heading names it by ("Road of Kings (Scions)")
+  function auraOf(road) {
+    const a = roadEntity('Aura');
+    const w = /^Road of (?:the )?(\S+)/.exec(road || '');
+    return a && w ? D.text(a, w[1]) : null;
+  }
+  function roadBlock(v, o) {
+    if (kindOf(v) !== 'cainite' || !v.Road) return null;
+    const n = +v['Road Rating'] || 0;
+    const e = roadAt(v.Road, n);
+    const aura = auraOf(v.Road);
+    const auraE = roadEntity('Aura');
+    const open = (id) => (o.onRule || window.VtmOpenEntity)(id);
+    return el('div', { class: 'road-block' }, [
+      el('div', { class: 'prop-k' }, [v.Road + ' · ' + n]),
+      e ? el('dl', { class: 'power-head' }, ['Moral Guideline', 'Rationale'].filter((k) => D.text(e, k)).map((k) => [el('dt', {}, [k]), el('dd', {}, [D.text(e, k)])])) : null,
+      e && (D.val(e, 'Effects') || []).length ? el('ul', { class: 'items small' }, D.val(e, 'Effects').map((t) => el('li', {}, [t && typeof t === 'object' ? String(t.value) : String(t)]))) : null,
+      aura ? el('div', { class: 'small' }, [el('b', {}, ['Aura: ']), auraE ? el('button', { class: 'ref', type: 'button', title: 'Aura, as printed', onclick: () => open(auraE.id) }, [aura]) : aura]) : null,
+      e ? el('button', { class: 'ref small', type: 'button', onclick: () => open(e.id) }, ['The Hierarchy of Sins']) : null,
+    ]);
   }
 
   // One roller per member (and per page role), kept across redraws — the panels redraw on
@@ -564,13 +673,13 @@ window.VtmSheet = (function () {
     if (!r) {
       const id = m.id;
       r = rollers[key] = Dice.roller({
-        pool: 4, hunger: hunger(m), who: m.name,
+        pool: 4, hunger: hunger(m), who: m.name, living: !isVampire(values(m)),
         onRule: o.onRule || window.VtmOpenEntity,
         onHunger: (n, cause) => setHunger({ id, name: m.name }, n, cause),
         // a roll made while a conflict is on is that conflict's (the one-roll results read it)
         onRoll: (entry) => State().commit('appendLog', [Object.assign(entry, { memberId: id }, (State().state.conflict ? { conflict: State().state.conflict.id } : {}))]),
         onWillpower: (dice) => spendWillpower({ id, name: m.name }, 'Willpower re-roll of ' + dice + (dice === 1 ? ' die' : ' dice')),
-        surge: () => surgeFor({ id }),
+        surge: isVampire(values(m)) ? () => surgeFor({ id }) : null,
       });
     } else {
       if (r.hunger() !== hunger(m)) r.setHunger(hunger(m));
@@ -658,11 +767,12 @@ window.VtmSheet = (function () {
     box.appendChild(el('div', { class: 'sheet-head' }, [el('h2', { class: 'chapter-h' }, [m.name]), el('div', { class: 'entity-sub' }, [memberSentence(am)])]));
     box.appendChild(versionPicker(m));
     box.appendChild(el('div', { class: 'archive-banner' }, ['Viewing “' + ver.label + '”' + (ver.date ? ' (' + ver.date + ')' : '') + ' — archived, read-only. Its file waits until you return to Current.']));
-    const h = +v.Humanity || 0;
+    const mo = morality(v);
+    const h = +v[mo.key] || 0;
     box.appendChild(el('div', { class: 'trackers' }, [
       el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Health']), tracker(+v.Health || derived(v).Health, lv.health || {}, null)]),
       el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Willpower']), tracker(+v.Willpower || derived(v).Willpower, lv.willpower || {}, null)]),
-      el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Humanity']), humanityTrack(h, +lv.stains || 0, null)]),
+      el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, [mo.label]), humanityTrack(h, +lv.stains || 0, null, mo.label)]),
     ]));
     box.appendChild(xpBlock(am, true));
     box.appendChild(el('details', { class: 'sheet-details', open: o.player ? 'open' : null }, [el('summary', {}, ['The sheet']), render(v, { edit: null })]));
@@ -677,7 +787,7 @@ window.VtmSheet = (function () {
     const sheetW = +v.Willpower || derived(v).Willpower;
     const attrSel = el('select', { class: 'scope' }, [el('option', { value: '' }, ['Attribute…'])].concat(attributes().map((a) => el('option', { value: a }, [a + ' ' + (v[a] || 0)]))));
     const second = el('select', { class: 'scope' }, [el('option', { value: '' }, ['+ Skill or Discipline…'])].concat(
-      skills().map((s) => el('option', { value: 'S:' + s }, [s + ' ' + (v[s] || 0)])),
+      skills().map((s) => el('option', { value: 'S:' + s }, [label(s) + ' ' + (v[s] || 0)])),
       (v.Disciplines || []).filter((d) => d.Discipline).map((d) => el('option', { value: 'D:' + d.Discipline }, [d.Discipline + ' ' + (d.Dots || 0)])),
     ));
     const note = el('span', { class: 'muted small' });
@@ -685,17 +795,17 @@ window.VtmSheet = (function () {
       const a = attrSel.value;
       if (!a) return;
       let n = +v[a] || 0;
-      let label = a;
+      let what = a;
       const s2 = second.value;
-      if (s2.startsWith('S:')) { n += +v[s2.slice(2)] || 0; label += ' + ' + s2.slice(2); }
-      if (s2.startsWith('D:')) { const d = (v.Disciplines || []).find((x) => x.Discipline === s2.slice(2)); n += +(d && d.Dots) || 0; label += ' + ' + s2.slice(2); }
+      if (s2.startsWith('S:')) { n += +v[s2.slice(2)] || 0; what += ' + ' + label(s2.slice(2)); }
+      if (s2.startsWith('D:')) { const d = (v.Disciplines || []).find((x) => x.Discipline === s2.slice(2)); n += +(d && d.Dots) || 0; what += ' + ' + s2.slice(2); }
       // Impairment: Physical pools from a full Health tracker, Social and Mental from Willpower
       const g = groupOf(a) || '';
       let pen = 0;
       if (/Physical/.test(g) && impaired(sheetH, live.health || {})) pen = IMPAIRED_PENALTY;
       if (/Social|Mental/.test(g) && impaired(sheetW, live.willpower || {})) pen = IMPAIRED_PENALTY;
       note.textContent = pen ? ' Impaired: −' + pen : '';
-      roller.setPool(Math.max(0, n - pen), label + (pen ? ' (Impaired −' + pen + ')' : ''));
+      roller.setPool(Math.max(0, n - pen), what + (pen ? ' (Impaired −' + pen + ')' : ''));
     };
     attrSel.addEventListener('change', apply);
     second.addEventListener('change', apply);
@@ -717,12 +827,13 @@ window.VtmSheet = (function () {
     const hSize = +v.Health || derived(v).Health;
     const wSize = +v.Willpower || derived(v).Willpower;
     const ruleLink = (id, label) => el('a', { class: 'rule-link small', href: '#', onclick: (ev) => { ev.preventDefault(); (o.onRule || window.VtmOpenEntity)(id); } }, [label]);
-    const h = +v.Humanity || 0;
+    const mo = morality(v);
+    const h = +v[mo.key] || 0;
     const stains = +lv.stains || 0;
     add(el('div', { class: 'trackers' }, [
       el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Health']), tracker(hSize, lv.health || {}, (t) => setLive(m, { health: t })), impaired(hSize, lv.health || {}) ? el('span', { class: 'verdict-bit blood' }, ['Impaired']) : null]),
       el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Willpower']), tracker(wSize, lv.willpower || {}, (t) => setLive(m, { willpower: t })), impaired(wSize, lv.willpower || {}) ? el('span', { class: 'verdict-bit blood' }, ['Impaired']) : null]),
-      el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, ['Humanity']), humanityTrack(h, stains, (n) => setLive(m, { stains: n })),
+      el('div', { class: 'track' }, [el('span', { class: 'prop-k' }, [mo.label]), humanityTrack(h, stains, (n) => setLive(m, { stains: n }), mo.label),
         stains > 10 - h ? el('span', { class: 'verdict-bit blood' }, ['Degeneration']) : null,
         stains ? button('Remorse test', () => {
           const n = Math.max(REMORSE_MIN, 10 - h - stains);
@@ -730,13 +841,14 @@ window.VtmSheet = (function () {
           const res = Dice.evaluate(dice, null);
           State().commit('appendLog', [Object.assign(Dice.entry({ who: m.name, label: 'Remorse', pool: n, hunger: 0, difficulty: 1, dice }), { memberId: m.id })]);
           const values2 = Object.assign({}, v);
-          if (res.successes < 1) values2.Humanity = Math.max(0, h - 1);
-          const lost = values2.Humanity !== v.Humanity;
-          change(m, lost ? { stains: 0, sheet: values2 } : { stains: 0 }, 'Remorse test: ' + res.successes + (res.successes === 1 ? ' success' : ' successes') + (lost ? ' — Humanity ' + h + ' → ' + values2.Humanity : ''));
+          if (res.successes < 1) values2[mo.key] = Math.max(0, h - 1);
+          const lost = values2[mo.key] !== v[mo.key];
+          change(m, lost ? { stains: 0, sheet: values2 } : { stains: 0 }, 'Remorse test: ' + res.successes + (res.successes === 1 ? ' success' : ' successes') + (lost ? ' — ' + mo.label + ' ' + h + ' → ' + values2[mo.key] : ''));
         }, 'ghost tiny') : null]),
       // the how-to line is the Storyteller's; the player's copy shows no working (owner, I12)
       o.player ? null : el('div', { class: 'muted small' }, ['Click a box: empty → ', MARK.sup, ' Superficial → ', MARK.agg, ' Aggravated. ', ruleLink(RULES.tracking, 'Tracking Damage'), ' · ', ruleLink(RULES.impairment, 'Impairment'), ' · ', ruleLink(RULES.stains, 'Stains'), ' · ', ruleLink(RULES.remorse, 'Remorse')]),
     ]), 'play');
+    add(roadBlock(v, o), 'play');
     const roller = rollerFor(m, o);
     if (o.player) {
       if (window.VtmConflict) add(window.VtmConflict.playerBlock(m, v, roller, o), 'conflict');
@@ -756,6 +868,8 @@ window.VtmSheet = (function () {
       return box;
     }
     box.appendChild(versionPicker(m));
+    const rb = roadBlock(v, o);
+    if (rb) box.appendChild(rb);
     box.appendChild(poolBuilder(m, roller));
     box.appendChild(roller);
     const pw = powersBlock(m, v, roller, o);
@@ -796,11 +910,11 @@ window.VtmSheet = (function () {
       let pen = 0;
       if (/Physical/.test(g) && impaired(sheetH, live.health || {})) pen = IMPAIRED_PENALTY;
       if (/Social|Mental/.test(g) && impaired(sheetW, live.willpower || {})) pen = IMPAIRED_PENALTY;
-      roller.setPool(Math.max(0, n - pen), [pk.a, pk.b].filter(Boolean).join(' + ') + (pen ? ' (Impaired −' + pen + ')' : ''), true);
+      roller.setPool(Math.max(0, n - pen), [pk.a, pk.b].filter(Boolean).map(label).join(' + ') + (pen ? ' (Impaired −' + pen + ')' : ''), true);
     };
     const row = (t, key) => el('button', { type: 'button', class: 'sk-row' + (pk[key] === t ? ' on' : ''),
       onclick: () => { pk[key] = pk[key] === t ? null : t; apply(); window.VttBus.emit('state:remote', { view: true }, { local: true }); } },
-      [el('span', {}, [t]), el('span', { class: 'sk-dots' }, ['●'.repeat(valueOf(t)) + '○'.repeat(Math.max(0, 5 - valueOf(t)))])]);
+      [el('span', {}, [label(t)]), el('span', { class: 'sk-dots' }, ['●'.repeat(valueOf(t)) + '○'.repeat(Math.max(0, 5 - valueOf(t)))])]);
     const groups = (names) => {
       const by = [];
       names.forEach((t) => { const g = groupOf(t) || ''; let x = by.find((y) => y[0] === g); if (!x) by.push(x = [g, []]); x[1].push(t); });
@@ -868,6 +982,6 @@ window.VtmSheet = (function () {
     spec, field, blank, complete, attributes, skills, derived, potencyRow, groupOf, sentence, render,
     fileOf, download, readMember, newMember, downloadMember, values, hunger, setHunger, change, damage, spendWillpower, trackLine,
     xp, logOf, isViewingArchive, versionsOf, surgeFor, potencyRow,
-    memberSentence, live, powersFor, templateId,
+    memberSentence, live, powersFor, templateId, label, KINDS, kindOf, isVampire, morality, specOfKind, specFor,
   };
 })();

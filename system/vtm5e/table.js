@@ -83,6 +83,7 @@ window.VttSystem = (function () {
     const v = Sheet.values(m);
     const out = [];
     if (Sheet.isSabbat(v) && !((S() || {}).creation || {}).blackHand) out.push(m.name + ' is made with The Black Hand’s options: playable here once your Storyteller allows them.');
+    if (Sheet.kindOf(v) === 'cainite' && !((S() || {}).creation || {}).roads) out.push(m.name + ' is made with Summoned Stories’ Road System: playable here once your Storyteller allows it.');
     const ls = Sheet.unavailableLoresheets(v);
     if (ls.length) out.push(m.name + ' draws on ' + ls.join(', ') + ': playable here once your Storyteller makes ' + (ls.length === 1 ? 'that loresheet' : 'those loresheets') + ' available.');
     return out.join(' ') || null;
@@ -92,6 +93,7 @@ window.VttSystem = (function () {
     window.VtmCreator.render(container, [], null, {
       where: 'play', joined: !!(o && o.joined),
       blackHand: !!((S() || {}).creation || {}).blackHand,
+      roads: !!((S() || {}).creation || {}).roads,
       done: (v) => { try { done(Sheet.readMember(Sheet.fileOf(v, { hunger: +v.Hunger || 0 }), null)); } catch (e) { window.alert(e.message); } },
     });
     return true;

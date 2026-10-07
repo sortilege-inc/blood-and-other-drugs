@@ -69,12 +69,12 @@ SHELVES = [
     {"id": "third-party", "label": "Third-party and homebrew", "root": DEFAULT_THIRD_PARTY,
      "note": "Storytellers Vault titles and this table's own homebrew, shelved apart: none of "
              "it is Renegade Game Studios' text, and a reader should not have to guess which.",
-     "dirs": ["the-black-hand/0.5", "sortilege/0.5"],
-     "excluded": {
-         "summoned-stories/0.5": "another Storyteller's chronicle documentation — a Road system "
-                                 "replacing Humanity, and a creation brief — house rules for a "
-                                 "different table, not rules this one plays by",
-     }},
+     # Summoned Stories (owner, 2026-09-27): a Storyteller's chronicle documentation - a Road
+     # system replacing Humanity and a creation brief - shelved for the table that plays it (War
+     # of Princes), opt-in as The Black Hand is: its ACTOR "Cainite" is a character kind the
+     # sheet reads, and nothing about it applies to a character that is not one.
+     "dirs": ["the-black-hand/0.5", "sortilege/0.5", "summoned-stories/0.5"],
+     "excluded": {}},
 ]
 
 # ───────────────────────── the prefix → book map ─────────────────────────
@@ -134,6 +134,8 @@ BOOKS = [
      "shelf": "third-party", "prefix": "black-hand"},
     {"id": "sunburners", "label": "Path of the Sun: the Sunburners", "kind": "homebrew",
      "shelf": "third-party", "prefix": "sortilege-sunburners"},
+    {"id": "summoned-stories", "label": "Summoned Stories: the Road System", "kind": "homebrew",
+     "shelf": "third-party", "prefix": "summoned-stories"},
 ]
 for _b in BOOKS:
     _b.setdefault("shelf", SHELVES[0]["id"])

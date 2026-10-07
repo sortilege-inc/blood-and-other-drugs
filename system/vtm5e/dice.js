@@ -222,7 +222,10 @@ window.VtmDice = (function () {
   const withSurge = (label, n) => (n ? (label ? label + ' + ' : '') + 'Blood Surge (' + n + ')' : label || null);
 
   function roller(opts) {
+    // o.living: a mortal or a ghoul - no Hunger dice, no Rouse Check, no Blood Surge (they have
+    // no Hunger and no Blood Potency; the Companion's Mortal and Ghoul carry neither)
     const o = Object.assign({ pool: 5, hunger: 1, difficulty: '' }, opts || {});
+    if (o.living) { o.hunger = 0; o.surge = null; }
     let state = { pool: o.pool, hunger: o.hunger, difficulty: o.difficulty, noHunger: false, twoRouse: false, dice: null, selected: [], rerolled: false, rouse: null, note: '', rolledNoHunger: false, surge: false, surged: 0, lim: {} };
     const box = R.el('div', { class: 'roller' });
 
@@ -307,13 +310,13 @@ window.VtmDice = (function () {
       box.innerHTML = '';
       box.appendChild(R.el('div', { class: 'roller-controls' }, [
         stepper('Dice pool', 'pool', 0, 30),
-        hungerTrack(),
+        o.living ? null : hungerTrack(),
         stepper('Difficulty', 'difficulty', 0, 15),
       ]));
       box.appendChild(R.el('div', { class: 'chiprow' }, [
-        R.el('button', { type: 'button', class: 'btn roll-btn', onclick: doRoll }, ['Roll ' + state.pool + (state.surge && !state.noHunger && o.surge && o.surge() ? ' + ' + o.surge().dice : '') + (state.noHunger ? '' : ' · ' + Math.min(state.pool, state.hunger) + ' Hunger')]),
-        R.el('button', { type: 'button', class: 'btn ghost', onclick: doRouse, title: 'One die; 6 or higher and Hunger holds' }, ['Rouse Check']),
-        R.el('label', { class: 'small' }, [R.el('input', { type: 'checkbox', checked: state.twoRouse || null, onchange: (ev) => { state.twoRouse = ev.target.checked; } }), ' two dice, keep the highest']),
+        R.el('button', { type: 'button', class: 'btn roll-btn', onclick: doRoll }, ['Roll ' + state.pool + (state.surge && !state.noHunger && o.surge && o.surge() ? ' + ' + o.surge().dice : '') + (state.noHunger || o.living ? '' : ' · ' + Math.min(state.pool, state.hunger) + ' Hunger')]),
+        o.living ? null : R.el('button', { type: 'button', class: 'btn ghost', onclick: doRouse, title: 'One die; 6 or higher and Hunger holds' }, ['Rouse Check']),
+        o.living ? null : R.el('label', { class: 'small' }, [R.el('input', { type: 'checkbox', checked: state.twoRouse || null, onchange: (ev) => { state.twoRouse = ev.target.checked; } }), ' two dice, keep the highest']),
         R.el('label', { class: 'small' }, [R.el('input', { type: 'checkbox', checked: state.noHunger || null, onchange: (ev) => { state.noHunger = ev.target.checked; draw(); } }), ' no Hunger dice (a check, a Willpower or a Humanity roll)']),
       ]));
       const sg = o.surge && !state.lim.noSurge ? o.surge() : null;
@@ -363,7 +366,7 @@ window.VtmDice = (function () {
       box.appendChild(R.el('div', { class: 'rules-row muted small' }, ['The rules: ', rule('results'), ' · ', rule('criticals'), ' · ', rule('hungerDice'), ' · ', rule('messy'), ' · ', rule('bestial'), ' · ', rule('checks')]));
     }
     box.setPool = (n, label) => { state.pool = n; o.label = label || o.label; state.dice = null; state.rouse = null; draw(); };
-    box.setHunger = (n) => { state.hunger = n; draw(); };
+    box.setHunger = (n) => { if (!o.living) state.hunger = n; draw(); };
     box.hunger = () => state.hunger;
     box.rouse = (q) => doRouse(null, q);
     box.roll = () => doRoll();
